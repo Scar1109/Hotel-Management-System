@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
-const eventSchema = new mongoose.Schema({
-    eventId : {
+const parkingSchema = new mongoose.Schema({
+    packageId : {
         type: String,
         required: true,
     },
-    eventName : {
+    packageType : {
         type: String,
         required: true,
     },
@@ -24,9 +24,12 @@ const eventSchema = new mongoose.Schema({
     baseImage : {
         type: String,
         required: true,
-    }
+    },
+    inventories : [],
+    extras : [],
+    contentImages: [],
 
 }, { timestamps: true });
 
-const eventModel = mongoose.model("packages", eventSchema);
-module.exports = eventModel;
+const parkingModel = mongoose.model("parkings", parkingSchema);
+module.exports = parkingModel;

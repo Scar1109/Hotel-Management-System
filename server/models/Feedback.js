@@ -1,0 +1,35 @@
+const mongoose = require('mongoose');
+
+const FeedbackSchema = new mongoose.Schema({
+
+    title : {
+        type: Number,
+        required: true
+    },
+
+    username : {
+        type: String,
+        required: true
+    },
+
+    userID : {
+        type: String,
+        required: true
+    },
+
+    rating : {
+        type: Number,
+        required: true
+    },
+
+    description : {
+        type: String,
+        required: true
+    },
+
+},{
+    timestamps: true
+});
+
+const feedbackModel = mongoose.model('rooms', FeedbackSchema);
+module.exports = feedbackModel;
