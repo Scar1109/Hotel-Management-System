@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-const employeeModel = require('../models/Employee');
+const parkingModel = require('../models/Parking');
 
 module.exports = router;
