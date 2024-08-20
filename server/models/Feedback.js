@@ -31,5 +31,5 @@ const FeedbackSchema = new mongoose.Schema({
     timestamps: true
 });
 
-const feedbackModel = mongoose.model('rooms', FeedbackSchema);
+const feedbackModel = mongoose.model('feedbacks', FeedbackSchema);
 module.exports = feedbackModel;

@@ -26,5 +26,5 @@ const cateringSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const cateringModel = mongoose.model("employee", cateringSchema);
+const cateringModel = mongoose.model("caterings", cateringSchema);
 module.exports = cateringModel;

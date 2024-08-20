@@ -26,15 +26,10 @@ const employeeSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        
-        leavesBalance: {
-            type: Array,
-            default: leaveBalanceDefault,
-        },
         leaves: [],
     },
     { timestamps: true }
 );
 
-const employeeModel = mongoose.model("employee", employeeSchema);
+const employeeModel = mongoose.model("employees", employeeSchema);
 module.exports = employeeModel;
