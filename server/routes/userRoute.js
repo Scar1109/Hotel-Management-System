@@ -26,11 +26,6 @@ router.post('/signup', async (req, res) => {
     try {
         const { firstName, lastName, email, password, confirmPassword, username } = req.body;
 
-        // Check if all required fields are present
-        if (!firstName || !lastName || !email || !password || !confirmPassword || !username) {
-            return res.status(400).json({ message: 'Please fill in all required fields' });
-        }
-
         // Check if passwords match
         if (password !== confirmPassword) {
             return res.status(400).json({ message: 'Passwords do not match' });
@@ -75,6 +70,49 @@ router.post('/signup', async (req, res) => {
         };
 
         res.status(201).json({ message: 'User registered successfully', user: userResponse });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Login Route
+router.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Check if all required fields are present
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Please fill in all required fields' });
+        }
+
+        // Find the user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid email or password' });
+        }
+
+        // Compare the provided password with the stored hashed password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid email or password' });
+        }
+
+        // Exclude the password from the response
+        const userResponse = {
+            _id: user._id,
+            userID: user.userID,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            username: user.username,
+            userType: user.userType,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
+        };
+
+        // Respond with the user object
+        res.status(200).json({ message: 'Login successful', user: userResponse });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
