@@ -46,7 +46,7 @@ function LoginPage() {
                         <div className="sg_input_filed_main">
                             <input
                                 type="email"
-                                placeholder="john.doe@gmail.com"
+                                placeholder="Email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
