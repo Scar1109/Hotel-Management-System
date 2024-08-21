@@ -10,7 +10,7 @@ import {
     Menu,
 } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
-import Logo from "../../assets/Logo/logo.png";
+import Logo from "../../assets/Logo/home-logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import axios from "axios";
