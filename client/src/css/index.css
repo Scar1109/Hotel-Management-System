@@ -13,6 +13,7 @@
 @import url('./users/login.css');
 @import url('./users/signup.css');
 @import url('./users/homepage.css');
+@import url('./users/navbar.css');
 
 @import url('./admin/ManageEmployees.css');
 
