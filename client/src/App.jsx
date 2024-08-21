@@ -1,6 +1,6 @@
-// Desc: Main App component
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "./components/CommonComponents/Navbar";
 import HomeScreen from "./pages/HomePage";
 import AdminPage from "./pages/AdminPage";
 import EventListPage from "./pages/EventListPage";
@@ -14,25 +14,33 @@ import SignupPage from "./pages/SignupPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import TakeAwayPage from "./pages/TakeAwayPage";
 
-
-
 function App() {
     return (
         <div className="App">
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<HomeScreen />} exact />
                     <Route path="/admin" element={<AdminPage />} exact />
-                    <Route path="/events" element={<EventListPage />} exact />
-                    <Route path="/events/:id" element={<EventViewPage />} exact />
-                    <Route path="/feedback" element={<FeedbackPage />} exact />
                     <Route path="/login" element={<LoginPage />} exact />
-                    <Route path="/order" element={<OrderFoodPage />} exact />
-                    <Route path="/rooms" element={<RoomListPage />} exact />
-                    <Route path="/rooms/:id" element={<RoomViewPage />} exact />
                     <Route path="/signup" element={<SignupPage />} exact />
-                    <Route path="/profile" element={<UserProfilePage />} exact />
-                    <Route path="/takeaway" element={<TakeAwayPage />} exact />
+                    <Route
+                        path="/*"
+                        element={
+                            <>
+                                <Navbar />
+                                <Routes>
+                                    <Route path="/" element={<HomeScreen />} exact />
+                                    <Route path="/events" element={<EventListPage />} exact />
+                                    <Route path="/events/:id" element={<EventViewPage />} exact />
+                                    <Route path="/feedbacks" element={<FeedbackPage />} exact />
+                                    <Route path="/order" element={<OrderFoodPage />} exact />
+                                    <Route path="/rooms" element={<RoomListPage />} exact />
+                                    <Route path="/rooms/:id" element={<RoomViewPage />} exact />
+                                    <Route path="/profile" element={<UserProfilePage />} exact />
+                                    <Route path="/takeaway" element={<TakeAwayPage />} exact />
+                                </Routes>
+                            </>
+                        }
+                    />
                 </Routes>
             </BrowserRouter>
         </div>
