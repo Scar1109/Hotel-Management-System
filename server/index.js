@@ -1,10 +1,13 @@
 const express = require("express");
 require("dotenv").config();
-const app = express();
 const cors = require("cors");
 
+const app = express();
+
+// Database configuration (ensure your dbConfig is correctly set up)
 const dbConfig = require("./config/db");
 
+// Importing route files
 const cateringRoutes = require("./routes/cateringRoutes");
 const employeeRoutes = require("./routes/employeeRoutes");
 const eventRoutes = require("./routes/eventRoutes");
@@ -15,9 +18,11 @@ const parkingRoutes = require("./routes/parkingRoute");
 const userRoutes = require("./routes/userRoute");
 const roomRoutes = require("./routes/roomRoutes");
 
+// Middleware
+app.use(cors()); // Apply CORS middleware here
+app.use(express.json()); // Parse JSON bodies
 
-app.use(express.json());
-
+// Route Definitions
 app.use("/api/catering", cateringRoutes);
 app.use("/api/employee", employeeRoutes);
 app.use("/api/event", eventRoutes);
@@ -28,11 +33,8 @@ app.use("/api/parking", parkingRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/room", roomRoutes);
 
-
-app.options('*', cors());
-
+// Start the server
 const port = process.env.PORT || 5000;
-
-app.listen(port, () =>
-    console.log(`Server running on port ${port} with nodemon`)
-);
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});

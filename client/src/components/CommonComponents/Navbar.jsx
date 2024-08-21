@@ -39,6 +39,7 @@ function NavBarUser() {
 
             // Parse user JSON
             const user = JSON.parse(userJSON);
+            setUser(user);
 
             // Check if user has a valid userID
             if (!user || !user.userID) {
@@ -46,24 +47,6 @@ function NavBarUser() {
                 return;
             }
 
-            const userID = { userID: user.userID };
-
-            try {
-                // Fetch user data by ID
-                const res = await axios.post("/api/users/getUserById", userID);
-                setUser(res.data);
-                setFileList([
-                    {
-                        uid: "1",
-                        name: "image.png",
-                        status: "done",
-                        url: res.data.profilePic,
-                    },
-                ]);
-                console.log(res.data);
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-            }
         };
 
         fetchUserByID();
@@ -183,7 +166,7 @@ function NavBarUser() {
                 <a
                     style={{ textDecoration: "none" }}
                     rel="noopener noreferrer"
-                    href="/userprofile"
+                    href="/profile"
                 >
                     My Account
                 </a>
@@ -191,7 +174,7 @@ function NavBarUser() {
             key: "0",
         },
         user &&
-            user.userType !== "Customer" && {
+            user.userType === "Admin" && {
                 label: (
                     <a style={{ textDecoration: "none" }} href="/admin">
                         Admin
@@ -218,12 +201,12 @@ function NavBarUser() {
             theme={{
                 components: {
                     Button: {
-                        defaultHoverBorderColor: "#99707E",
-                        defaultHoverColor: "#99707E",
+                        defaultHoverBorderColor: "#27ae61",
+                        defaultHoverColor: "#27ae61",
                     },
                     Menu: {
-                        horizontalItemSelectedColor: "#533C56",
-                        horizontalItemHoverColor: "#533C56",
+                        horizontalItemSelectedColor: "#27ae61",
+                        horizontalItemHoverColor: "#27ae61",
                     },
                 },
             }}
@@ -304,7 +287,7 @@ function NavBarUser() {
                                             onClick={(e) => e.preventDefault()}
                                             style={{
                                                 textDecoration: "none",
-                                                color: "#454545",
+                                                color: "#333333",
                                             }}
                                         >
                                             <Space>
