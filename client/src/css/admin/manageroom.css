@@ -37,3 +37,12 @@
 .add_new_room:hover {
     background-color: #49a56f;
 }
+
+.room_model{
+    margin-top: 20px;
+}
+
+.room_model input{
+    margin-bottom: 10px;
+}
+

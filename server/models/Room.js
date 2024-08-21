@@ -2,33 +2,31 @@ const mongoose = require('mongoose');
 
 const roomSchema = new mongoose.Schema({
 
-    name : {
+    imageUrl: {
         type: String,
-        required: true
+        required: true,
     },
-
-    maxCount : {
+    roomNumber: {
+        type: String,
+        required: true,
+    },
+    roomType: {
+        type: String,
+        required: true,
+    },
+    facilities: {
+        type: String,
+        required: true,
+    },
+    price: {
         type: Number,
-        required: true
+        required: true,
     },
-
-    pricePerDay : {
-        type: Number,
-        required: true
-    },
-
-    roomType : {
+    status: {
         type: String,
-        required: true
+        enum: ['Activate', 'Suspended'],
+        default: 'Activate',
     },
-
-    description : {
-        type: String,
-        required: true
-    },
-
-    imgURL : [],
-    bookedDates : [],
 
 },{
     timestamps: true
