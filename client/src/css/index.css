@@ -10,4 +10,7 @@
 }
 
 @import url('./admin/dashboard.css');
+@import url('./admin/manageroom.css');
 @import url('.//users/homepage.css');
+@import url('./users/roomlistpage.css');
+@import url('./users/roomviewpage.css');
