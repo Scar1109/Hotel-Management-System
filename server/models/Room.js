@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
+// Define the Room schema
 const roomSchema = new mongoose.Schema({
-
     imageUrl: {
         type: String,
         required: true,
@@ -9,6 +9,7 @@ const roomSchema = new mongoose.Schema({
     roomNumber: {
         type: String,
         required: true,
+        unique: true, // Ensure roomNumber is unique
     },
     roomType: {
         type: String,
@@ -27,10 +28,11 @@ const roomSchema = new mongoose.Schema({
         enum: ['Activate', 'Suspended'],
         default: 'Activate',
     },
-
-},{
-    timestamps: true
+}, {
+    timestamps: true // Automatically add createdAt and updatedAt fields
 });
 
-const roomModel = mongoose.model('rooms', roomSchema);
-module.exports = roomModel;
+// Create the Room model
+const Room = mongoose.model('Room', roomSchema);
+
+module.exports = Room;
