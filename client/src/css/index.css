@@ -8,3 +8,6 @@
 .body {
     background-color: #efefef;
 }
+
+@import url('./admin/dashboard.css');
+@import url('.//users/homepage.css');

@@ -19,7 +19,7 @@ function App() {
         <div className="App">
             <BrowserRouter>
                 <Routes>
-                    <Route path="/admin" element={<AdminPage />} exact />
+                    <Route path="/admin/*" element={<AdminPage />} exact />
                     <Route path="/login" element={<LoginPage />} exact />
                     <Route path="/signup" element={<SignupPage />} exact />
                     <Route
