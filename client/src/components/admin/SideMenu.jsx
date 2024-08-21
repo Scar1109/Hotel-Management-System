@@ -19,6 +19,7 @@ const items = [
     getItem("Dashboard", "/admin", <Icon icon="material-symbols:dashboard-outline" />),
     getItem("Events", "/admin/manage-events", <Icon icon="ic:outline-inventory" />),
     getItem("Foods", "/admin/manage-foods", <Icon icon="mdi:food" />),
+    getItem("Employees", "/admin/manage-employees", <Icon icon="mdi:account-group-outline" />),
     getItem("Orders", "/admin/manage-orders", <Icon icon="mdi:cart-outline" />),
     getItem("Packages", "/admin/manage-packages", <Icon icon="ri:news-line" />),
     getItem("Parking", "/admin/manage-parkings", <Icon icon="mdi:parking" />),
