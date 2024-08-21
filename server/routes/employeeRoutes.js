@@ -7,9 +7,13 @@ const bcrypt = require('bcrypt');
 async function generateUniqueEmployeeId() {
     let unique = false;
     let employeeId;
-    
+
     while (!unique) {
-        employeeId = Math.random().toString(36).substr(2, 9);
+        // Generate a random 8-digit number
+        const randomNumber = Math.floor(10000000 + Math.random() * 90000000);
+        employeeId = `E${randomNumber}`;
+        
+        // Check if this employeeId already exists in the database
         const existingEmployee = await employeeModel.findOne({ employeeId });
         if (!existingEmployee) {
             unique = true;
@@ -67,16 +71,11 @@ router.post('/addEmployee', async (req, res) => {
 // Update employee
 router.post('/updateEmployee', async (req, res) => {
     try {
-        const { employeeId, firstName, lastName, email, username } = req.body;
-
-        const existingEmployee = await employeeModel.findOne({ _id: { $ne: employeeId }, $or: [{ email }, { username }] });
-        if (existingEmployee) {
-            return res.status(400).send('Email or Username already exists');
-        }
+        const { firstName, lastName, email, username } = req.body;
 
         const updatedEmployee = await employeeModel.findOneAndUpdate(
-            { employeeId },
-            { firstName, lastName, email, username },
+            { email },
+            { firstName, lastName, username },
             { new: true }
         );
 

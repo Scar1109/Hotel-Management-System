@@ -37,9 +37,9 @@ function ManageEmployees() {
         if (searchTerm !== "") {
             tempList = tempList.filter(
                 (item) =>
-                    item.firstName.toLowerCase().includes(searchTerm) ||
-                    item.lastName.toLowerCase().includes(searchTerm) ||
-                    item.email.toLowerCase().includes(searchTerm)
+                    item.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    item.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    item.email.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
 
@@ -142,6 +142,7 @@ function ManageEmployees() {
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="search-input-1234"
+                                disabled={showEditPopup || showDeletePopup || showAddPopup}
                             />
                             <button className="add-btn-1234" onClick={() => setShowAddPopup(true)}>Add New</button>
                         </div>
@@ -220,6 +221,7 @@ function AddEditPopup({ employee, onSave, onClose }) {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="Email"
+                    disabled={!!employee} // Disable email if editing (employee is present)
                 />
                 <input
                     type="text"
