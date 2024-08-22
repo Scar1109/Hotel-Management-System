@@ -4,20 +4,29 @@ import { message } from "antd";
 import parkingImg from "../assets/Images/ParkingImg.png";
 
 function ParkingPage() {
+    // State to store the selected date for booking
     const [selectedDate, setSelectedDate] = useState("");
+    // State to store the available parking slots for the selected date
     const [availability, setAvailability] = useState([]);
+    // State to store the vehicle number entered by the user
     const [vehicleNumber, setVehicleNumber] = useState("");
+    // State to store the selected parking slot
     const [selectedSlot, setSelectedSlot] = useState("");
+    // State to store the selected booking duration (e.g., Full day, 12 hours, 6 hours)
     const [bookingDuration, setBookingDuration] = useState("Full day");
+    // State to store the user information
     const [user, setUser] = useState(null);
+    // State to store the calculated price based on selected slot and duration
     const [price, setPrice] = useState(0);
 
+    // Effect to fetch parking availability whenever the selected date changes
     useEffect(() => {
         if (selectedDate) {
             fetchAvailability();
         }
     }, [selectedDate]);
 
+    // Effect to fetch user information from localStorage when the component mounts
     useEffect(() => {
         const fetchUserByID = async () => {
             // Retrieve user from localStorage
@@ -29,7 +38,7 @@ function ParkingPage() {
                 return;
             }
 
-            // Parse user JSON
+            // Parse user JSON and set it in state
             const user = JSON.parse(userJSON);
             setUser(user);
             console.log(user);
@@ -44,17 +53,20 @@ function ParkingPage() {
         fetchUserByID();
     }, []);
 
+    // Function to calculate the price based on selected slot and booking duration
     const calculatePrice = () => {
         if (!selectedSlot) return;
 
         let basePrice = 0;
 
+        // Set base price based on slot type (B for Bikes, C for Cars)
         if (selectedSlot.startsWith("B")) {
             basePrice = 500;
         } else if (selectedSlot.startsWith("C")) {
             basePrice = 1000;
         }
 
+        // Adjust price based on booking duration
         switch (bookingDuration) {
             case "Full day":
                 setPrice(basePrice);
@@ -70,10 +82,12 @@ function ParkingPage() {
         }
     };
 
+    // Effect to recalculate the price whenever the selected slot or duration changes
     useEffect(() => {
         calculatePrice();
     }, [selectedSlot, bookingDuration]);
 
+    // Function to fetch parking slot availability from the server
     const fetchAvailability = async () => {
         try {
             const response = await axios.get(`/api/parking/availability`, {
@@ -85,7 +99,9 @@ function ParkingPage() {
         }
     };
 
+    // Function to handle booking a parking slot
     const handleBookNow = async () => {
+        // Ensure all necessary fields are filled
         if (!vehicleNumber || !selectedSlot || !selectedDate) {
             message.error("Please fill all the fields.");
             return;
@@ -93,6 +109,7 @@ function ParkingPage() {
         console.log(user);
 
         try {
+            // Send booking request to the server
             await axios.post("/api/parking/book", {
                 vehicleNumber,
                 parkingSlot: selectedSlot,
@@ -130,6 +147,7 @@ function ParkingPage() {
             )}
             {selectedDate && (
                 <div className="availability-grid1244">
+                    {/* Generate a grid of parking slots (5 rows, 10 columns) */}
                     {Array.from({ length: 5 }).map((_, rowIndex) => (
                         <div className="row1244" key={rowIndex}>
                             {Array.from({ length: 10 }).map((_, colIndex) => {
@@ -143,6 +161,7 @@ function ParkingPage() {
                                         colIndex + 1 + (rowIndex - 2) * 10
                                     }`;
                                 }
+                                // Check if the slot is available
                                 const isAvailable =
                                     availability.includes(slotId);
                                 return (
@@ -162,6 +181,7 @@ function ParkingPage() {
                     ))}
                 </div>
             )}
+            <hr style={{width : "80%", alignSelf : "center"}} />
             <div className="booking-form1244">
                 <h3>Book a parking slot</h3>
                 <div className="bookig_form-row">
@@ -171,13 +191,13 @@ function ParkingPage() {
                         placeholder="Vehicle Number"
                         value={vehicleNumber}
                         onChange={(e) => setVehicleNumber(e.target.value)}
-                        disabled={selectedDate ? false : true}
+                        disabled={selectedDate ? false : true} // Disable input if no date is selected
                     />
                     <select
                         className="slot-select1244"
                         value={selectedSlot}
                         onChange={(e) => setSelectedSlot(e.target.value)}
-                        disabled={selectedDate ? false : true}
+                        disabled={selectedDate ? false : true} // Disable input if no date is selected
                     >
                         <option value="" disabled>
                             Select the slot
@@ -196,13 +216,13 @@ function ParkingPage() {
                         onChange={(e) => setSelectedDate(e.target.value)}
                         className="date-picker-form-1244"
                         placeholder="Select date"
-                        disabled={selectedDate ? false : true}
+                        disabled={selectedDate ? false : true} // Disable input if no date is selected
                     />
                     <select
                         className="duration-select1244"
                         value={bookingDuration}
                         onChange={(e) => setBookingDuration(e.target.value)}
-                        disabled={selectedDate ? false : true}
+                        disabled={selectedDate ? false : true} // Disable input if no date is selected
                     >
                         <option value="Full day">Full day</option>
                         <option value="12 hours">12 hours</option>
@@ -213,7 +233,7 @@ function ParkingPage() {
                 <button
                     className="book-now-btn1244"
                     onClick={handleBookNow}
-                    disabled={selectedDate ? false : true}
+                    disabled={selectedDate ? false : true} // Disable button if no date is selected
                 >
                     Book Now
                 </button>

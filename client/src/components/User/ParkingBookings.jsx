@@ -4,15 +4,24 @@ import moment from "moment";
 import axios from "axios";
 
 function ParkingBookings() {
+    // State to hold the list of bookings
     const [bookings, setBookings] = useState([]);
+    // State to hold the booking currently being edited
     const [editingBooking, setEditingBooking] = useState(null);
+    // State to control the visibility of the edit modal
     const [isModalVisible, setIsModalVisible] = useState(false);
+    // State to control the visibility of the delete confirmation modal
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+    // State to store the ID of the parking spot selected for deletion
     const [selectedParkingId, setSelectedParkingId] = useState(null);
+    // State to hold the current user information
     const [user, setUser] = useState(null);
+    // State to hold the vehicle number being edited or added
     const [vehicleNumber, setVehicleNumber] = useState("");
+    // State to hold the booking date being edited or added
     const [bookingDate, setBookingDate] = useState(null);
 
+    // Fetches user information from localStorage
     const fetchUserByID = useCallback(() => {
         const userJSON = localStorage.getItem("currentUser");
         if (!userJSON) {
@@ -23,16 +32,19 @@ function ParkingBookings() {
         setUser(user);
     }, []);
 
+    // Runs fetchUserByID when the component mounts
     useEffect(() => {
         fetchUserByID();
     }, [fetchUserByID]);
 
+    // Fetches bookings when the user is loaded
     useEffect(() => {
         if (user) {
             fetchBookings();
         }
     }, [user]);
 
+    // Function to fetch the list of bookings from the server
     const fetchBookings = async () => {
         if (!user || !user.userID) return;
 
@@ -46,24 +58,27 @@ function ParkingBookings() {
         }
     };
 
+    // Opens the delete confirmation modal
     const showDeleteModal = (parkingId) => {
         setSelectedParkingId(parkingId);
         setIsDeleteModalVisible(true);
     };
 
+    // Handles the deletion of a booking
     const handleDelete = async () => {
         try {
             await axios.post("/api/parking/delete", {
                 parkingId: selectedParkingId,
             });
             message.success("Booking deleted successfully.");
-            fetchBookings(); // Refresh the bookings list
+            fetchBookings(); // Refresh the bookings list after deletion
             setIsDeleteModalVisible(false); // Close delete modal
         } catch (error) {
             message.error("Failed to delete booking.");
         }
     };
 
+    // Opens the edit modal and populates it with the selected booking's data
     const handleEdit = (record) => {
         setEditingBooking(record);
         setVehicleNumber(record.vehicleNumber);
@@ -71,6 +86,7 @@ function ParkingBookings() {
         setIsModalVisible(true);
     };
 
+    // Handles the update of a booking
     const handleUpdate = async () => {
         try {
             await axios.post("/api/parking/update", {
@@ -80,16 +96,18 @@ function ParkingBookings() {
             });
             message.success("Booking updated successfully.");
             setIsModalVisible(false);
-            fetchBookings(); // Refresh the bookings list
+            fetchBookings(); // Refresh the bookings list after update
         } catch (error) {
             message.error("Failed to update booking.");
         }
     };
 
+    // Updates the bookingDate state when the date picker value changes
     const handleDateChange = (date) => {
         setBookingDate(date);
     };
 
+    // Columns configuration for the bookings table
     const columns = [
         {
             title: "Vehicle Number",
@@ -144,7 +162,7 @@ function ParkingBookings() {
                 columns={columns}
                 dataSource={bookings}
                 rowKey="parkingId"
-                pagination={false}
+                pagination={false} // Disable pagination
             />
 
             <Modal

@@ -213,6 +213,9 @@ function NavBarUser() {
     return (
         <ConfigProvider
             theme={{
+                token: {
+                    colorPrimary: "#27ae61", // Set your desired primary color
+                },
                 components: {
                     Button: {
                         defaultHoverBorderColor: "#27ae61",

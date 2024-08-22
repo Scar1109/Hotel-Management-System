@@ -4,31 +4,43 @@ import { Table, message, DatePicker } from "antd";
 import moment from "moment";
 
 const LeaveDetails = () => {
+    // State to store the list of leave records
     const [leaves, setLeaves] = useState([]);
+    // State to manage the loading state while fetching data
     const [loading, setLoading] = useState(true);
+    // State to control the visibility of the leave request modal
     const [isModalVisible, setIsModalVisible] = useState(false);
+    // State to store the selected 'from' date for a leave request
     const [fromDate, setFromDate] = useState(null);
+    // State to store the selected 'to' date for a leave request
     const [toDate, setToDate] = useState(null);
+    // Retrieve the current user information from localStorage
     const user = JSON.parse(localStorage.getItem("currentUser"));
+    // Extract the employee ID from the user object
     const empID = user.userID;
 
+    // Effect to fetch leave records when the component mounts
     useEffect(() => {
         fetchLeaves();
     }, []);
 
+    // Function to fetch leave records from the server
     const fetchLeaves = async () => {
         try {
             const response = await axios.get(
                 `http://localhost:5000/api/employee/getLeave/${empID}`
             );
+            // Set the retrieved leave records in the state
             setLeaves(response.data.leaves);
         } catch (error) {
             message.error("Failed to retrieve leaves");
         } finally {
+            // Set loading to false once the data fetching is done
             setLoading(false);
         }
     };
 
+    // Function to handle adding a new leave request
     const handleAddLeave = async () => {
         if (!fromDate || !toDate) {
             message.error("Please select both From Date and To Date");
@@ -40,6 +52,7 @@ const LeaveDetails = () => {
         const formattedToDate = moment(toDate).format('YYYY-MM-DD');
 
         try {
+            // Send the leave request to the server
             const response = await axios.post(
                 "http://localhost:5000/api/employee/addLeave",
                 {
@@ -48,24 +61,28 @@ const LeaveDetails = () => {
                     toDate: formattedToDate,
                 }
             );
+            // Update the leave records with the new data from the response
             setLeaves(response.data.leaves);
             message.success("Leave added successfully");
-            closeModal();
+            closeModal(); // Close the modal after successful submission
         } catch (error) {
             message.error("Failed to add leave");
         }
     };
 
+    // Function to open the leave request modal
     const openModal = () => {
         setIsModalVisible(true);
     };
 
+    // Function to close the leave request modal and reset the date fields
     const closeModal = () => {
         setIsModalVisible(false);
         setFromDate(null);
         setToDate(null);
     };
 
+    // Define the columns for the leaves table
     const columns = [
         { title: "Leave ID", dataIndex: "leaveID", key: "leaveID" },
         { title: "From Date", dataIndex: "fromDate", key: "fromDate" },
@@ -82,6 +99,7 @@ const LeaveDetails = () => {
                 </button>
             </div>
 
+            {/* Conditionally render the leave request modal */}
             {isModalVisible && (
                 <div id="custom-modal-1234">
                     <div id="custom-modal-content-1234">
@@ -118,6 +136,7 @@ const LeaveDetails = () => {
                 </div>
             )}
 
+            {/* Conditionally render based on loading state and leave data availability */}
             {loading ? (
                 <div className="center">
                     <p>Loading...</p>
