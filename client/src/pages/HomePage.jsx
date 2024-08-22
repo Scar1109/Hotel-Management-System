@@ -12,6 +12,7 @@ function HomePage() {
         borderRadius: "10px",
         marginTop: "25px",
     };
+    const { Meta } = Card;
 
     return (
         <div>
@@ -93,6 +94,90 @@ function HomePage() {
                 </div>
                 <div className="sg_home_page_paragraph_area_p2">
                     <h>Whether you're visiting for business or leisure, we are dedicated to extending a warm welcome to all our guests with heartfelt hospitality and a commitment to making your stay unforgettable. Our outstanding services and unwavering pursuit of excellence distinguish Sixth Gear Hotel from the rest. Come, settle in, and feel at home — we’ll take care of every detail for you.</h>
+                </div>
+            </div>
+            <div className="sg_home_page_img_section_main">
+                <div className="sg_home_page_image_1">
+                    {/* image home */}
+                </div>
+            </div>
+            <div className="sg_home_page_room_section_txt">
+                <h3>Live in the lap of luxury</h3>
+                <h1>A SLICE OF HEAVEN!</h1>
+            </div>
+            <div className="sg_home_page_room_section">
+                <div className="sg_home_page_room_image_section">
+                </div>
+                <div className="sg_home_page_room_bag">
+                    <div className="sg_home_page_room_txt">
+                        <h2>BEST LUXURY ROOMS</h2>
+                        <h>Experience the pinnacle of comfort in our Best Luxury Rooms, where modern elegance meets unparalleled amenities. Every detail is crafted to ensure your stay is nothing short of extraordinary, offering a serene escape in the heart of the city</h>
+                        <Button danger style={{ color: '#27ae61', borderColor: '#27ae61', backgroundColor: 'transparent' }}>FIND OUT MORE</Button>
+                    </div>
+                </div>
+            </div>
+            <div className="sg_home_page_food_section_main">
+                <div className="sg_home_page_food_bg_image_section">
+                    <div className="sg_home_page_food_bg_section">
+                        <div className="sg_home_page_food_item_section_main">
+                            <div className="sg_home_page_food_txt">
+                                <h3>Moments of pleasure and exceptional taste
+                                </h3>
+                                <h2>Tantalising Flavours!
+                                </h2>
+                                <h>Embark on a culinary journey and discover a world of delectable dishes from Sri Lanka and beyond. Immerse yourself in the exquisite flavours and let your taste buds explode with every bite. Head to our cosy restaurants and indulge in a wide range of freshly prepared dishes or beverages of your choice.</h>
+                                <Button danger style={{ color: '#27ae61', borderColor: '#27ae61', backgroundColor: 'transparent', width: 140, marginLeft: 60, marginTop: 30 }}>FIND OUT MORE</Button>
+                            </div>
+                            <div className="sg_home_page_food_card_section">
+                                <div className="sg_home_page_food_card_set">
+                                    <Card
+                                        hoverable
+                                        style={{
+                                            width: 260,
+                                            height: 400,
+                                        }}
+                                        cover={<img alt="example" src="https://i.ibb.co/mHvgFN8/the-lobby-lounge-heritage.jpg" />}
+                                    >
+                                        <Meta style={{ textAlign: 'center', fontWeight: 600, fontSize: 28 }} title="breakfast" />
+                                    </Card>
+                                </div>
+                                <div className="sg_home_page_food_card_set">
+                                    <Card
+                                        hoverable
+                                        style={{
+                                            width: 260,
+                                            height: 400,
+                                        }}
+                                        cover={<img alt="example" src="https://i.ibb.co/m0qxXjJ/PUBLIC-Popular-Cantina-0621-Liz-Clayman-149.jpg" />}
+                                    >
+                                        <Meta style={{ textAlign: 'center', fontWeight: 600, fontSize: 28 }} title="Lunch" />
+                                    </Card>
+                                </div>
+                                <div className="sg_home_page_food_card_set">
+                                    <Card
+                                        hoverable
+                                        style={{
+                                            width: 260,
+                                            height: 400,
+                                        }}
+                                        cover={<img alt="example" src="https://i.ibb.co/pwyDBt0/Novotel-Bangkok-on-Siam-Square-Bangkok-Restaurant-1-12749.jpg" />}
+                                    >
+                                        <Meta style={{ textAlign: 'center', fontWeight: 600, fontSize: 28 }} title="Dinner" />
+                                    </Card>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="sg_home_page_online_oder_section">
+                <div className="sg_home_page_online_oder_image">
+                
+                </div>
+                <div className="sg_home_page_online_oder_txt">
+                    <h3>gvhghjg</h3>
+                    <h2>hgsdbfsd</h2>
+                    <h4>gdfgdjhfg</h4>
                 </div>
             </div>
         </div>
