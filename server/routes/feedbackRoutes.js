@@ -82,19 +82,30 @@
 
     // Search feedback by title
     router.post("/searchFeedback", async (req, res) => {
-    const { title, page, limit } = req.body;
-    try {
-        const feedbacks = await feedbackModel
-        .find({ title: new RegExp(title, "i") })
-        .skip((page - 1) * limit)
-        .limit(limit);
-        const total = await feedbackModel.countDocuments({
-        title: new RegExp(title, "i"),
-        });
-        res.json({ feedbacks, total });
-    } catch (error) {
-        res.status(500).json({ message: "Error searching feedbacks" });
-    }
+        const { search, page, limit } = req.body;
+    
+        try {
+            const searchTerms = search.split(" "); // Split the search input by spaces
+    
+            // Build the query to search for both title and username
+            const query = {
+                $or: [
+                    { title: { $regex: searchTerms.join("|"), $options: "i" } }, // Match any word in the title
+                    { username: { $regex: searchTerms.join("|"), $options: "i" } }, // Match any word in the username
+                ],
+            };
+    
+            const feedbacks = await feedbackModel
+                .find(query)
+                .skip((page - 1) * limit)
+                .limit(limit);
+    
+            const total = await feedbackModel.countDocuments(query);
+    
+            res.json({ feedbacks, total });
+        } catch (error) {
+            res.status(500).json({ message: "Error searching feedbacks" });
+        }
     });
 
     module.exports = router;

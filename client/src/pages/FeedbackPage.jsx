@@ -35,7 +35,11 @@ const FeedbackPage = () => {
 
     const fetchFeedbacks = async () => {
         try {
-            const { data } = await axios.post('/api/feedback/getFeedback', { page, limit, search });
+            const { data } = await axios.post('/api/feedback/searchFeedback', {
+                search,
+                page,
+                limit
+            });
             setFeedbacks(data.feedbacks);
             setTotal(data.total);
         } catch (error) {
@@ -51,7 +55,7 @@ const FeedbackPage = () => {
             console.log("Feedback Data being sent:", feedbackData);
             const response = await axios.post('/api/feedback/addFeedback', feedbackData);
             console.log("Response data:", response.data);
-            
+
             if (response.status === 201) {
                 message.success('Feedback added successfully');
                 fetchFeedbacks();
@@ -97,7 +101,7 @@ const FeedbackPage = () => {
         <div className="feedback-page-6789">
             <div className="feedback-header-6789">
                 <Input.Search
-                    placeholder="Search by title"
+                    placeholder="Search by title or username"
                     value={search}
                     onChange={handleSearch}
                     style={{ width: 300 }}
