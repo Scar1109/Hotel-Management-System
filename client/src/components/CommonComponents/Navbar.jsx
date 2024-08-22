@@ -75,10 +75,20 @@ function NavBarUser() {
         {
             label: "Foods",
             key: "foods",
+            children: [
+                {
+                    label: "For Rooms",
+                    key: "order",
+                },
+                {
+                    label: "Take Away",
+                    key: "takeaway",
+                },
+            ],
         },
         {
-            label: "Take Away",
-            key: "takeaway",
+            label: "Packing",
+            key: "parking",
         },
         {
             label: "Feedbacks",
@@ -96,12 +106,14 @@ function NavBarUser() {
             navigate("/rooms");
         } else if (e.key === "events") {
             navigate("/events");
-        } else if (e.key === "foods") {
+        } else if (e.key === "order") {
             navigate("/order");
         } else if (e.key === "takeaway") {
             navigate("/takeaway");
         } else if (e.key === "feedbacks") {
             navigate("/feedbacks");
+        } else if (e.key === "parking") {
+            navigate("/parking");
         }
     };
 
@@ -116,10 +128,12 @@ function NavBarUser() {
         } else if (path === "/order") {
             setCurrent("foods");
         } else if (path === "/takeaway") {
-            setCurrent("takeaway");
+            setCurrent("foods");
         } else if (path === "/feedbacks") {
             setCurrent("feedbacks");
-        }
+        } else if (path === "/parking") {
+            setCurrent("parking");
+        } 
     }, []);
 
     const styles = {
