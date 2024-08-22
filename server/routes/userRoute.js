@@ -119,4 +119,39 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// Update User Route
+router.post('/updateUser', async (req, res) => {
+    try {
+        const { userID, firstName, lastName, email, username } = req.body;
+
+        const updatedUser = await User.findOneAndUpdate(
+            { userID },
+            { firstName, lastName, email, username },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Return the updated user data excluding the password
+        const userResponse = {
+            _id: updatedUser._id,
+            userID: updatedUser.userID,
+            firstName: updatedUser.firstName,
+            lastName: updatedUser.lastName,
+            email: updatedUser.email,
+            username: updatedUser.username,
+            userType: updatedUser.userType,
+            createdAt: updatedUser.createdAt,
+            updatedAt: updatedUser.updatedAt
+        };
+
+        res.status(200).json({ message: 'User updated successfully', user: userResponse });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 module.exports = router;
