@@ -23,6 +23,7 @@ function RoomViewPage() {
                               `/api/room/getRoom/${id}`
                         );
                         setRoom(response.data.room);
+                        console.log(response.data)
                         setTotalPrice(response.data.room.price); // Initialize total price with room price
                   } catch (error) {
                         console.error("Error fetching room:", error);
@@ -78,15 +79,18 @@ function RoomViewPage() {
       };
 
       // Handle form submission
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      const userID = currentUser.userID;
       const handleOk = async () => {
         try {
             const values = await form.validateFields(); // Get form values
             const reservationData = {
-                roomNumber: id, // Assuming roomNumber is stored as ID
+                userID: userID,
+                roomNumber: room.roomNumber, // Assuming roomNumber is stored as ID
                 guestName: values.name,
                 guestEmail: values.email,
                 guestPhone: values.phone,
-                checkInDate: values.dates[0].format('YYYY-MM-DD'), // Assuming dates are in moment format
+                checkInDate: values.dates[0].format('YYYY-MM-DD'), //  dates are in moment format
                 checkOutDate: values.dates[1].format('YYYY-MM-DD'),
                 packages: selectedPackages.map((pkg) => pkg._id),
                 totalAmount: totalPrice,

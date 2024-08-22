@@ -31,8 +31,18 @@ router.get("/getRoom/:id", async (req, res) => {
 
 // Add new room
 router.post("/addRoom", async (req, res) => {
-      const { imageUrl, roomNumber, roomType, bedType,size,viewInformation,facilities, price,amenities, status } =
-            req.body;
+      const {
+            imageUrl,
+            roomNumber,
+            roomType,
+            bedType,
+            size,
+            viewInformation,
+            facilities,
+            price,
+            amenities,
+            status,
+      } = req.body;
 
       try {
             // Check if a room with the same room number already exists
@@ -124,15 +134,41 @@ router.delete("/deleteRoom/:id", async (req, res) => {
       }
 });
 
-// Route to create a new room reservation
-router.post("/reserveRoom/:id", async (req, res) => {
-      const { id } = req.params; // Room ID
-      const { guestName, guestEmail, guestPhone, checkInDate, checkOutDate, packages, totalAmount } = req.body;
+// Function to generate sequential booking ID
+let currentID = 0; // This should be stored and managed in your database
+
+const generateBookingID = () => {
+    currentID++;
+    return `Res${currentID.toString().padStart(3, '0')}`;
+};
+
+// Example usage
+console.log(generateBookingID()); // Outputs: Res001
+console.log(generateBookingID()); // Outputs: Res002
+
+  // Route to create a new room reservation
+  router.post("/reserveRoom/:id", async (req, res) => {
+      const {
+            roomNumber,
+          userID,
+          guestName,
+          guestEmail,
+          guestPhone,
+          checkInDate,
+          checkOutDate,
+          packages,
+          totalAmount,
+      } = req.body;
   
       try {
-          // Create a new reservation
+          // Generate a custom booking ID
+          const bookingID = await generateBookingID();
+  
+          // Create a new reservation with the custom booking ID
           const newReservation = new ReservationModel({
-              roomNumber: id, // Assuming roomNumber is stored as ID
+              bookingID, // Add the custom booking ID to the reservation
+              userID,
+              roomNumber,
               guestName,
               guestEmail,
               guestPhone,
@@ -151,4 +187,39 @@ router.post("/reserveRoom/:id", async (req, res) => {
           res.status(500).json({ message: "Server error" });
       }
   });
+  
+
+router.get("/getBookings", async (req, res) => {
+      try {
+            const bookings = await ReservationModel.find();
+            res.status(200).json({ bookings });
+      } catch (error) {
+            res.status(404).json({ message: error.message });
+      }
+});
+
+//update booking
+router.put("/updateBooking/:id", async (req, res) => {
+      try {
+          const updatedBooking = await ReservationModel.findByIdAndUpdate(
+              req.params.id,
+              req.body,
+              { new: true }
+          );
+          res.status(200).json(updatedBooking);
+      } catch (error) {
+          res.status(404).json({ message: error.message });
+      }
+  });
+
+  //delete bookings
+  router.delete("/deleteBooking/:id", async (req, res) => {
+      try {
+          await ReservationModel.findByIdAndDelete(req.params.id);
+          res.status(200).json({ message: "Booking deleted successfully" });
+      } catch (error) {
+          res.status(404).json({ message: error.message });
+      }
+  });
+  
 module.exports = router;
