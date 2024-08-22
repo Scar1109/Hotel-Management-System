@@ -76,20 +76,23 @@ function ManageOrders() {
     // Function to edit an existing order
     const handleEditOrder = async (updatedOrder) => {
         try {
-            await axios.post("http://localhost:5000/api/order/updateOrder", updatedOrder);
+            console.log("Updating order with data:", updatedOrder); // Log to verify the data being sent
+            await axios.post("http://localhost:5000/api/order/updateItem", updatedOrder);
             message.success("Order updated successfully");
             fetchOrders(); // Refresh the order list after updating
             setShowEditPopup(null); // Close the edit popup
         } catch (error) {
+            console.error("Update error:", error.response?.data || error.message);
             message.error(error.response?.data || "Failed to update order"); // Show error message if updating fails
         }
     };
+    
 
     // Function to delete an order
     const handleDeleteOrder = async (orderId) => {
         try {
             console.log("Deleting order with ID:", orderId); // Log the orderId to ensure it's correct
-            await axios.post("http://localhost:5000/api/order/deleteOrder", { orderId });
+            await axios.post("http://localhost:5000/api/order/deleteItem", { orderId });
             message.success("Order deleted successfully");
             fetchOrders(); // Refresh the order list after deleting
             setShowDeletePopup(null); // Close the delete confirmation popup

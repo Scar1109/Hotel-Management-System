@@ -63,14 +63,15 @@ router.post('/addOrder', async (req, res) => {
 });
 
 
-// Route to update an existing order
 router.post('/updateOrder', async (req, res) => {
     try {
-        const { orderId, purchaseDate, customerName, customerID, amount, meals, status } = req.body; // Extract updated order details from the request body
+        const { orderId, purchaseDate, customerName, customerID, amount, meals, status } = req.body;
 
-        // Find the order by orderId and update its details
+        console.log("Received data to update order:", req.body); // Log the received data
+
+        // Ensure the orderId is correct and matches the database
         const updatedOrder = await orderModel.findOneAndUpdate(
-            { orderId },
+            { orderId }, // Ensure you're querying the correct field
             { purchaseDate, customerName, customerID, amount, meals, status },
             { new: true } // Return the updated document
         );
@@ -79,11 +80,14 @@ router.post('/updateOrder', async (req, res) => {
             return res.status(404).send('Order not found'); // Return a 404 error if the order was not found
         }
 
+        console.log("Order updated successfully:", updatedOrder); // Log the successful update
         res.json(updatedOrder); // Send the updated order data as a JSON response
     } catch (err) {
+        console.error("Error updating order:", err); // Log any errors
         res.status(500).send(err); // Send a 500 error if something goes wrong
     }
 });
+
 
 // Route to delete an order
 router.post('/deleteOrder', async (req, res) => {
