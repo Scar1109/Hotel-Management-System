@@ -147,7 +147,7 @@
 .sg_home_page_food_bg_section{
     background-color: aqua;
     width: 80%;
-    height: 637px;
+    height: 720px;
     align-items: flex-end;
     margin-left: auto;
     margin-top: 8%;
@@ -210,5 +210,213 @@
     background-image:linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(https://i.ibb.co/MgnYhBc/luxury-food-service-main-course-served-restaurant-formal-dinner-event-classic-english-style-luxuriou.jpg);
     width: 600px;
     height: 300px;
-    margin-top: 8%;
+    margin-left: 10%;
+    margin-top: 18%;
+}
+.sg_home_page_online_oder_txt{
+    
+}
+.sg_home_page_online_oder_txt h3{
+    color: #757575 ;
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 25px;
+    width: 260px;
+    font-style: italic;
+    margin-bottom: 20px;
+    margin-left: 145px;
+}
+.sg_home_page_online_oder_txt h2{
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+    line-height: 55px;
+    font-size: 45px;
+    text-align: center;
+    letter-spacing: 5px;
+    color: #272727;
+    font-family: "Playfair Display", serif;
+    width: 410px;
+    margin-bottom: 20px;
+    margin-left: 70px;
+}
+
+.sg_home_page_online_oder_txt h{
+    color: #312b2b ;
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: 20px;
+    width: 10px;
+    text-align: center;
+    font-style: italic;
+
+}
+.sg_home_page_online_oder_btn_txt{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin-left: 15%;
+    margin-top: 17%;
+    border-top: 2px solid #000; 
+    border-bottom: 2px solid #000;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+.sg_home_page_package_section{
+    margin-top: 3%;
+}
+.home_page_our_category_section1 {
+    display: flex;
+    flex-direction: row;
+    gap: 100px;
+    margin-bottom: 60px;
+    justify-content: center;
+}
+.home_page_category_card1 {
+    width: 364px;
+    height: 260px;
+    background-image: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url(https://i.ibb.co/QbLbzwN/wedding.png);
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    cursor: pointer;
+}
+.home_page_category_card1:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.home_page_category_card1 h3 {
+    color: rgba(255, 255, 255, 0.8);
+    font-family: "Product Sans";
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-align: center;
+    margin-top: 123.5px;
+}
+.home_page_category_card2 {
+    width: 364px;
+    height: 260px;
+    background-image: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(https://i.ibb.co/Jk5p9Fv/birthday.png);
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    cursor: pointer;
+}
+.home_page_category_card2:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.home_page_category_card2 h3 {
+    color: rgba(255, 255, 255, 0.8);
+    font-family: "Product Sans";
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-align: center;
+    margin-top: 123.5px;
+}
+.home_page_category_card3 {
+    width: 364px;
+    height: 260px;
+    background-image:linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(https://i.ibb.co/0Y6gqBz/get.png);
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    cursor: pointer;
+}
+.home_page_category_card3:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.home_page_category_card3 h3 {
+    color: rgba(255, 255, 255, 0.8);
+    font-family: "Product Sans";
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-align: center;
+    margin-top: 123.5px;
+}
+.home_page_category_section2 {
+    display: flex;
+    flex-direction: row;
+    gap: 100px;
+    margin-bottom: 130px;
+    justify-content: center;
+}
+.home_page_category_card4 {
+    width: 364px;
+    height: 260px;
+    background-image:linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(https://i.ibb.co/3Rxm12m/farewell.png);
+    border-radius: 10px;
+    gap: 18px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    cursor: pointer;
+}
+.home_page_category_card4:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.home_page_category_card4 h3 {
+    color: rgba(255, 255, 255, 0.8);
+    font-family: "Product Sans";
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-align: center;
+    margin-top: 123.5px;
+}
+.home_page_category_card5 {
+    width: 364px;
+    height: 260px;
+    background-image:linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(https://i.ibb.co/SQfxTff/brideto.png);
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    cursor: pointer;
+}
+.home_page_category_card5:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.home_page_category_card5 h3 {
+    color: rgba(255, 255, 255, 0.8);
+    font-family: "Product Sans";
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-align: center;
+    margin-top: 123.5px;
+}
+.home_page_category_card6 {
+    width: 364px;
+    height: 260px;
+    background-image:linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(https://i.ibb.co/LJDTMZs/annavia.png);
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    cursor: pointer;
+}
+.home_page_category_card6:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.home_page_category_card6 h3 {
+    color: rgba(255, 255, 255, 0.8);
+    font-family: "Product Sans";
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-align: center;
+    margin-top: 123.5px;
+}
+.sg_home_page_package_txt{
+    margin-top: 80px;
+    margin-left: 15%;
+}
+.sg_home_page_package_txt h1{
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+    line-height: 55px;
+    font-size: 45px;
+    text-align: start;
+    letter-spacing: 5px;
+    color: #272727;
+    font-family: "Playfair Display", serif;
+    width: 610px;
 }

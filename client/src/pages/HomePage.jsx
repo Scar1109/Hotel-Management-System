@@ -172,14 +172,61 @@ function HomePage() {
             </div>
             <div className="sg_home_page_online_oder_section">
                 <div className="sg_home_page_online_oder_image">
-                
                 </div>
-                <div className="sg_home_page_online_oder_txt">
-                    <h3>gvhghjg</h3>
-                    <h2>hgsdbfsd</h2>
-                    <h4>gdfgdjhfg</h4>
+                <div className="sg_home_page_online_oder_btn_txt" >
+                    <div className="sg_home_page_online_oder_txt">
+                        <h3>Online food delivery</h3>
+                        <h2>Satisfy your cravings</h2>
+                        <h>Fancy a delicious dish? Contact us and we will deliver it to your doorstep.</h>  
+                    </div>
+                    <Button danger style={{ color: '#27ae61', borderColor: '#27ae61', backgroundColor: 'transparent', width: 140, marginLeft: 220, marginTop: 20 }}>FIND OUT MORE</Button>
                 </div>
             </div>
+            <div className="sg_home_page_package_txt">
+                <h1>SPECIAL PACKAGES</h1>
+            </div>
+            <div className="sg_home_page_package_section">
+            <div className="home_page_our_category_section1">
+                    <div
+                        className="home_page_category_card1"
+                        
+                    >
+                        <h3>Weddings</h3>
+                    </div>
+                    <div
+                        className="home_page_category_card2"
+                        
+                    >
+                        <h3>Birthdays</h3>
+                    </div>
+                    <div
+                        className="home_page_category_card3"
+                        
+                    >
+                        <h3>Get Together</h3>
+                    </div>
+                </div>
+            </div>
+            <div className="home_page_category_section2">
+                    <div
+                        className="home_page_category_card4"
+                        
+                    >
+                        <h3>Farewell</h3>
+                    </div>
+                    <div
+                        className="home_page_category_card5"
+                        
+                    >
+                        <h3>Bride To Be</h3>
+                    </div>
+                    <div
+                        className="home_page_category_card6"
+                        
+                    >
+                        <h3>Anniversary</h3>
+                    </div>
+                </div>
         </div>
     );
 }
