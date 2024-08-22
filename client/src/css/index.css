@@ -20,6 +20,8 @@
 @import url('./users/navbar.css');
 @import url('./users/profile.css');
 @import url('./users/feedback.css');
+@import url('./users/eventlist.css');
 
 @import url('./admin/ManageEmployees.css');
 @import url('./admin/managepackage.css');
+@import url('./admin/manageEvent.css');
