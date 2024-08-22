@@ -143,4 +143,47 @@ router.post('/deleteEmployee', async (req, res) => {
     }
 });
 
+router.get('/getLeave/:empID', async (req, res) => {
+    const { empID } = req.params;
+
+    try {
+        const employee = await employeeModel.findOne({ employeeId : empID });
+        if (!employee) {
+            return res.status(404).json({ message: 'Employee not found' });
+        }
+
+        res.status(200).json({ leaves: employee.leaves });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+});
+
+router.post('/addLeave', async (req, res) => {
+    const { empID, fromDate, toDate } = req.body;
+
+    try {
+        const employee = await employeeModel.findOne({ employeeId : empID });
+        if (!employee) {
+            return res.status(404).json({ message: 'Employee not found' });
+        }
+
+        const randomNumber = Math.floor(10000000 + Math.random() * 90000000);
+        leaveID = `L${randomNumber}`;
+
+        const newLeave = {
+            leaveID,
+            fromDate: new Date(fromDate),
+            toDate: new Date(toDate),
+            status: 'Pending',
+        };
+
+        employee.leaves.push(newLeave);
+        await employee.save();
+
+        res.status(200).json({ message: 'Leave added successfully', leaves: employee.leaves });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+});
+
 module.exports = router; // Export the router to use it in the main application
