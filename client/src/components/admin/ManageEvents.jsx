@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Modal, Form, Input, Pagination, message } from 'antd';
 import axios from 'axios';
 import { Icon } from '@iconify/react';
+import { DatePicker } from 'antd';
+import moment from 'moment';
 
 const { confirm } = Modal;
 
@@ -48,7 +50,10 @@ const ManageEvents = () => {
     const handleEditEvent = (record) => {
         setIsEditMode(true);
         setSelectedEvent(record);
-        form.setFieldsValue(record);
+        form.setFieldsValue({
+            ...record,
+            eventDate: moment(record.eventDate)  // Convert the date to a moment object
+        });
         setIsModalVisible(true);
     };
 
@@ -133,7 +138,7 @@ const ManageEvents = () => {
     return (
         <div className="manage-events">
             <div className="search-add-container">
-                <Input placeholder="Search events" value={searchText} onChange={handleSearch} className="search-bar" />
+                <Input placeholder="Search events" value={searchText} onChange={handleSearch} className="search-bar-eventmanage" />
                 <Button type="primary" onClick={handleAddNewEvent} className="add-event-button" style={{ backgroundColor: '#25b05f' }}>Add Event</Button>
             </div>
             <Table
@@ -178,7 +183,7 @@ const ManageEvents = () => {
                             { required: true, message: 'Please select the event date!' },
                             {
                                 validator: (_, value) => {
-                                    if (!value || new Date(value) > new Date()) {
+                                    if (!value || value.isAfter(moment())) {
                                         return Promise.resolve();
                                     }
                                     return Promise.reject(new Error('The event date must be in the future!'));
@@ -186,7 +191,7 @@ const ManageEvents = () => {
                             }
                         ]}
                     >
-                        <Input type="date" />
+                        <DatePicker format="YYYY-MM-DD" />
                     </Form.Item>
                     <Form.Item label="Image Link" name="baseImage" rules={[{ required: true, message: 'Please input the image link!' }]}>
                         <Input />

@@ -99,6 +99,7 @@ const FeedbackPage = () => {
 
     return (
         <div className="feedback-page-6789">
+            <h1 style={{marginBottom:20}}>Our Events</h1>
             <div className="feedback-header-6789">
                 <Input.Search
                     placeholder="Search by title or username"
