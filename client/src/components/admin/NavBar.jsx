@@ -25,7 +25,7 @@ const items = [
             <a
                 style={{ textDecoration: "none" }}
                 rel="noopener noreferrer"
-                href="/userprofile"
+                href="/profile"
             >
                 Profile
             </a>
