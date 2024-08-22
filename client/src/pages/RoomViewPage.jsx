@@ -23,7 +23,7 @@ function RoomViewPage() {
                               `/api/room/getRoom/${id}`
                         );
                         setRoom(response.data.room);
-                        console.log(response.data)
+                        console.log(response.data);
                         setTotalPrice(response.data.room.price); // Initialize total price with room price
                   } catch (error) {
                         console.error("Error fetching room:", error);
@@ -82,35 +82,35 @@ function RoomViewPage() {
       const currentUser = JSON.parse(localStorage.getItem("currentUser"));
       const userID = currentUser.userID;
       const handleOk = async () => {
-        try {
-            const values = await form.validateFields(); // Get form values
-            const reservationData = {
-                userID: userID,
-                roomNumber: room.roomNumber, // Assuming roomNumber is stored as ID
-                guestName: values.name,
-                guestEmail: values.email,
-                guestPhone: values.phone,
-                checkInDate: values.dates[0].format('YYYY-MM-DD'), //  dates are in moment format
-                checkOutDate: values.dates[1].format('YYYY-MM-DD'),
-                packages: selectedPackages.map((pkg) => pkg._id),
-                totalAmount: totalPrice,
-            };
-    
-            // Save the reservation data to the database
-            await axios.post(
-                `/api/room/reserveRoom/${id}`,
-                reservationData
-            );
-    
-            console.log("Reservation data:", reservationData);
-            setIsModalOpen(false); // Close the modal after saving
-            form.resetFields(); // Reset the form
-            message.success("Reservation successful!");
-        } catch (error) {
-            console.error("Failed to reserve:", error);
-            message.error("Reservation failed. Please try again.");
-        }
-    };
+            try {
+                  const values = await form.validateFields(); // Get form values
+                  const reservationData = {
+                        userID: userID,
+                        roomNumber: room.roomNumber, // Assuming roomNumber is stored as ID
+                        guestName: values.name,
+                        guestEmail: values.email,
+                        guestPhone: values.phone,
+                        checkInDate: values.dates[0].format("YYYY-MM-DD"), //  dates are in moment format
+                        checkOutDate: values.dates[1].format("YYYY-MM-DD"),
+                        packages: selectedPackages.map((pkg) => pkg.packageName),
+                        totalAmount: totalPrice,
+                  };
+
+                  // Save the reservation data to the database
+                  await axios.post(
+                        `/api/room/reserveRoom/${id}`,
+                        reservationData
+                  );
+
+                  console.log("Reservation data:", reservationData);
+                  setIsModalOpen(false); // Close the modal after saving
+                  form.resetFields(); // Reset the form
+                  message.success("Reservation successful!");
+            } catch (error) {
+                  console.error("Failed to reserve:", error);
+                  message.error("Reservation failed. Please try again.");
+            }
+      };
 
       // Function to show the modal
       const showModal = () => {
@@ -175,17 +175,19 @@ function RoomViewPage() {
                         />
 
                         {/* Display selected packages */}
-                        <div className="selected-packages">
-                              <h4>Selected Packages:</h4>
-                              <ul>
-                                    {selectedPackages.map((pkg) => (
-                                          <li key={pkg._id}>
-                                                {pkg.packageName} - Rs:{" "}
-                                                {pkg.price}
-                                          </li>
-                                    ))}
-                              </ul>
-                        </div>
+                        {selectedPackages.length > 0 && (
+                              <div className="selected-packages">
+                                    <h4>Selected Packages:</h4>
+                                    <ul>
+                                          {selectedPackages.map((pkg) => (
+                                                <li key={pkg._id}>
+                                                      {pkg.packageName} - Rs:{" "}
+                                                      {pkg.price}
+                                                </li>
+                                          ))}
+                                    </ul>
+                              </div>
+                        )}
 
                         <h3>Cancellation Rules</h3>
                         <p className="cancellation-rules">

@@ -24,12 +24,10 @@ const ReservationSchema = new mongoose.Schema(
                   type: String,
                   required: true,
             },
-            packages: [
-                  {
-                        type: mongoose.Schema.Types.ObjectId, // Assuming packages are references to other documents
-                        ref: "Package", // Replace with the correct model name for packages
-                  },
-            ],
+            packages: {
+                  type: [String],
+                  required: true,
+            },
             guestPhone: {
                   type: String,
                   required: true,

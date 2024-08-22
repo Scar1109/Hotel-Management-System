@@ -58,7 +58,7 @@ function RoomListPage() {
               </div>
               <div className="room-price">
                 <p>From</p>
-                <p>{room.price}</p>
+                <p>Rs: {room.price}</p>
                 <button onClick={() => handleMoreInfo(room._id)}>More Info</button>
               </div>
             </div>

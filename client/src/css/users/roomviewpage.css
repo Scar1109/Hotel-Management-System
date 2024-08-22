@@ -218,23 +218,26 @@
 
 /* my bookings page  */
 .bookings-container {
-    max-width: 800px;
-    margin: 0 auto;
     padding: 20px;
+}
+
+.booking-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 .booking-card {
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
+    background: #fff;
+    border: 1px solid #ddd;
     border-radius: 8px;
     padding: 20px;
-    margin-bottom: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: calc(50% - 20px); /* Two cards per row */
 }
 
 .booking-card h2 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
+    margin: 0 0 10px;
 }
 
 .booking-card p {
@@ -243,10 +246,17 @@
 
 .card-buttons {
     display: flex;
-    justify-content: space-between;
+    gap: 10px;
     margin-top: 20px;
 }
 
-.card-buttons button {
-    width: 48%;
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
+
+.pagination button {
+    margin: 0 10px;
+}
+

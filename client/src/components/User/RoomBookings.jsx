@@ -8,6 +8,8 @@ function RoomBookings() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState(null);
     const [form] = Form.useForm();
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 2;
 
     // Fetch bookings data
     const getBookings = async () => {
@@ -69,6 +71,16 @@ function RoomBookings() {
         }
     };
 
+    // Pagination
+    const indexOfLastBooking = currentPage * itemsPerPage;
+    const indexOfFirstBooking = indexOfLastBooking - itemsPerPage;
+    const currentBookings = bookings.slice(indexOfFirstBooking, indexOfLastBooking);
+
+    // Change page
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
     // Fetch bookings when the component mounts
     useEffect(() => {
         getBookings();
@@ -76,25 +88,46 @@ function RoomBookings() {
 
     return (
         <div className="bookings-container">
-            <h1>Your Room Bookings</h1>
+            <h2>Your Room Bookings</h2>
             {bookings.length === 0 ? (
                 <p>No bookings found</p>
             ) : (
-                bookings.map((booking) => (
-                    <div key={booking._id} className="booking-card">
-                        <h2>Booking ID: {booking.bookingID}</h2>
-                        <p>Room Number: {booking.roomNumber}</p>
-                        <p>Packages: {booking.packages}</p>
-                        <p>Guest Name: {booking.guestName}</p>
-                        <p>Check-in: {moment(booking.checkInDate).format('YYYY-MM-DD')}</p> {/* Format date */}
-                        <p>Check-out: {moment(booking.checkOutDate).format('YYYY-MM-DD')}</p> {/* Format date */}
-                        <p>Total Amount: Rs {booking.totalAmount}</p>
-                        <div className="card-buttons">
-                            <Button type="primary" onClick={() => handleEdit(booking)}>Edit</Button>
-                            <Button type="danger" onClick={() => deleteBooking(booking._id)}>Cancel</Button>
-                        </div>
+                <>
+                    <div className="booking-cards">
+                        {currentBookings.map((booking) => (
+                            <div key={booking._id} className="booking-card">
+                                <h3>Booking ID: {booking.bookingID}</h3>
+                                <p>Room Number: {booking.roomNumber}</p>                              
+                                <p>Guest Name: {booking.guestName}</p>
+                                <p>Packages: {booking.packages.join(" , ")}</p>
+                                <p>Check-in: {moment(booking.checkInDate).format('YYYY-MM-DD')}</p> {/* Format date */}
+                                <p>Check-out: {moment(booking.checkOutDate).format('YYYY-MM-DD')}</p> {/* Format date */}
+                                <h5>Total Amount: Rs {booking.totalAmount}</h5>
+                                <div className="card-buttons">
+                                    <Button type="primary" onClick={() => handleEdit(booking)}>Edit</Button>
+                                    <Button type="danger" onClick={() => deleteBooking(booking._id)}>Cancel</Button>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                ))
+                    <div className="pagination">
+                        <Button
+                            type="default"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            Previous
+                        </Button>
+                        <span>Page {currentPage}</span>
+                        <Button
+                            type="default"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={indexOfLastBooking >= bookings.length}
+                        >
+                            Next
+                        </Button>
+                    </div>
+                </>
             )}
 
             {/* Edit Booking Modal */}

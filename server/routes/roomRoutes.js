@@ -142,10 +142,6 @@ const generateBookingID = () => {
     return `Res${currentID.toString().padStart(3, '0')}`;
 };
 
-// Example usage
-console.log(generateBookingID()); // Outputs: Res001
-console.log(generateBookingID()); // Outputs: Res002
-
   // Route to create a new room reservation
   router.post("/reserveRoom/:id", async (req, res) => {
       const {
