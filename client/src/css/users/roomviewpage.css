@@ -70,7 +70,7 @@
 }
 
 .cancellation-rules {
-    margin: 20px 0;
+    margin: 10px 0;
     font-size: 1.1em;
     color: #c0392b;
 }
@@ -108,12 +108,18 @@
     color: #7f8c8d;
 }
 
+.add-prices {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    color: #27ae60;
+}
 .total-save {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 30px;
     font-weight: bold;
-    color: #2980b9;
+    font-size: 1.4em;
+    color: #27ae60;
 }
 
 .choose-button {
@@ -146,4 +152,66 @@
 
 .wishlist-button:hover {
     background-color: #d5dbdb;
+}
+
+.custom-reservation-modal {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.custom-reservation-modal .ant-modal-content {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.custom-reservation-modal .ant-modal-header {
+    background-color: #f9f9f9;
+    color: white;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+}
+
+.custom-reservation-modal .ant-modal-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.custom-reservation-modal .ant-modal-footer {
+    border-top: none;
+    padding-top: 15px;
+    background-color: #f9f9f9;
+}
+
+.custom-reservation-modal .ant-modal-footer .custom-cancel-button,
+.custom-reservation-modal .ant-modal-footer .custom-submit-button {
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.custom-reservation-modal .custom-cancel-button {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+}
+
+.custom-reservation-modal .custom-submit-button {
+    background-color: #229954;
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.custom-reservation-modal .custom-submit-button:hover {
+    background-color: #1e8449; 
+    color: white;
+}
+
+
+.custom-reservation-modal .total-cost {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 15px;
+    color: #333;
 }

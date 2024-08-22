@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const roomsModel = require("../models/Room"); // import model
+const ReservationModel = require("../models/Resevation"); // import model
 
 // Get all rooms
 router.get("/getRooms", async (req, res) => {
@@ -123,4 +124,31 @@ router.delete("/deleteRoom/:id", async (req, res) => {
       }
 });
 
+// Route to create a new room reservation
+router.post("/reserveRoom/:id", async (req, res) => {
+      const { id } = req.params; // Room ID
+      const { guestName, guestEmail, guestPhone, checkInDate, checkOutDate, packages, totalAmount } = req.body;
+  
+      try {
+          // Create a new reservation
+          const newReservation = new ReservationModel({
+              roomNumber: id, // Assuming roomNumber is stored as ID
+              guestName,
+              guestEmail,
+              guestPhone,
+              checkInDate,
+              checkOutDate,
+              packages,
+              totalAmount,
+          });
+  
+          // Save the reservation to the database
+          await newReservation.save();
+  
+          res.status(201).json({ reservation: newReservation });
+      } catch (error) {
+          console.error(error);
+          res.status(500).json({ message: "Server error" });
+      }
+  });
 module.exports = router;
