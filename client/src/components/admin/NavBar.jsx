@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button, Dropdown, Space, Avatar, ConfigProvider } from "antd";
 import { Icon } from "@iconify/react";
+const defaultProfilePic =
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png";
 
 const items = [
     {
@@ -50,18 +52,19 @@ const items = [
     },
 ];
 
-
 function NavBar() {
-    // const [loggedUser, setLoggedUser] = useState(null);
-    // useEffect(() => {
-    //     const user = JSON.parse(localStorage.getItem("currentUser"));
-
-    //     setLoggedUser(user);
-    // }, []);
+    const [loggedUser, setLoggedUser] = useState(null);
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        if (user.userType !== "Admin") {
+            window.location.href = "/home";
+        }
+        setLoggedUser(user);
+    }, []);
 
     return (
         <>
-            {/* {loggedUser && ( */}
+            {loggedUser && (
                 <div className="Admin__NavBar">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -120,19 +123,19 @@ function NavBar() {
                                         size={30}
                                         src={
                                             <img
-                                                // src={loggedUser.profilePic}
+                                                src={defaultProfilePic}
                                                 alt="avatar"
                                             />
                                         }
                                     />
-                                    {/* {loggedUser.username} */}
+                                    {loggedUser.username}
                                     <Icon icon="gridicons:dropdown" />
                                 </Space>
                             </a>
                         </Dropdown>
                     </ConfigProvider>
                 </div>
-            {/* )} */}
+            )}
         </>
     );
 }
