@@ -1,38 +1,52 @@
 const mongoose = require('mongoose');
 
+// Define the Room schema
 const roomSchema = new mongoose.Schema({
-
-    name : {
+    imageUrl: {
         type: String,
-        required: true
     },
-
-    maxCount : {
+    roomNumber: {
+        type: String,
+        required: true,
+        unique: true, // Ensure roomNumber is unique
+    },
+    roomType: {
+        type: String,
+        required: true,
+    },
+    bedType: {
+        type: String,
+        required: true,
+    },
+    size: {
+        type: String,
+        required: true,
+    },
+    viewInformation:{
+        type: String,
+    },
+    facilities: {
+        type: String,
+        required: true,
+    },
+    price: {
         type: Number,
-        required: true
+        required: true,
     },
-
-    pricePerDay : {
-        type: Number,
-        required: true
+    amenities: {
+        type: [String],
+        required: true,
     },
-
-    roomType : {
+    status: {
         type: String,
-        required: true
+        enum: ['Activate', 'Suspended'],
+        default: 'Activate',
     },
-
-    description : {
-        type: String,
-        required: true
-    },
-
-    imgURL : [],
-    bookedDates : [],
-
-},{
-    timestamps: true
+}, {
+    timestamps: true // Automatically add createdAt and updatedAt fields
 });
 
-const roomModel = mongoose.model('rooms', roomSchema);
-module.exports = roomModel;
+// Create the Room model
+const Room = mongoose.model('Room', roomSchema);
+
+module.exports = Room;
