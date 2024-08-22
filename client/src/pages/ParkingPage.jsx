@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { message } from "antd";
+import parkingImg from "../assets/Images/ParkingImg.png";
 
 function ParkingPage() {
     const [selectedDate, setSelectedDate] = useState("");
@@ -38,7 +39,6 @@ function ParkingPage() {
                 console.error("Invalid user object or userID not found.");
                 return;
             }
-
         };
 
         fetchUserByID();
@@ -50,9 +50,9 @@ function ParkingPage() {
         let basePrice = 0;
 
         if (selectedSlot.startsWith("B")) {
-            basePrice = 50; // Example base price for bikes
+            basePrice = 500;
         } else if (selectedSlot.startsWith("C")) {
-            basePrice = 100; // Example base price for cars
+            basePrice = 1000;
         }
 
         switch (bookingDuration) {
@@ -99,7 +99,7 @@ function ParkingPage() {
                 date: selectedDate,
                 duration: bookingDuration,
                 userID: user.userID,
-                Price : price
+                Price: price,
             });
             message.success("Parking slot booked successfully.");
             fetchAvailability(); // Refresh availability after booking
@@ -110,7 +110,11 @@ function ParkingPage() {
 
     return (
         <div className="parking-page1244">
+            <div className="parking-header1244">
+                <img src={parkingImg} alt="Parking" />
+            </div>
             <div className="date-picker-container1244">
+                <p>Select a date to view availability:</p>
                 <input
                     type="date"
                     value={selectedDate}
@@ -135,13 +139,18 @@ function ParkingPage() {
                                     slotId = `B${colIndex + 1 + rowIndex * 10}`;
                                 } else {
                                     // Cars: C21, C22, ... C50
-                                    slotId = `C${colIndex + 1 + (rowIndex - 2) * 10}`;
+                                    slotId = `C${
+                                        colIndex + 1 + (rowIndex - 2) * 10
+                                    }`;
                                 }
-                                const isAvailable = availability.includes(slotId);
+                                const isAvailable =
+                                    availability.includes(slotId);
                                 return (
                                     <div
                                         className={`cell1244 ${
-                                            isAvailable ? "available1244" : "booked1244"
+                                            isAvailable
+                                                ? "available1244"
+                                                : "booked1244"
                                         }`}
                                         key={colIndex}
                                     >
@@ -154,48 +163,57 @@ function ParkingPage() {
                 </div>
             )}
             <div className="booking-form1244">
-                <input
-                    type="text"
-                    className="vehicle-number-input1244"
-                    placeholder="Vehicle Number"
-                    value={vehicleNumber}
-                    onChange={(e) => setVehicleNumber(e.target.value)}
-                />
-                <select
-                    className="slot-select1244"
-                    value={selectedSlot}
-                    onChange={(e) => setSelectedSlot(e.target.value)}
-                >
-                    <option value="" disabled>Select the slot</option>
-                    {availability.map((slot) => (
-                        <option value={slot} key={slot}>
-                            {slot}
+                <h3>Book a parking slot</h3>
+                <div className="bookig_form-row">
+                    <input
+                        type="text"
+                        className="vehicle-number-input1244"
+                        placeholder="Vehicle Number"
+                        value={vehicleNumber}
+                        onChange={(e) => setVehicleNumber(e.target.value)}
+                        disabled={selectedDate ? false : true}
+                    />
+                    <select
+                        className="slot-select1244"
+                        value={selectedSlot}
+                        onChange={(e) => setSelectedSlot(e.target.value)}
+                        disabled={selectedDate ? false : true}
+                    >
+                        <option value="" disabled>
+                            Select the slot
                         </option>
-                    ))}
-                </select>
-                <input
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="date-picker1244"
-                    placeholder="Select date"
-                />
-                <select
-                    className="duration-select1244"
-                    value={bookingDuration}
-                    onChange={(e) => setBookingDuration(e.target.value)}
-                >
-                    <option value="Full day">Full day</option>
-                    <option value="12 hours">12 hours</option>
-                    <option value="6 hours">6 hours</option>
-                </select>
-                <div className="price-display1244">
-                    <strong>Price: </strong>LKR {price}
+                        {availability.map((slot) => (
+                            <option value={slot} key={slot}>
+                                {slot}
+                            </option>
+                        ))}
+                    </select>
                 </div>
+                <div className="bookig_form-row">
+                    <input
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="date-picker-form-1244"
+                        placeholder="Select date"
+                        disabled={selectedDate ? false : true}
+                    />
+                    <select
+                        className="duration-select1244"
+                        value={bookingDuration}
+                        onChange={(e) => setBookingDuration(e.target.value)}
+                        disabled={selectedDate ? false : true}
+                    >
+                        <option value="Full day">Full day</option>
+                        <option value="12 hours">12 hours</option>
+                        <option value="6 hours">6 hours</option>
+                    </select>
+                </div>
+                <div className="price-display1244">Price: LKR {price}</div>
                 <button
                     className="book-now-btn1244"
                     onClick={handleBookNow}
-                    style={{ backgroundColor: "#27ae61", color: "#fff" }}
+                    disabled={selectedDate ? false : true}
                 >
                     Book Now
                 </button>
