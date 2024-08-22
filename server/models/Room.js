@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const roomSchema = new mongoose.Schema({
     imageUrl: {
         type: String,
-        required: true,
     },
     roomNumber: {
         type: String,
@@ -15,12 +14,27 @@ const roomSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    bedType: {
+        type: String,
+        required: true,
+    },
+    size: {
+        type: String,
+        required: true,
+    },
+    viewInformation:{
+        type: String,
+    },
     facilities: {
         type: String,
         required: true,
     },
     price: {
         type: Number,
+        required: true,
+    },
+    amenities: {
+        type: [String],
         required: true,
     },
     status: {

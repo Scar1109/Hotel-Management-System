@@ -1,65 +1,126 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const roomsModel = require('../models/Room'); // imported model
+const roomsModel = require("../models/Room"); // import model
 
 // Get all rooms
-router.get('/getRooms', async (req, res) => {
-    try {
-        const rooms = await roomsModel.find();
-        res.status(200).json({ rooms });
-    } catch (error) {
-        res.status(404).json({ message: error.message });
-    }
+router.get("/getRooms", async (req, res) => {
+      try {
+            const rooms = await roomsModel.find();
+            res.status(200).json({ rooms });
+      } catch (error) {
+            res.status(404).json({ message: error.message });
+      }
+});
+
+//get room by id
+router.get("/getRoom/:id", async (req, res) => {
+      const { id } = req.params;
+
+      try {
+            const room = await roomsModel.findById(id);
+            if (!room) {
+                  return res.status(404).json({ message: "Room not found" });
+            }
+
+            res.status(200).json({ room });
+      } catch (error) {
+            res.status(404).json({ message: error.message });
+      }
 });
 
 // Add new room
-router.post('/addRoom', async (req, res) => {
-    const { imageUrl, roomNumber, roomType, facilities, price, status } = req.body;
-    const newRoom = new roomsModel({ imageUrl, roomNumber, roomType, facilities, price, status });
-    try {
-        const room = await newRoom.save();
-        res.status(201).json(room);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
+router.post("/addRoom", async (req, res) => {
+      const { imageUrl, roomNumber, roomType, bedType,size,viewInformation,facilities, price,amenities, status } =
+            req.body;
+
+      try {
+            // Check if a room with the same room number already exists
+            const existingRoom = await roomsModel.findOne({ roomNumber });
+            if (existingRoom) {
+                  return res.status(400).json({
+                        message: "Room with this number already exists",
+                  });
+            }
+
+            // Create a new room if it doesn't exist
+            const newRoom = new roomsModel({
+                  imageUrl,
+                  roomNumber,
+                  roomType,
+                  bedType,
+                  size,
+                  viewInformation,
+                  facilities,
+                  price,
+                  amenities,
+                  status,
+            });
+            const room = await newRoom.save();
+            res.status(201).json(room);
+      } catch (error) {
+            res.status(400).json({ message: error.message });
+      }
 });
 
-// Route to update a room
-router.put('/updateRoom/:id', async (req, res) => {
-    const { id } = req.params; // Room ID
+//room update
+router.put("/updateRoom/:id", async (req, res) => {
+      const { id } = req.params; // Room ID
+      const { roomNumber } = req.body;
 
-    try {
-        // Find and update the room by ID
-        const updatedRoom = await roomsModel.findByIdAndUpdate(id, req.body, { new: true });
+      try {
+            // Check if room number already exists in another document
+            const existingRoom = await roomsModel.findOne({ roomNumber });
+            if (existingRoom && existingRoom._id.toString() !== id) {
+                  return res.status(400).json({
+                        message: `Room number ${roomNumber} already exists.`,
+                  });
+            }
 
-        if (!updatedRoom) {
-            return res.status(404).json({ message: 'Room not found' });
-        }
+            // Find and update the room by ID
+            const updatedRoom = await roomsModel.findByIdAndUpdate(
+                  id,
+                  req.body,
+                  { new: true }
+            );
 
-        res.status(200).json({ room: updatedRoom });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
-    }
+            if (!updatedRoom) {
+                  return res.status(404).json({ message: "Room not found" });
+            }
+
+            res.status(200).json({ room: updatedRoom });
+      } catch (error) {
+            console.error(error);
+
+            // Handle duplicate key error
+            if (error.code === 11000) {
+                  const duplicateKey = Object.keys(error.keyValue)[0];
+                  const duplicateValue = error.keyValue[duplicateKey];
+                  return res.status(400).json({
+                        message: `Duplicate key error: ${duplicateKey} with value ${duplicateValue} already exists.`,
+                  });
+            }
+
+            res.status(500).json({ message: "Server error" });
+      }
 });
 
 // Route to delete a room
-router.delete('/deleteRoom/:id', async (req, res) => {
-    const { id } = req.params; // Room ID
+router.delete("/deleteRoom/:id", async (req, res) => {
+      const { id } = req.params; // Room ID
 
-    try {
-        // Find and delete the room by ID
-        const deletedRoom = await roomsModel.findByIdAndDelete(id);
+      try {
+            // Find and delete the room by ID
+            const deletedRoom = await roomsModel.findByIdAndDelete(id);
 
-        if (!deletedRoom) {
-            return res.status(404).json({ message: 'Room not found' });
-        }
+            if (!deletedRoom) {
+                  return res.status(404).json({ message: "Room not found" });
+            }
 
-        res.status(200).json({ room: deletedRoom });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
-    }
+            res.status(200).json({ room: deletedRoom });
+      } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Server error" });
+      }
 });
 
 module.exports = router;
