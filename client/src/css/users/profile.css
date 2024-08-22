@@ -272,3 +272,97 @@
 #custom-modal-button-submit-1234:hover {
     background-color: #218c50;
 }
+
+/* Parking section */
+
+/* ParkingBookings2345.css */
+
+.actions-container2345 {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-button2345, .delete-button2345 {
+    background-color: #1890ff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.delete-button2345 {
+    background-color: #ff4d4f;
+}
+
+.edit-button2345:hover, .delete-button2345:hover {
+    opacity: 0.8;
+}
+
+.modal2345 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content2345 {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    text-align: center;
+}
+
+.modal-content2345 h3 {
+    margin-bottom: 20px;
+}
+
+.modal-content2345 label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.modal-content2345 input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+}
+
+.modal-actions2345 {
+    display: flex;
+    justify-content: space-between;
+}
+
+.update-button2345, .cancel-button2345 {
+    background-color: #1890ff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.cancel-button2345 {
+    background-color: #ff4d4f;
+}
+
+.update-button2345:hover, .cancel-button2345:hover {
+    opacity: 0.8;
+}
+
+.date-picker-21313 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 10px;
+}
