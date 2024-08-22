@@ -76,6 +76,9 @@ function UserProfilePage() {
                 </div>
                 <button className={`edit-button-1234`} onClick={handleEdit}>Edit Profile</button>
             </div>
+            <div className="additional-features-container-1234">
+
+            </div>
 
             {isEditing && (
                 <div className={`edit-modal-1234`}>
