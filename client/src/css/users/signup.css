@@ -22,7 +22,7 @@
 .sg_signup_page_title {
   font-size: 2rem;
   margin-bottom: 0.5rem;
-  color: #5a4c9d;
+  color: #218c50;
   width: 175.522px;
   height: 54.249px;
   font-size: 40px;
@@ -93,7 +93,7 @@
 .sg_signup_page_button {
   width: 100%;
   padding: 0.75rem;
-  background-color: #5a4c9d;
+  background-color: #27ae61;
   color: white;
   border: none;
   border-radius: 5px;
@@ -103,7 +103,7 @@
 }
 
 .sg_signup_page_button:hover {
-  background-color: #533f8f;
+  background-color: #218c50;
 }
 
 /* Login text */
