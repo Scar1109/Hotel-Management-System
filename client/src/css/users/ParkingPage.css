@@ -1,0 +1,76 @@
+.parking-page1244 {
+    padding: 20px;
+}
+
+.date-picker-container1244 {
+    margin-bottom: 20px;
+}
+
+.date-picker1244 {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.no-date-selected1244 {
+    text-align: center;
+    color: red;
+    margin-top: 20px;
+}
+
+.availability-grid1244 {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.row1244 {
+    display: contents;
+}
+
+.cell1244 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    background-color: lightgray;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.available1244 {
+    background-color: #27ae61;
+    color: #fff;
+}
+
+.booked1244 {
+    background-color: darkorange;
+    color: #fff;
+}
+
+.booking-form1244 {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.vehicle-number-input1244,
+.slot-select1244,
+.date-picker1244,
+.duration-select1244 {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.book-now-btn1244 {
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
