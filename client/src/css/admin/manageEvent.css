@@ -18,7 +18,7 @@
     border-color: #25b05f;
 }
 
-.pagination {
+.pagination-eventMange {
     display: flex;
     justify-content: center;
     margin-top: 20px;
@@ -32,7 +32,7 @@
     margin-bottom: 15px;
 }
 
-.action-buttons > svg {
+.action-buttons-manageEvent > svg {
     margin-right: 8px;
     cursor: pointer;
 }

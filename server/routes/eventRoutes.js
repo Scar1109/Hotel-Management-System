@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const eventModel = require('../models/Event');
+const eventBookingModel = require('../models/eventBooking');
 
 router.get('/getEvents', async (req, res) => {
     try {
@@ -21,6 +22,20 @@ router.get('/getEvents', async (req, res) => {
     } catch (err) {
         console.error('Error retrieving events:', err.message); // Log the error
         res.status(500).json({ message: 'Error retrieving events', error: err.message });
+    }
+});
+
+// Get a specific event by eventId
+router.get('/getEvent/:id', async (req, res) => {
+    try {
+        const event = await eventModel.findOne({ eventId: req.params.id });
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+        res.status(200).json({ event });
+    } catch (err) {
+        console.error('Error retrieving event:', err.message); // Log the error
+        res.status(500).json({ message: 'Error retrieving event', error: err.message });
     }
 });
 
@@ -86,6 +101,78 @@ router.post('/updateEvent', async (req, res) => {
         res.status(200).json({ message: 'Event updated successfully' });
     } catch (err) {
         res.status(500).json({ message: 'Error updating event', error: err.message });
+    }
+});
+
+// Booking events
+
+// Add booking route
+router.post('/reserveEvent/:eventId', async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        const { guestName, guestEmail, guestPhone, eventDate, totalAmount, userID } = req.body;
+
+        const newBooking = new eventBookingModel({
+            eventId,
+            guestName,
+            guestEmail,
+            guestPhone,
+            eventDate,
+            totalAmount,
+            userID // Include userID in the booking
+        });
+
+        await newBooking.save();
+        res.status(201).json({ message: 'Reservation successful' });
+    } catch (err) {
+        console.error("Error making reservation:", err.message);
+        res.status(500).json({ message: 'Error making reservation', error: err.message });
+    }
+});
+
+// Get all bookings for a user
+router.get('/getBookings', async (req, res) => {
+    try {
+        const { userID } = req.query; // Retrieve userID from query params
+        const bookings = await eventBookingModel.find({ userID });
+        res.status(200).json({ bookings });
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching bookings', error: err.message });
+    }
+});
+
+// Update booking
+router.put('/updateBooking/:bookingId', async (req, res) => {
+    try {
+        const { bookingId } = req.params;
+        const { guestName, guestEmail, guestPhone, eventDate } = req.body;
+
+        await eventBookingModel.findByIdAndUpdate(bookingId, {
+            guestName,
+            guestEmail,
+            guestPhone,
+            eventDate
+        });
+
+        res.status(200).json({ message: 'Booking updated successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating booking', error: err.message });
+    }
+});
+
+// Delete booking
+router.delete('/deleteBooking/:bookingId', async (req, res) => {
+    try {
+        const { bookingId } = req.params;
+        const deletedBooking = await eventBookingModel.findByIdAndDelete(bookingId);
+
+        if (!deletedBooking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        res.status(200).json({ message: 'Booking deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error deleting booking', error: err.message });
     }
 });
 

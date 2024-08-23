@@ -111,7 +111,7 @@ const ManageEvents = () => {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
-                <div className="action-buttons">
+                <div className="action-buttons-manageEvent">
                     <Icon
                         onClick={() => handleEditEvent(record)}
                         icon="akar-icons:edit"
@@ -151,7 +151,7 @@ const ManageEvents = () => {
             <Pagination
                 {...pagination}
                 onChange={(page) => setPagination({ ...pagination, current: page })}
-                className="pagination"
+                className="pagination-eventMange"
             />
             <Modal
                 title={isEditMode ? "Edit Event" : "Add New Event"}
