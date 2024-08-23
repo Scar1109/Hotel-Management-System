@@ -22,7 +22,6 @@ function ManageEmployees() {
         try {
             const response = await axios.get("http://localhost:5000/api/employee/getEmployees");
             const emp = response.data || [];
-            console.log(emp);
             setEmployees(emp);
         } catch (error) {
             message.error("Failed to fetch employees"); // Show error message if fetching fails
@@ -34,8 +33,6 @@ function ManageEmployees() {
     // Apply search filter when searchTerm or employees list changes
     useEffect(() => {
         let tempList = employees;
-
-        console.log(employees);
 
         // Filter employees based on the search term
         if (searchTerm !== "") {
