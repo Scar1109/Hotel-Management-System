@@ -92,5 +92,19 @@ router.post('/update', async (req, res) => {
     }
 });
 
+// Endpoint to retrieve all parking bookings
+router.get('/getAllParkings', async (req, res) => {
+    try {
+        const bookings = await parkingModel.find({});
+        if (bookings.length === 0) {
+            return res.status(404).json({ message: "No bookings found." });
+        }
+        res.json(bookings);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error retrieving parking bookings." });
+    }
+});
+
 
 module.exports = router;
