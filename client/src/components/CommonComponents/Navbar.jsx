@@ -151,7 +151,7 @@ function NavBarUser() {
         },
         logo: {
             display: "block",
-            height: screens.md ? token.sizeLG * 2 : token.sizeLG,
+            height: screens.md ? token.sizeLG *1.5 : token.sizeLG,
             width: "auto",
             position: screens.xl ? "static" : "absolute",
             top: "50%",
