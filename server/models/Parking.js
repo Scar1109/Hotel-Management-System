@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
 
 const parkingSchema = new mongoose.Schema({
-    packageId : {
+    parkingId : {
+        type: String,
+        required: true,
+    },
+    userID : {
         type: String,
         required: true,
     },
@@ -9,25 +13,18 @@ const parkingSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    eventType : {
+    bookingDate : {
         type: String,
-        required: true,
+        required : true,
     },
     price : {
         type: Number,
         required: true,
     },
-    description : {
+    vehicleNumber : {
         type: String,
         required: true,
-    },
-    baseImage : {
-        type: String,
-        required: true,
-    },
-    inventories : [],
-    extras : [],
-    contentImages: [],
+    }
 
 }, { timestamps: true });
 
