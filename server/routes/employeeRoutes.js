@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const employeeModel = require('../models/Employee'); // Import the employee model for database operations
+const User = require('../models/User');
 const bcrypt = require('bcrypt'); // Import bcrypt for password hashing
 
 // Function to generate a unique employee ID
@@ -36,36 +37,80 @@ router.get('/getEmployees', async (req, res) => {
 // Route to add a new employee
 router.post('/addEmployee', async (req, res) => {
     try {
-        const { firstName, lastName, email, username } = req.body; // Extract employee details from the request body
+        const { firstName, lastName, email, username } = req.body;
 
         // Check if the username or email already exists in the database
         const existingEmployee = await employeeModel.findOne({ $or: [{ email }, { username }] });
         if (existingEmployee) {
-            return res.status(400).send('Email or Username already exists'); // Return an error if either exists
+            return res.status(400).send('Email or Username already exists as Employee');
+        }
+
+        // Check if the email or username already exists in the User collection
+        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Email or username already in as Customer' });
         }
 
         // Generate a unique employee ID
         const employeeId = await generateUniqueEmployeeId();
+        let randomPwd = Math.random().toString(36).substr(2, 9);
+        console.log(randomPwd);
 
-        // Generate a hashed password using bcrypt (using 'defaultpassword' as a placeholder)
-        const password = bcrypt.hashSync('defaultpassword', 10); // Replace 'defaultpassword' with actual logic
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(randomPwd, salt);
 
         // Create a new employee document
         const newEmployee = new employeeModel({
             employeeId,
-            userID: Math.random().toString(36).substr(2, 9), // Generate a random userID
+            userID: Math.random().toString(36).substr(2, 9),
             firstName,
             lastName,
             email,
             username,
-            leaves: [], // Initialize an empty array for leaves
-            password,
+            leaves: [],
+            password : hashedPassword,
         });
 
-        await newEmployee.save(); // Save the new employee to the database
-        res.status(201).json(newEmployee); // Send a 201 response with the new employee data
+        // Save the new employee to the database
+        await newEmployee.save();
+
+        const userID = employeeId;
+
+        // Create the new User
+        const newUser = new User({
+            userID,
+            firstName,
+            lastName,
+            email,
+            password: hashedPassword,
+            username,
+            userType: "Employee",
+        });
+
+        const savedUser = await newUser.save();
+
+        // Exclude the password from the response
+        const userResponse = {
+            _id: savedUser._id,
+            userID: savedUser.userID,
+            firstName: savedUser.firstName,
+            lastName: savedUser.lastName,
+            email: savedUser.email,
+            username: savedUser.username,
+            userType: savedUser.userType,
+            createdAt: savedUser.createdAt,
+            updatedAt: savedUser.updatedAt
+        };
+
+        res.status(201).json({
+            message: 'Employee added and registered as user successfully',
+            employee: newEmployee,
+            user: userResponse
+        });
+
     } catch (err) {
-        res.status(500).send(err); // Send a 500 error if something goes wrong
+        console.error(err);
+        res.status(500).send('Server error');
     }
 });
 
@@ -95,6 +140,49 @@ router.post('/deleteEmployee', async (req, res) => {
         res.send('Employee deleted successfully'); // Send a success message
     } catch (err) {
         res.status(500).send(err); // Send a 500 error if something goes wrong
+    }
+});
+
+router.get('/getLeave/:empID', async (req, res) => {
+    const { empID } = req.params;
+
+    try {
+        const employee = await employeeModel.findOne({ employeeId : empID });
+        if (!employee) {
+            return res.status(404).json({ message: 'Employee not found' });
+        }
+
+        res.status(200).json({ leaves: employee.leaves });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+});
+
+router.post('/addLeave', async (req, res) => {
+    const { empID, fromDate, toDate } = req.body;
+
+    try {
+        const employee = await employeeModel.findOne({ employeeId : empID });
+        if (!employee) {
+            return res.status(404).json({ message: 'Employee not found' });
+        }
+
+        const randomNumber = Math.floor(10000000 + Math.random() * 90000000);
+        leaveID = `L${randomNumber}`;
+
+        const newLeave = {
+            leaveID,
+            fromDate: new Date(fromDate),
+            toDate: new Date(toDate),
+            status: 'Pending',
+        };
+
+        employee.leaves.push(newLeave);
+        await employee.save();
+
+        res.status(200).json({ message: 'Leave added successfully', leaves: employee.leaves });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
     }
 });
 

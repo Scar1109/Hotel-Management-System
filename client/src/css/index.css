@@ -10,10 +10,6 @@
 }
 
 @import url('./admin/dashboard.css');
-@import url('./admin/manageroom.css');
-@import url('.//users/homepage.css');
-@import url('./users/roomlistpage.css');
-@import url('./users/roomviewpage.css');
 @import url('./users/login.css');
 @import url('./users/signup.css');
 @import url('./users/homepage.css');
@@ -21,7 +17,14 @@
 @import url('./users/profile.css');
 @import url('./users/feedback.css');
 @import url('./users/eventlist.css');
+@import url('./users/ParkingPage.css');
+@import url('./users/roomlistpage.css');
+@import url('./users/roomviewpage.css');
 
 @import url('./admin/ManageEmployees.css');
+@import url('./admin/manageroom.css');
 @import url('./admin/managepackage.css');
 @import url('./admin/manageEvent.css');
+@import url('./admin/ManageParking.css');
+
+

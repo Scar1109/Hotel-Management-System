@@ -25,7 +25,7 @@ const items = [
             <a
                 style={{ textDecoration: "none" }}
                 rel="noopener noreferrer"
-                href="/userprofile"
+                href="/profile"
             >
                 Profile
             </a>
@@ -99,6 +99,9 @@ function NavBar() {
                     </svg>
                     <ConfigProvider
                         theme={{
+                            token: {
+                                colorPrimary: "#27ae61", // Set your desired primary color
+                            },
                             components: {
                                 Dropdown: {
                                     sizePopupArrow: "10px",
