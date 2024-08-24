@@ -3,40 +3,38 @@ import axios from "axios";
 import { message, Table } from "antd";
 
 function ManageCateringFoods() {
-    const [foods, setFoods] = useState([]); // Stores the list of foods
-    const [searchTerm, setSearchTerm] = useState(""); // Stores the current search term
-    const [showAddPopup, setShowAddPopup] = useState(false); // Controls visibility of the add food popup
-    const [showEditPopup, setShowEditPopup] = useState(null); // Controls visibility of the edit food popup
-    const [showDeletePopup, setShowDeletePopup] = useState(null); // Controls visibility of the delete confirmation popup
-    const [loading, setLoading] = useState(true); // Tracks if the data is still loading
-    const [filteredFoods, setFilteredFoods] = useState([]); // Stores the filtered list of foods based on the search term
+    const [foods, setFoods] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [showAddPopup, setShowAddPopup] = useState(false);
+    const [showEditPopup, setShowEditPopup] = useState(null);
+    const [showDeletePopup, setShowDeletePopup] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [filteredFoods, setFilteredFoods] = useState([]);
+    const [pagination, setPagination] = useState({
+        pageSize: 10,
+        current: 1,
+        position: ["bottomCenter"],
+    });
 
-    // Fetch foods when the component first mounts
     useEffect(() => {
         fetchFoods();
     }, []);
 
-    // Function to fetch foods from the server
     const fetchFoods = async () => {
         try {
             const response = await axios.get("http://localhost:5000/api/catering/getItems");
             const foodData = response.data || [];
-            console.log(foodData);
             setFoods(foodData);
         } catch (error) {
-            message.error("Failed to fetch foods"); // Show error message if fetching fails
+            message.error("Failed to fetch foods");
         } finally {
-            setLoading(false); // Set loading to false after fetching is complete
+            setLoading(false);
         }
     };
 
-    // Apply search filter when searchTerm or foods list changes
     useEffect(() => {
         let tempList = foods;
 
-        console.log(foods);
-
-        // Filter foods based on the search term
         if (searchTerm !== "") {
             tempList = tempList.filter(
                 (item) =>
@@ -45,62 +43,46 @@ function ManageCateringFoods() {
             );
         }
 
-        setFilteredFoods(tempList); // Update the filtered list of foods
+        setFilteredFoods(tempList);
     }, [searchTerm, foods]);
 
-    // State to manage table pagination
-    const [pagination, setPagination] = useState({
-        pageSize: 10,
-        current: 1,
-        position: ["bottomCenter"],
-    });
-
-    // Handle changes to the table (e.g., pagination)
     const handleTableChange = (pagination, filters, sorter) => {
         setPagination(pagination);
     };
 
-    // Function to add a new food item
     const handleAddFood = async (newFood) => {
         try {
-            const response = await axios.post("http://localhost:5000/api/catering/addItem", newFood);
+            await axios.post("http://localhost:5000/api/catering/addItem", newFood);
             message.success("Food item added successfully");
-            fetchFoods(); // Refresh the food list after adding
-            setShowAddPopup(false); // Close the add popup
+            fetchFoods();
+            setShowAddPopup(false);
         } catch (error) {
-            message.error(error.response?.data || "Failed to add food item"); // Show error message if adding fails
+            message.error("Failed to add food item");
         }
     };
 
-    // Function to edit an existing food item
     const handleEditFood = async (updatedFood) => {
         try {
-            console.log("Updating food with data:", updatedFood); // Log to verify the data being sent
-            const response = await axios.post("http://localhost:5000/api/catering/updateItem", updatedFood);
+            await axios.post("http://localhost:5000/api/catering/updateItem", updatedFood);
             message.success("Food item updated successfully");
-            fetchFoods(); // Refresh the food list after updating
-            setShowEditPopup(null); // Close the edit popup
+            fetchFoods();
+            setShowEditPopup(null);
         } catch (error) {
-            console.error("Update error:", error.response?.data || error.message);
-            message.error(error.response?.data || "Failed to update food item"); // Show error message if updating fails
+            message.error("Failed to update food item");
         }
     };
 
-    // Function to delete a food item
     const handleDeleteFood = async (itemId) => {
         try {
-            console.log("Deleting food item with ID:", itemId); // Log the itemId to ensure it's correct
-            const response = await axios.post("http://localhost:5000/api/catering/deleteItem", { itemId });
+            await axios.post("http://localhost:5000/api/catering/deleteItem", { itemId });
             message.success("Food item deleted successfully");
-            fetchFoods(); // Refresh the food list after deleting
-            setShowDeletePopup(null); // Close the delete confirmation popup
+            fetchFoods();
+            setShowDeletePopup(null);
         } catch (error) {
-            console.error("Delete error:", error.response?.data || error.message);
-            message.error("Failed to delete food item"); // Show error message if deleting fails
+            message.error("Failed to delete food item");
         }
     };
 
-    // Define columns for the food table
     const columns = [
         {
             title: 'Item ID',
@@ -128,6 +110,12 @@ function ManageCateringFoods() {
             key: 'category',
         },
         {
+            title: 'Type',
+            dataIndex: 'type',
+            key: 'type',
+
+        },
+        {
             title: 'Actions',
             key: 'actions',
             render: (text, food) => (
@@ -142,7 +130,7 @@ function ManageCateringFoods() {
     return (
         <div className="manage-catering-foods">
             {loading ? (
-                <p>Loading food items...</p> // Show loading message while foods are being fetched
+                <p>Loading food items...</p>
             ) : (
                 <>
                     <div className="header">
@@ -154,37 +142,37 @@ function ManageCateringFoods() {
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="search-input"
-                                disabled={showEditPopup || showDeletePopup || showAddPopup} // Disable search input when any popup is open
+                                disabled={showEditPopup || showDeletePopup || showAddPopup}
                             />
                             <button className="add-btn" onClick={() => setShowAddPopup(true)}>Add New</button>
                         </div>
                     </div>
 
                     <Table
-                        dataSource={filteredFoods} // Data to display in the table
-                        columns={columns} // Table columns
-                        pagination={filteredFoods.length > 10 ? pagination : false} // Enable pagination if more than 10 foods
-                        onChange={handleTableChange} // Handle table change (e.g., pagination)
+                        dataSource={filteredFoods}
+                        columns={columns}
+                        pagination={filteredFoods.length > 10 ? pagination : false}
+                        onChange={handleTableChange}
                     />
 
                     {showAddPopup && (
                         <AddEditFoodPopup
-                            onSave={handleAddFood} // Save new food item
-                            onClose={() => setShowAddPopup(false)} // Close add popup
+                            onSave={handleAddFood}
+                            onClose={() => setShowAddPopup(false)}
                         />
                     )}
                     {showEditPopup && (
                         <AddEditFoodPopup
-                            food={showEditPopup} // Pass the food item to edit
-                            onSave={handleEditFood} // Save updated food item
-                            onClose={() => setShowEditPopup(null)} // Close edit popup
+                            food={showEditPopup}
+                            onSave={handleEditFood}
+                            onClose={() => setShowEditPopup(null)}
                         />
                     )}
                     {showDeletePopup && (
                         <DeleteConfirmationPopup
-                            food={showDeletePopup} // Pass the food item to delete
-                            onDelete={handleDeleteFood} // Confirm deletion
-                            onClose={() => setShowDeletePopup(null)} // Close delete confirmation popup
+                            food={showDeletePopup}
+                            onDelete={handleDeleteFood}
+                            onClose={() => setShowDeletePopup(null)}
                         />
                     )}
                 </>
@@ -193,32 +181,32 @@ function ManageCateringFoods() {
     );
 }
 
-// Popup component for adding and editing food items
 function AddEditFoodPopup({ food, onSave, onClose }) {
-    // State to manage form data
     const [formData, setFormData] = useState({
         name: food?.name || "",
         description: food?.description || "",
         price: food?.price || "",
         category: food?.category || "",
+        type: food?.type || "vegi", // Default to "vegi"
     });
 
-    // Handle changes in form inputs
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // Handle form submission
-    const handleSubmit = () => {
-        const dataToSave = food ? { ...food, ...formData } : formData;
-        onSave(dataToSave); // Save the food data (add or edit)
+    const handleSelectChange = (value) => {
+        setFormData({ ...formData, type: value });
     };
 
+    const handleSubmit = () => {
+        const dataToSave = food ? { ...food, ...formData } : formData;
+        onSave(dataToSave);
+    };
 
     return (
         <div className="popup-overlay">
             <div className="popup">
-                <h3>{food ? "Edit Food Item" : "Add New Food Item"}</h3> {/* Change title based on add or edit */}
+                <h3>{food ? "Edit Food Item" : "Add New Food Item"}</h3>
                 <input
                     type="text"
                     name="name"
@@ -247,30 +235,37 @@ function AddEditFoodPopup({ food, onSave, onClose }) {
                     onChange={handleChange}
                     placeholder="Category"
                 />
+                <select
+                    name="type"
+                    value={formData.type}
+                    onChange={(e) => handleSelectChange(e.target.value)}
+                >
+                    <option value="vegi">Veg</option>
+                    <option value="non vegi">Non-Veg</option>
+                </select>
                 <div className="actions">
-                    <button onClick={handleSubmit}>Save</button> {/* Save button */}
-                    <button onClick={onClose}>Cancel</button> {/* Cancel button */}
+                    <button onClick={handleSubmit}>Save</button>
+                    <button onClick={onClose}>Cancel</button>
                 </div>
             </div>
         </div>
     );
 }
 
-// Popup component for confirming deletion
+
 function DeleteConfirmationPopup({ food, onDelete, onClose }) {
-    // Handle deletion confirmation
     const handleDelete = () => {
-        onDelete(food.itemId); // Delete the food item
+        onDelete(food.itemId);
     };
 
     return (
         <div className="popup-overlay">
             <div className="popup">
                 <h3>Delete Food Item</h3>
-                <p>Are you sure you want to delete {food.name}?</p> {/* Show food name in confirmation */}
+                <p>Are you sure you want to delete {food.name}?</p>
                 <div className="actions">
-                    <button onClick={handleDelete}>Delete</button> {/* Delete button */}
-                    <button onClick={onClose}>Cancel</button> {/* Cancel button */}
+                    <button onClick={handleDelete}>Delete</button>
+                    <button onClick={onClose}>Cancel</button>
                 </div>
             </div>
         </div>

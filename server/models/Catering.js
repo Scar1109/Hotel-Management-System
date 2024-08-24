@@ -21,6 +21,11 @@ const cateringSchema = new mongoose.Schema(
         category: {
             type: String,
             required: true,
+        },
+        type: {
+            type: String,
+            enum: ["vegi", "non vegi"], // Restrict the field to "vegi" or "non vegi"
+            required: true, // Set it to true if it's a required field
         }
     },
     { timestamps: true }
