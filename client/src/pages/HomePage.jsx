@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { Carousel, Button, Card, Avatar } from "antd";
 
 function HomePage() {
@@ -13,6 +14,12 @@ function HomePage() {
         marginTop: "25px",
     };
     const { Meta } = Card;
+    const navigate = useNavigate(); // Initialize useNavigate
+
+    // Function to handle button click
+    const handleFindOutMore = () => {
+        navigate('/rooms'); // Navigate to the RoomListPage
+    };
 
     return (
         <div>
@@ -112,7 +119,7 @@ function HomePage() {
                     <div className="sg_home_page_room_txt">
                         <h2>BEST LUXURY ROOMS</h2>
                         <h>Experience the pinnacle of comfort in our Best Luxury Rooms, where modern elegance meets unparalleled amenities. Every detail is crafted to ensure your stay is nothing short of extraordinary, offering a serene escape in the heart of the city</h>
-                        <Button danger style={{ color: '#27ae61', borderColor: '#27ae61', backgroundColor: 'transparent' }}>FIND OUT MORE</Button>
+                        <Button danger style={{ color: '#27ae61', borderColor: '#27ae61', backgroundColor: 'transparent' }} onClick={handleFindOutMore}>FIND OUT MORE</Button>
                     </div>
                 </div>
             </div>
@@ -186,47 +193,29 @@ function HomePage() {
                 <h1>SPECIAL EVENTS</h1>
             </div>
             <div className="sg_home_page_package_section">
-            <div className="home_page_our_category_section1">
-                    <div
-                        className="home_page_category_card1"
-                        
-                    >
+                <div className="home_page_our_category_section1">
+                    <div className="home_page_category_card1">
                         <h3>Weddings</h3>
                     </div>
-                    <div
-                        className="home_page_category_card2"
-                        
-                    >
+                    <div className="home_page_category_card2">
                         <h3>Birthdays</h3>
                     </div>
-                    <div
-                        className="home_page_category_card3"
-                        
-                    >
+                    <div className="home_page_category_card3">
                         <h3>Get Together</h3>
                     </div>
                 </div>
             </div>
             <div className="home_page_category_section2">
-                    <div
-                        className="home_page_category_card4"
-                        
-                    >
-                        <h3>Farewell</h3>
-                    </div>
-                    <div
-                        className="home_page_category_card5"
-                        
-                    >
-                        <h3>Bride To Be</h3>
-                    </div>
-                    <div
-                        className="home_page_category_card6"
-                        
-                    >
-                        <h3>Anniversary</h3>
-                    </div>
+                <div className="home_page_category_card4">
+                    <h3>Farewell</h3>
                 </div>
+                <div className="home_page_category_card5">
+                    <h3>Bride To Be</h3>
+                </div>
+                <div className="home_page_category_card6">
+                    <h3>Anniversary</h3>
+                </div>
+            </div>
         </div>
     );
 }

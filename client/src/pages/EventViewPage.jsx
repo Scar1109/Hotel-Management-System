@@ -1,79 +1,82 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Modal, Form, Input, Button, message,DatePicker } from "antd";
+import { Modal, Form, Input, Button, message, DatePicker } from "antd";
 import moment from "moment";
 
 function EventViewPage() {
-    const { id } = useParams(); // ID from the URL params
-    const [event, setEvent] = useState(null); // Event state
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [loading, setLoading] = useState(true); // Add loading state
-    const [form] = Form.useForm();
+    const { id } = useParams(); // Get the event ID from the URL parameters
+    const [event, setEvent] = useState(null); // State to hold the event data
+    const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+    const [loading, setLoading] = useState(true); // State to show loading status
+    const [form] = Form.useForm(); // Create form instance
 
     useEffect(() => {
+        // Fetch event data when the component mounts or ID changes
         const fetchEvent = async () => {
             try {
                 const response = await axios.get(`/api/event/getEvent/${id}`);
                 console.log("Fetched Event Data:", response.data); // Debugging: Log the fetched event data
-                setEvent(response.data.event);
+                setEvent(response.data.event); // Update event state with fetched data
             } catch (error) {
                 console.error("Error fetching event:", error);
-                message.error("Failed to load event data.");
+                message.error("Failed to load event data."); // Show error message if fetching fails
             } finally {
-                setLoading(false); // Set loading to false once the request completes
+                setLoading(false); // Set loading to false once data is fetched
             }
         };
 
-        fetchEvent(); // Fetch event data when the component mounts
-    }, [id]);
+        fetchEvent(); // Trigger the fetch function
+    }, [id]); // Dependency array: re-fetch if ID changes
 
     const handleOk = async () => {
         try {
+            // Validate form and get values
             const values = await form.validateFields();
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const currentUser = JSON.parse(localStorage.getItem('currentUser')); // Get current user from localStorage
             
+            // Prepare reservation data
             const reservationData = {
                 eventId: event.eventId,
                 guestName: values.name,
                 guestEmail: values.email,
                 guestPhone: values.phone,
-                eventDate: values.eventDate.format('YYYY-MM-DD'), // Use the selected date from the form
+                eventDate: values.eventDate.format('YYYY-MM-DD'), // Format selected date
                 totalAmount: event.price,
-                userID: currentUser.userID // Include userID in the reservation
+                userID: currentUser.userID // Include user ID for reservation
             };
     
-            console.log("Reservation Data:", reservationData); // Debugging: Log the reservation data
+            console.log("Reservation Data:", reservationData); // Debugging: Log reservation data
     
+            // Send reservation data to the server
             await axios.post(`/api/event/reserveEvent/${event.eventId}`, reservationData);
     
-            setIsModalOpen(false);
-            form.resetFields();
-            message.success("Reservation successful!");
+            setIsModalOpen(false); // Close modal on successful reservation
+            form.resetFields(); // Reset form fields
+            message.success("Reservation successful!"); // Show success message
         } catch (error) {
             console.error("Failed to reserve:", error);
-            message.error("Reservation failed. Please try again.");
+            message.error("Reservation failed. Please try again."); // Show error message if reservation fails
         }
     };
 
     const showModal = () => {
-        setIsModalOpen(true);
+        setIsModalOpen(true); // Open modal
     };
 
     const handleCancel = () => {
-        setIsModalOpen(false);
+        setIsModalOpen(false); // Close modal
     };
 
-    if (loading) return <p>Loading...</p>; // Show loading state if event data is not yet loaded
-    if (!event && !loading) return <p>Event with ID {id} not found.</p>; // Handle case where event is null or not found
-
+    if (loading) return <p>Loading...</p>; // Display loading state while data is being fetched
+    if (!event && !loading) return <p>Event with ID {id} not found.</p>; // Handle case where event is not found
 
     return (
         <div className="event-details-page">
             <div className="event-image">
                 <img
-                    src={event.baseImage || "https://via.placeholder.com/650"}
-                    alt={event.eventName || "Event Image"}
+                    src={event.baseImage || "https://via.placeholder.com/650"} // Use default image if no event image
+                    alt={event.eventName || "Event Image"} // Fallback alt text
                 />
             </div>
             <div className="event-info">
