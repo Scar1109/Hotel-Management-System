@@ -25,7 +25,7 @@
   width: 253px;
   height: 41px;
   margin-bottom: 5px;
-  color: #5a4c9d;
+  color: #313131;
   font-weight: 600;
 }
 
@@ -79,7 +79,7 @@
 .sg_login_main_button {
   padding: 12px;
   margin-top: 20px;
-  background-color: #5a4c9d;
+  background-color: #27ae61;
   color: white;
   border: none;
   width: 487px;
@@ -91,7 +91,7 @@
 }
 
 .sg_login_main_button:hover {
-  background-color: #533f8f;
+  background-color: #218c50;
 }
 
 .sg_login_remember_me {
@@ -123,7 +123,7 @@
 }
 
 .sg_signup_link {
-  color: #5a4c9d;
+  color: #27ae61;
   text-decoration: none;
 }
 
