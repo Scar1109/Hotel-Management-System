@@ -136,68 +136,70 @@ const ManageEvents = () => {
     };
 
     return (
-        <div className="manage-events">
-            <div className="search-add-container">
-                <Input placeholder="Search events" value={searchText} onChange={handleSearch} className="search-bar-eventmanage" />
-                <Button type="primary" onClick={handleAddNewEvent} className="add-event-button" style={{ backgroundColor: '#25b05f' }}>Add Event</Button>
-            </div>
-            <Table
-                columns={columns}
-                dataSource={events}
-                pagination={false}
-                loading={loading}
-                rowKey="eventId"
-            />
-            <Pagination
-                {...pagination}
-                onChange={(page) => setPagination({ ...pagination, current: page })}
-                className="pagination-eventMange"
-            />
-            <Modal
-                title={isEditMode ? "Edit Event" : "Add New Event"}
-                visible={isModalVisible}
-                onCancel={handleCancel}
-                onOk={() => form.submit()}
-            >
-                <Form
-                    form={form}
-                    onFinish={handleSubmit}
-                    layout="vertical"
+        <div className="sg_eventManage_table_bg">
+            <div className="manage-events">
+                <div className="search-add-container">
+                    <Input placeholder="Search events" value={searchText} onChange={handleSearch} className="search-bar-eventmanage" />
+                    <Button type="primary" onClick={handleAddNewEvent} className="add-event-button" style={{ backgroundColor: '#25b05f' }}>Add Event</Button>
+                </div>
+                <Table
+                    columns={columns}
+                    dataSource={events}
+                    pagination={false}
+                    loading={loading}
+                    rowKey="eventId"
+                />
+                <Pagination
+                    {...pagination}
+                    onChange={(page) => setPagination({ ...pagination, current: page })}
+                    className="pagination-eventMange"
+                />
+                <Modal
+                    title={isEditMode ? "Edit Event" : "Add New Event"}
+                    visible={isModalVisible}
+                    onCancel={handleCancel}
+                    onOk={() => form.submit()}
                 >
-                    <Form.Item label="Event Name" name="eventName" rules={[{ required: true, message: 'Please input the event name!' }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item label="Event Type" name="eventType" rules={[{ required: true, message: 'Please input the event type!' }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item label="Price" name="price" rules={[{ required: true, message: 'Please input the price!' }]}>
-                        <Input type="number" />
-                    </Form.Item>
-                    <Form.Item label="Description" name="description" rules={[{ required: true, message: 'Please input the description!' }]}>
-                        <Input.TextArea />
-                    </Form.Item>
-                    <Form.Item
-                        label="Event Date"
-                        name="eventDate"
-                        rules={[
-                            { required: true, message: 'Please select the event date!' },
-                            {
-                                validator: (_, value) => {
-                                    if (!value || value.isAfter(moment())) {
-                                        return Promise.resolve();
-                                    }
-                                    return Promise.reject(new Error('The event date must be in the future!'));
-                                }
-                            }
-                        ]}
+                    <Form
+                        form={form}
+                        onFinish={handleSubmit}
+                        layout="vertical"
                     >
-                        <DatePicker format="YYYY-MM-DD" />
-                    </Form.Item>
-                    <Form.Item label="Image Link" name="baseImage" rules={[{ required: true, message: 'Please input the image link!' }]}>
-                        <Input />
-                    </Form.Item>
-                </Form>
-            </Modal>
+                        <Form.Item label="Event Name" name="eventName" rules={[{ required: true, message: 'Please input the event name!' }]}>
+                            <Input />
+                        </Form.Item>
+                        <Form.Item label="Event Type" name="eventType" rules={[{ required: true, message: 'Please input the event type!' }]}>
+                            <Input />
+                        </Form.Item>
+                        <Form.Item label="Price" name="price" rules={[{ required: true, message: 'Please input the price!' }]}>
+                            <Input type="number" />
+                        </Form.Item>
+                        <Form.Item label="Description" name="description" rules={[{ required: true, message: 'Please input the description!' }]}>
+                            <Input.TextArea />
+                        </Form.Item>
+                        <Form.Item
+                            label="Event Date"
+                            name="eventDate"
+                            rules={[
+                                { required: true, message: 'Please select the event date!' },
+                                {
+                                    validator: (_, value) => {
+                                        if (!value || value.isAfter(moment())) {
+                                            return Promise.resolve();
+                                        }
+                                        return Promise.reject(new Error('The event date must be in the future!'));
+                                    }
+                                }
+                            ]}
+                        >
+                            <DatePicker format="YYYY-MM-DD" />
+                        </Form.Item>
+                        <Form.Item label="Image Link" name="baseImage" rules={[{ required: true, message: 'Please input the image link!' }]}>
+                            <Input />
+                        </Form.Item>
+                    </Form>
+                </Modal>
+            </div>
         </div>
     );
 }

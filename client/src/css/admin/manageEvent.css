@@ -1,7 +1,17 @@
 .manage-events {
-    padding: 30px;
-    background-color: #f8f9fa;
+    margin: 16px;
+    padding: 16px;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: calc(100vh - 100px);
+    
 }
+/* .sg_eventManage_table_bg{
+    padding: 20px;
+    border-radius: 8px;
+    width: 1650px;
+} */
 
 .search-add-container {
     display: flex;
