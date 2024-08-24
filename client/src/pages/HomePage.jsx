@@ -138,7 +138,7 @@ function HomePage() {
                                         }}
                                         cover={<img alt="example" src="https://i.ibb.co/mHvgFN8/the-lobby-lounge-heritage.jpg" />}
                                     >
-                                        <Meta style={{ textAlign: 'center', fontWeight: 600, fontSize: 28 }} title="breakfast" />
+                                        <Meta style={{ textAlign: 'center', fontWeight: 600, fontSize: 28 }} title="Breakfast" />
                                     </Card>
                                 </div>
                                 <div className="sg_home_page_food_card_set">
@@ -183,7 +183,7 @@ function HomePage() {
                 </div>
             </div>
             <div className="sg_home_page_package_txt">
-                <h1>SPECIAL PACKAGES</h1>
+                <h1>SPECIAL EVENTS</h1>
             </div>
             <div className="sg_home_page_package_section">
             <div className="home_page_our_category_section1">

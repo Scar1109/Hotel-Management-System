@@ -206,7 +206,7 @@ function EventBookings() {
                             { type: "number", message: "Total amount must be a number" }
                         ]}
                     >
-                        <Input type="number" />
+                        <Input type="number" disabled={true} />
                     </Form.Item>
                 </Form>
             </Modal>
