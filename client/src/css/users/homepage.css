@@ -51,6 +51,7 @@
 .sg_home_page_image_1{
     width: 1900px;
     height: 490px;
+    margin-top: 140px;
     background-image: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url(https://i.ibb.co/wc1xcRG/Colombo-3512dccdb8.jpg);
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -262,8 +263,8 @@
     display: flex;
     flex-direction: column;
     text-align: center;
-    margin-left: 15%;
-    margin-top: 17%;
+    margin-left: 9%;
+    margin-top: 18%;
     border-top: 2px solid #000; 
     border-bottom: 2px solid #000;
     padding-top: 30px;
