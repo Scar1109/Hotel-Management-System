@@ -137,40 +137,7 @@ function HomePage() {
                             </div>
                             <div className="sg_home_page_food_card_section">
                                 <div className="sg_home_page_food_card_set">
-                                    <Card
-                                        hoverable
-                                        style={{
-                                            width: 260,
-                                            height: 400,
-                                        }}
-                                        cover={<img alt="example" src="https://i.ibb.co/mHvgFN8/the-lobby-lounge-heritage.jpg" />}
-                                    >
-                                        <Meta style={{ textAlign: 'center', fontWeight: 600, fontSize: 28 }} title="Breakfast" />
-                                    </Card>
-                                </div>
-                                <div className="sg_home_page_food_card_set">
-                                    <Card
-                                        hoverable
-                                        style={{
-                                            width: 260,
-                                            height: 400,
-                                        }}
-                                        cover={<img alt="example" src="https://i.ibb.co/m0qxXjJ/PUBLIC-Popular-Cantina-0621-Liz-Clayman-149.jpg" />}
-                                    >
-                                        <Meta style={{ textAlign: 'center', fontWeight: 600, fontSize: 28 }} title="Lunch" />
-                                    </Card>
-                                </div>
-                                <div className="sg_home_page_food_card_set">
-                                    <Card
-                                        hoverable
-                                        style={{
-                                            width: 260,
-                                            height: 400,
-                                        }}
-                                        cover={<img alt="example" src="https://i.ibb.co/pwyDBt0/Novotel-Bangkok-on-Siam-Square-Bangkok-Restaurant-1-12749.jpg" />}
-                                    >
-                                        <Meta style={{ textAlign: 'center', fontWeight: 600, fontSize: 28 }} title="Dinner" />
-                                    </Card>
+                                    
                                 </div>
                             </div>
                         </div>

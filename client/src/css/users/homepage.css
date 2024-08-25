@@ -200,7 +200,14 @@
     margin-top: 10%;
 }
 .sg_home_page_food_card_set{
-    margin-left: 7%;
+    width: 664px;
+    height: 360px;
+    margin-top: 30px;
+    background-image: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(https://t3.ftcdn.net/jpg/02/52/38/80/360_F_252388016_KjPnB9vglSCuUJAumCDNbmMzGdzPAucK.jpg);
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    cursor: pointer;
+    
 }
 .sg_home_page_online_oder_section{
     display: flex;
