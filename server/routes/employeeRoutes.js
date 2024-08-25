@@ -54,7 +54,6 @@ router.post('/addEmployee', async (req, res) => {
         // Generate a unique employee ID
         const employeeId = await generateUniqueEmployeeId();
         let randomPwd = Math.random().toString(36).substr(2, 9);
-        console.log(randomPwd);
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(randomPwd, salt);
