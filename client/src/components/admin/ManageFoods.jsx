@@ -11,7 +11,7 @@ function ManageCateringFoods() {
   const [loading, setLoading] = useState(true);
   const [filteredFoods, setFilteredFoods] = useState([]);
   const [pagination, setPagination] = useState({
-    pageSize: 10,
+    pageSize: 6,
     current: 1,
     position: ["bottomCenter"],
   });
@@ -166,7 +166,7 @@ function ManageCateringFoods() {
           <Table
             dataSource={filteredFoods}
             columns={columns}
-            pagination={filteredFoods.length > 10 ? pagination : false}
+            pagination={filteredFoods.length > 6 ? pagination : false}
             onChange={handleTableChange}
           />
 

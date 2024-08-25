@@ -30,7 +30,7 @@
     border: none;
     height: 45px;
     padding: 10px 20px;
-    border-radius: 10px;
+    border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }

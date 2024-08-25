@@ -1,17 +1,16 @@
 /* General Styles */
 .manage-orders {
-    width: calc(195vh - 120px);;
     margin: 40px auto;
-    height: calc(100vh - 120px);
+    height: calc(100vh - 100px);
     background-color: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: 20px;
+    margin-bottom: 20px;
 }
 
 .manage-catering-foods{
-    width: calc(195vh - 120px);;
     margin: 40px auto;
     height: calc(100vh - 120px);
     background-color: #f9f9f9;
