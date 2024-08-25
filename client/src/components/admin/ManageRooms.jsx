@@ -20,6 +20,9 @@ function ManageRooms() {
       const [rooms, setRooms] = useState([]);
       const [editingRoom, setEditingRoom] = useState(null);
 
+      const [searchTerm, setSearchTerm] = useState("");
+      const [filteredRooms, setFilteredRooms] = useState([]);
+
       const [form] = Form.useForm(); // Form instance for add room
       const [updateForm] = Form.useForm(); // Form instance for update room
 
@@ -62,6 +65,9 @@ function ManageRooms() {
             try {
                   const response = await axios.get("/api/room/getRooms");
                   setRooms(response.data.rooms);
+                  setFilteredRooms(response.data.rooms); // Initialize filteredRooms with all rooms
+                  console.log("Rooms:", response.data.rooms); // Debugging line
+                  console.log("Filtered Rooms:", filteredRooms); // Debugging line
             } catch (err) {
                   console.log(err);
             }
@@ -70,6 +76,31 @@ function ManageRooms() {
       useEffect(() => {
             fetchRooms();
       }, []);
+
+      // Update filtered rooms when search term changes
+      useEffect(() => {
+            const tempList = rooms.filter(
+                  (room) =>
+                        (room.roomType &&
+                              room.roomType
+                                    .toLowerCase()
+                                    .includes(searchTerm.toLowerCase())) || // Filter by room type
+                        (room.roomNumber &&
+                              room.roomNumber
+                                    .toLowerCase()
+                                    .includes(searchTerm.toLowerCase())) || // Filter by room number
+                        (room.facilities &&
+                              room.facilities
+                                    .toLowerCase() 
+                                    .includes(searchTerm.toLowerCase())) // Filter by room facilities
+            );
+            setFilteredRooms(tempList);
+      }, [searchTerm, rooms]);
+
+      // Handle search input change
+      const handleSearchChange = (e) => {
+            setSearchTerm(e.target.value);
+      };
 
       // Add new room
       const addRoom = async () => {
@@ -186,6 +217,15 @@ function ManageRooms() {
                   <div className="manage_room_content">
                         <div className="manage_room_header">
                               <h1>Manage Rooms</h1>
+                              <div className="search-bar">
+                                    <input
+                                          type="text"
+                                          placeholder="Search rooms"
+                                          value={searchTerm}
+                                          onChange={handleSearchChange}
+                                          style={{ width: 300, marginLeft: 20, height: 40 }}
+                                    />
+                              </div>
                               <button
                                     className="add_new_room"
                                     onClick={showModal}
@@ -356,10 +396,11 @@ function ManageRooms() {
                         <div className="manageroom_table">
                               <Table
                                     columns={columns}
-                                    dataSource={[...rooms].reverse()} // Create a shallow copy and reverse
+                                    dataSource={[...filteredRooms].reverse()} // Use filteredRooms instead of rooms
                                     pagination={{ pageSize: 6 }} // Display 6 rows per page
                               />
                         </div>
+
                         <Modal
                               title="Update Room"
                               open={isUpdateModalOpen}
@@ -422,24 +463,23 @@ function ManageRooms() {
                                           <Input placeholder="Enter bed type" />
                                     </Form.Item>
                                     <Form.Item
-                                                label="Number of Person"
-                                                name="size"
-                                                rules={[
-                                                      {
-                                                            required: true,
-                                                            message: "Please enter the number of person",
-                                                      },
-                                                      {
-                                                            type: "number",
-                                                            message: "Price must be a number",
-                                                            transform: (
-                                                                  value
-                                                            ) => Number(value),
-                                                      },
-                                                ]}
-                                          >
-                                                <Input placeholder="Enter the number of person" />
-                                          </Form.Item>
+                                          label="Number of Person"
+                                          name="size"
+                                          rules={[
+                                                {
+                                                      required: true,
+                                                      message: "Please enter the number of person",
+                                                },
+                                                {
+                                                      type: "number",
+                                                      message: "Price must be a number",
+                                                      transform: (value) =>
+                                                            Number(value),
+                                                },
+                                          ]}
+                                    >
+                                          <Input placeholder="Enter the number of person" />
+                                    </Form.Item>
                                     <Form.Item
                                           label="View information"
                                           name="viewInformation"

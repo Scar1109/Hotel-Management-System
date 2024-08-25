@@ -4,13 +4,17 @@ import { useNavigate } from 'react-router-dom';
 
 function RoomListPage() {
   const [rooms, setRooms] = useState([]);
+  const [filteredRooms, setFilteredRooms] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate(); // Hook for navigation
 
+  // Fetch rooms on component mount
   useEffect(() => {
     const fetchRooms = async () => {
       try {
         const response = await axios.get('/api/room/getRooms');
         setRooms(response.data.rooms);
+        setFilteredRooms(response.data.rooms); // Initially, show all rooms
       } catch (error) {
         console.error('Error fetching rooms:', error);
       }
@@ -18,6 +22,21 @@ function RoomListPage() {
 
     fetchRooms();
   }, []);
+
+  // Update filtered rooms when search term changes
+  useEffect(() => {
+    const tempList = rooms.filter((room) =>
+      (room.roomType && room.roomType.toLowerCase().includes(searchTerm.toLowerCase())) ||  // Filter by room type
+      (room.roomNumber && room.roomNumber.toLowerCase().includes(searchTerm.toLowerCase())) || // Filter by room number
+      (room.facilities && room.facilities.toLowerCase().includes(searchTerm.toLowerCase())) // Filter by facilities
+    );
+    setFilteredRooms(tempList);
+  }, [searchTerm, rooms]);  
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
   const handleMoreInfo = (id) => {
     navigate(`/rooms/${id}`);
@@ -29,19 +48,15 @@ function RoomListPage() {
       <hr />
       <div className="room-list">
         <div className="search-bar">
-          <input type="date" placeholder="Check-In" />
-          <input type="date" placeholder="Check-Out" />
-          <select>
-            <option>1 Adult</option>
-            <option>2 Adults</option>
-          </select>
-          <select>
-            <option>0 Kids</option>
-            <option>1 Kid</option>
-          </select>
-          <button>Search</button>
+          <input
+            type="text"
+            placeholder="Search rooms"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            style={{ marginBottom: '1.5rem', width:"300px"}}
+          />
         </div>
-        {rooms
+        {filteredRooms
           .filter((room) => room.status === 'Activate') // Filter rooms by status
           .map((room) => (
             <div className="room" key={room._id}>
