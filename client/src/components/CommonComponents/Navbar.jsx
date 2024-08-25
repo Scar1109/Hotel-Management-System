@@ -87,7 +87,7 @@ function NavBarUser() {
             ],
         },
         {
-            label: "Packing",
+            label: "Parking",
             key: "parking",
         },
         {

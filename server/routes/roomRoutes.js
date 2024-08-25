@@ -134,7 +134,7 @@ router.delete("/deleteRoom/:id", async (req, res) => {
       }
 });
 
-// Function to generate sequential booking ID
+// Function to generate  booking ID
 let currentID = 0; // This should be stored and managed in your database
 
 const generateBookingID = () => {
