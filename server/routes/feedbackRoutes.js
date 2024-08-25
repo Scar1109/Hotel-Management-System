@@ -4,7 +4,7 @@
 
     // Retrieve feedback with pagination
     router.post("/getFeedback", async (req, res) => {
-    const { page, limit } = req.body;
+    const { page, limit} = req.body;
     try {
         const feedbacks = await feedbackModel
         .find({})
@@ -16,6 +16,7 @@
         res.status(500).json({ message: "Error fetching feedbacks" });
     }
     });
+
 
     // Add new feedback
     router.post("/addFeedback", async (req, res) => {
@@ -41,8 +42,8 @@
         } catch (error) {
             console.error("Error adding feedback:", error.message);
             return res.status(500).json({ error: "Error adding feedback", details: error.message });
-        }
-    });
+    }
+});
 
     // Update existing feedback
     router.post("/updateFeedback", async (req, res) => {
@@ -106,5 +107,37 @@
             res.status(500).json({ message: "Error searching feedbacks" });
         }
     });
+
+    // Search feedback by title and filter by userID
+router.post("/getFeedbackByUserId", async (req, res) => {
+    const { search, page, limit, userID } = req.body;
+
+    try {
+        const searchTerms = search ? search.split(" ") : []; // Split the search input by spaces if it exists
+
+        // Build the query to first filter by userID and then search for title or username
+        const query = {
+            userID: userID, // Filter by user ID first
+            $or: searchTerms.length > 0 ? [
+                { title: { $regex: searchTerms.join("|"), $options: "i" } }, // Match any word in the title
+                { username: { $regex: searchTerms.join("|"), $options: "i" } }, // Match any word in the username
+            ] : [{}] // If no search terms are provided, no further filtering by title/username is applied
+        };
+
+        const feedbacks = await feedbackModel
+            .find(query)
+            .skip((page - 1) * limit)
+            .limit(limit);
+
+        const total = await feedbackModel.countDocuments(query);
+
+        res.json({ feedbacks, total });
+    } catch (error) {
+        res.status(500).json({ message: "Error searching feedbacks" });
+    }
+});
+
+
+
 
     module.exports = router;

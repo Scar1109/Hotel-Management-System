@@ -2,12 +2,12 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Modal, Button, Input, Rate, Pagination, message } from 'antd';
 import axios from 'axios';
 
-const FeedbackPage = () => {
+function Feedbacks() {
 
     const [userID, setUserID] = useState(null);
     const [feedbacks, setFeedbacks] = useState([]);
     const [page, setPage] = useState(1);
-    const [limit] = useState(9); // Show 9 feedbacks at a time
+    const [limit] = useState(2); 
     const [total, setTotal] = useState(0);
     const [search, setSearch] = useState('');
     const [visibleAdd, setVisibleAdd] = useState(false);
@@ -27,18 +27,19 @@ const FeedbackPage = () => {
 
     useEffect(() => {
         fetchUserByID();
-    }, [fetchUserByID]);
+    }, []);
 
     useEffect(() => {
         fetchFeedbacks();
-    }, [page, search]);
+    }, [page, search, userID]);
 
     const fetchFeedbacks = async () => {
         try {
-            const { data } = await axios.post('/api/feedback/searchFeedback', {
+            const { data } = await axios.post('/api/feedback/getFeedbackByUserId', {
                 search,
                 page,
-                limit
+                limit,
+                userID
             });
             setFeedbacks(data.feedbacks);
             setTotal(data.total);
@@ -49,12 +50,8 @@ const FeedbackPage = () => {
 
     const handleAddFeedback = async (values) => {
         try {
-            console.log("Submitting feedback with values:", values);
-            console.log("User ID:", userID);
             const feedbackData = { ...values, userID };
-            console.log("Feedback Data being sent:", feedbackData);
             const response = await axios.post('/api/feedback/addFeedback', feedbackData);
-            console.log("Response data:", response.data);
 
             if (response.status === 201) {
                 message.success('Feedback added successfully');
@@ -91,39 +88,31 @@ const FeedbackPage = () => {
         }
     };
 
-    const handleSearch = async (e) => {
-        const value = e.target.value;
-        setSearch(value);
-        setPage(1);
-    };
-
-    return (
+    return <div>
         <div className="feedback-page-6789">
-            <h1 style={{marginBottom:20, marginLeft:5}}>Feedbacks..</h1>
             <div className="feedback-header-6789">
-                <Input.Search
-                    placeholder="Search by title or username"
-                    value={search}
-                    onChange={handleSearch}
-                    style={{ width: 300 }}
-                />
-                <Button type="primary" style={{ backgroundColor: '#25b05f' }} onClick={() => setVisibleAdd(true)}>
+            <h2>Your Feedbacks</h2>
+                <Button type="primary" style={{ backgroundColor: '#25b05f'}} onClick={() => setVisibleAdd(true)}>
                     Add Feedback
                 </Button>
             </div>
-            <div className="feedback-list-6789">
+            <div className="feedback-list-pofile-6789">
                 {feedbacks.map((feedback) => (
                     <div key={feedback._id} className="feedback-card-6789">
                         <h3>{feedback.title}</h3>
                         <p><strong>User:</strong> {feedback.username}</p>
                         <p>{feedback.description}</p>
                         <Rate disabled defaultValue={feedback.rating} />
+                        <div className="feedback-actions-6789">
+                            <Button onClick={() => { setCurrentFeedback(feedback); setVisibleEdit(true); }}>Edit</Button>
+                            <Button danger onClick={() => { setCurrentFeedback(feedback); setVisibleDelete(true); }}>Delete</Button>
+                        </div>
                     </div>
                 ))}
             </div>
             <Pagination
                 current={page}
-                pageSize={limit}  // Shows 9 cards per page
+                pageSize={limit}
                 total={total}
                 onChange={setPage}
                 style={{ textAlign: 'center', marginTop: '20px' }}
@@ -146,10 +135,8 @@ const FeedbackPage = () => {
                 onConfirm={handleDeleteFeedback}
             />
         </div>
-    );
-};
-
-
+    </div>;
+}
 
 const AddFeedbackModal = ({ visible, onCancel, onSubmit, userID }) => {
     const [title, setTitle] = useState('');
@@ -157,7 +144,6 @@ const AddFeedbackModal = ({ visible, onCancel, onSubmit, userID }) => {
     const [rating, setRating] = useState(0);
     const [description, setDescription] = useState('');
 
-    // Reset form fields when modal is closed
     useEffect(() => {
         if (!visible) {
             setTitle('');
@@ -245,4 +231,5 @@ const DeleteFeedbackModal = ({ visible, onCancel, onConfirm }) => (
     </Modal>
 );
 
-export default FeedbackPage;
+
+export default Feedbacks;

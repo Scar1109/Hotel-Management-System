@@ -119,7 +119,7 @@ function HomePage() {
                     <div className="sg_home_page_room_txt">
                         <h2>BEST LUXURY ROOMS</h2>
                         <h>Experience the pinnacle of comfort in our Best Luxury Rooms, where modern elegance meets unparalleled amenities. Every detail is crafted to ensure your stay is nothing short of extraordinary, offering a serene escape in the heart of the city</h>
-                        <Button danger style={{ color: '#27ae61', borderColor: '#27ae61', backgroundColor: 'transparent' }} onClick={handleFindOutMore}>FIND OUT MORE</Button>
+                        <Button danger style={{ color: '#27ae61', borderColor: '#27ae61', backgroundColor: 'transparent' }} onClick={handleFindOutMore}>FIND ROOM</Button>
                     </div>
                 </div>
             </div>
@@ -137,40 +137,7 @@ function HomePage() {
                             </div>
                             <div className="sg_home_page_food_card_section">
                                 <div className="sg_home_page_food_card_set">
-                                    <Card
-                                        hoverable
-                                        style={{
-                                            width: 260,
-                                            height: 400,
-                                        }}
-                                        cover={<img alt="example" src="https://i.ibb.co/mHvgFN8/the-lobby-lounge-heritage.jpg" />}
-                                    >
-                                        <Meta style={{ textAlign: 'center', fontWeight: 600, fontSize: 28 }} title="Breakfast" />
-                                    </Card>
-                                </div>
-                                <div className="sg_home_page_food_card_set">
-                                    <Card
-                                        hoverable
-                                        style={{
-                                            width: 260,
-                                            height: 400,
-                                        }}
-                                        cover={<img alt="example" src="https://i.ibb.co/m0qxXjJ/PUBLIC-Popular-Cantina-0621-Liz-Clayman-149.jpg" />}
-                                    >
-                                        <Meta style={{ textAlign: 'center', fontWeight: 600, fontSize: 28 }} title="Lunch" />
-                                    </Card>
-                                </div>
-                                <div className="sg_home_page_food_card_set">
-                                    <Card
-                                        hoverable
-                                        style={{
-                                            width: 260,
-                                            height: 400,
-                                        }}
-                                        cover={<img alt="example" src="https://i.ibb.co/pwyDBt0/Novotel-Bangkok-on-Siam-Square-Bangkok-Restaurant-1-12749.jpg" />}
-                                    >
-                                        <Meta style={{ textAlign: 'center', fontWeight: 600, fontSize: 28 }} title="Dinner" />
-                                    </Card>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -186,7 +153,7 @@ function HomePage() {
                         <h2>Satisfy your cravings</h2>
                         <h>Fancy a delicious dish? Contact us and we will deliver it to your doorstep.</h>  
                     </div>
-                    <Button danger style={{ color: '#27ae61', borderColor: '#27ae61', backgroundColor: 'transparent', width: 140, marginLeft: 220, marginTop: 20 }}>FIND OUT MORE</Button>
+                    <Button danger style={{ color: '#27ae61', borderColor: '#27ae61', backgroundColor: 'transparent', width: 140, marginLeft: 220, marginTop: 20 }}>ODER NOW</Button>
                 </div>
             </div>
             <div className="sg_home_page_package_txt">
