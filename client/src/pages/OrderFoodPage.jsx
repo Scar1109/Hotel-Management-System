@@ -40,8 +40,12 @@ function MealOrderPage() {
   }, []);
 
   const handleFilter = (filter) => {
-    const filtered = meals.filter(meal => meal.type === filter);
-    setFilteredMeals(filtered);
+    if (filter === 'All') {
+      setFilteredMeals(meals);
+    } else {
+      const filtered = meals.filter(meal => meal.type === filter);
+      setFilteredMeals(filtered);
+    }
   };
 
   const handleSelectMeal = (meal) => {
@@ -86,9 +90,9 @@ function MealOrderPage() {
       <h1>Order Your Meal for Room</h1>
       <hr />
       <div className="filter-bar">
-        <button onClick={() => handleFilter('Vegetarian')}>Vegetarian</button>
-        <button onClick={() => handleFilter('Non-Vegetarian')}>Non-Vegetarian</button>
-        <button onClick={() => setFilteredMeals(meals)}>All</button>
+        <button onClick={() => handleFilter('vegi')}>Vegetarian</button>
+        <button onClick={() => handleFilter('non vegi')}>Non-Vegetarian</button>
+        <button onClick={() => handleFilter('All')}>All</button>
       </div>
       <div className="meal-list">
         {filteredMeals.map((meal, index) => (

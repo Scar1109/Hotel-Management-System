@@ -68,6 +68,44 @@ router.post('/addOrder', async (req, res) => {
     }
 });
 
+
+
+router.post('/updateItem', async (req, res) => {
+    try {
+        const { orderId, purchaseDate, customerName, customerID, amount, meals, status } = req.body;
+
+        const updatedOrder = await orderModel.findOneAndUpdate(
+            { orderId },
+            { purchaseDate, customerName, customerID, amount, meals, status },
+            { new: true }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).send('Order not found');
+        }
+
+        res.json(updatedOrder);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+router.post('/deleteItem', async (req, res) => {
+    try {
+        const { orderId } = req.body;
+        const deletedOrder = await orderModel.findOneAndDelete({ orderId });
+
+        if (!deletedOrder) {
+            return res.status(404).send('Order not found');
+        }
+
+        res.send('Order deleted successfully');
+    } catch (err) {
+        res.status(500).send(err);
+    }
+}
+);
+
 // Route to update an order
 router.put('/updateOrder/:orderId', async (req, res) => {
     try {

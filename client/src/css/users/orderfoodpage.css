@@ -7,6 +7,13 @@
     font-family: Arial, sans-serif;
   }
   
+  .manage-orders{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
   h1 {
     text-align: center;
     color: #333;
@@ -120,6 +127,32 @@
   .customer-details {
     margin: 20px 0;
   }
+
+/* Add this in your CSS file */
+.select-dropdown {
+  width: 200px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.select-dropdown:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  outline: none;
+}
+
+.select-dropdown option {
+  background-color: #fff;
+  color: #333;
+  padding: 10px;
+}
+
   
   .input-field {
     width: calc(50% - 10px);

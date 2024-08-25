@@ -24,15 +24,25 @@ function ManageOrders() {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/order/getOrders");
-      const ord = Array.isArray(response.data.data) ? response.data.data : [];
-      setOrders(ord);
+      const response = await axios.get(
+        "http://localhost:5000/api/order/getOrders"
+      );
+      
+      // Assuming response.data might not be an array directly, but contains an array.
+      if (Array.isArray(response.data)) {
+        setOrders(response.data);
+      } else if (response.data && Array.isArray(response.data.orders)) {
+        setOrders(response.data.orders);
+      } else {
+        message.error("Unexpected response format");
+      }
     } catch (error) {
       message.error("Failed to fetch orders");
     } finally {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     let tempList = orders;
@@ -40,7 +50,6 @@ function ManageOrders() {
     if (searchTerm !== "") {
       tempList = tempList.filter(
         (item) =>
-          item.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.orderId.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -65,7 +74,10 @@ function ManageOrders() {
 
   const handleEditOrder = async (updatedOrder) => {
     try {
-      await axios.post("http://localhost:5000/api/order/updateItem", updatedOrder);
+      await axios.post(
+        "http://localhost:5000/api/order/updateItem",
+        updatedOrder
+      );
       message.success("Order updated successfully");
       fetchOrders();
       setShowEditPopup(null);
@@ -76,7 +88,9 @@ function ManageOrders() {
 
   const handleDeleteOrder = async (orderId) => {
     try {
-      await axios.post("http://localhost:5000/api/order/deleteItem", { orderId });
+      await axios.post("http://localhost:5000/api/order/deleteItem", {
+        orderId,
+      });
       message.success("Order deleted successfully");
       fetchOrders();
       setShowDeletePopup(null);
@@ -112,7 +126,7 @@ function ManageOrders() {
       key: "status",
     },
     {
-      title: "Meal Types",
+      title: "Meals",
       dataIndex: "meals",
       key: "meals",
       render: (meals) => meals.join(", "),
@@ -160,12 +174,13 @@ function ManageOrders() {
           </div>
 
           <Table
-            dataSource={Array.isArray(filteredOrders) ? filteredOrders : []}
+            dataSource={filteredOrders}
             columns={columns}
             pagination={filteredOrders.length > 10 ? pagination : false}
             onChange={handleTableChange}
           />
 
+          {/* Popup Components */}
           {showAddPopup && (
             <AddEditPopup
               onSave={handleAddOrder}
@@ -194,20 +209,17 @@ function ManageOrders() {
 
 function AddEditPopup({ order, onSave, onClose }) {
   const [formData, setFormData] = useState({
+    orderId: order?.orderId || "",
     purchaseDate: order?.purchaseDate || "",
     customerName: order?.customerName || "",
     customerID: order?.customerID || "",
     amount: order?.amount || "",
+    status: order?.status || "",
     meals: order?.meals || [],
-    type: order?.type || "", // Include type field
   });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleTypeChange = (value) => {
-    setFormData({ ...formData, type: value });
   };
 
   const handleSubmit = () => {
@@ -218,6 +230,13 @@ function AddEditPopup({ order, onSave, onClose }) {
     <div className="popup-overlay">
       <div className="popup">
         <h3>{order ? "Edit Order" : "Add New Order"}</h3>
+        <input
+          type="text"
+          name="orderId"
+          value={formData.orderId}
+          onChange={handleChange}
+          placeholder="Order ID"
+        />
         <input
           type="text"
           name="purchaseDate"
@@ -246,15 +265,13 @@ function AddEditPopup({ order, onSave, onClose }) {
           onChange={handleChange}
           placeholder="Amount"
         />
-        <Select
-          name="type"
-          value={formData.type}
-          onChange={handleTypeChange}
-          placeholder="Select Type"
-        >
-          <Option value="Vegetarian">Vegetarian</Option>
-          <Option value="Non-Vegetarian">Non-Vegetarian</Option>
-        </Select>
+        <input
+          type="text"
+          name="status"
+          value={formData.status}
+          onChange={handleChange}
+          placeholder="Status"
+        />
         <textarea
           name="meals"
           value={formData.meals.join(", ")}

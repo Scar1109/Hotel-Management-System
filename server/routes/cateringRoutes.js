@@ -62,11 +62,11 @@ router.post('/addItem', async (req, res) => {
 // Route to update a food item
 router.post('/updateItem', async (req, res) => {
     try {
-        const { itemId, name, description, price, category } = req.body;
+        const { itemId, name, description, price, category,type } = req.body;
 
         const updatedItem = await cateringModel.findOneAndUpdate(
             { itemId },
-            { name, description, price, category },
+            { name, description, price, category ,type},
             { new: true }
         );
 
