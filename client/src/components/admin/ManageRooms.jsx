@@ -217,6 +217,7 @@ function ManageRooms() {
                   <div className="manage_room_content">
                         <div className="manage_room_header">
                               <h1>Manage Rooms</h1>
+                              <div className="search-container-122313">
                               <div className="search-bar">
                                     <input
                                           type="text"
@@ -232,6 +233,7 @@ function ManageRooms() {
                               >
                                     Add Room
                               </button>
+                              </div>
                               <Modal
                                     title="Add Room"
                                     open={isModalOpen}

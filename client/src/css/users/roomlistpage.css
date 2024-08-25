@@ -9,6 +9,12 @@
     justify-content: right;
 }
 
+.search-container-122313 {
+    display: flex;
+    gap: 10px;
+
+}
+
 .search-bar input,
 .search-bar select {
     padding: 8px;
@@ -22,7 +28,7 @@
     background-color: #27ae60;
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 2px;
     cursor: pointer;
 }
 
