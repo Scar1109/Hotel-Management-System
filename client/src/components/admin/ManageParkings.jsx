@@ -28,7 +28,7 @@ function ManageParkings() {
 
     // State to manage table pagination
     const [pagination, setPagination] = useState({
-        pageSize: 10,
+        pageSize: 6,
         current: 1,
         position: ["bottomCenter"],
     });
@@ -179,7 +179,7 @@ function ManageParkings() {
                 columns={columns}
                 dataSource={filteredBookings}
                 rowKey="parkingId"
-                pagination={filteredBookings.length > 10 ? pagination : false} // Enable pagination if more than 10 employees
+                pagination={filteredBookings.length > 6 ? pagination : false} // Enable pagination if more than 10 employees
                 onChange={handleTableChange} // Handle table change (e.g., pagination)
             />
 

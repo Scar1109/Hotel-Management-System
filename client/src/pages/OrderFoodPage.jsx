@@ -6,11 +6,9 @@ import { message } from 'antd';
 import MealImg1 from '../assets/Images/meal1.png';
 import MealImg2 from '../assets/Images/meal2.jpeg';
 
-// Image mapping based on meal names or IDs
 const mealImages = {
   'Meal 1': MealImg1,
   'Meal 2': MealImg2,
-  // Add more mappings as needed
 };
 
 function MealOrderPage() {
@@ -38,13 +36,21 @@ function MealOrderPage() {
     };
 
     fetchMeals();
+
+    // Auto-fetch customer ID from localStorage when the component mounts
+    const storedCustomer = localStorage.getItem('currentUser');
+    if (storedCustomer) {
+      const userObject = JSON.parse(storedCustomer);
+      setCustomerID(userObject.userID);
+      console.log(userObject.userID); // Verify the correct value is retrieved
+    }
   }, []);
 
-   const handleFilter = (filter) => {
+  const handleFilter = (filter) => {
     if (filter === 'All') {
       setFilteredMeals(meals);
     } else {
-      const filtered = meals.filter(meal => meal.type === filter);
+      const filtered = meals.filter((meal) => meal.type === filter);
       setFilteredMeals(filtered);
     }
   };
@@ -73,7 +79,7 @@ function MealOrderPage() {
       customerID,
       roomNumber,
       amount: totalAmount,
-      meals: selectedMeals.map(meal => meal.name),
+      meals: selectedMeals.map((meal) => meal.name), // Simplified to only include meal names
     };
 
     try {

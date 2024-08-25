@@ -6,11 +6,9 @@ import { message } from 'antd';
 import MealImg1 from '../assets/Images/meal1.png';
 import MealImg2 from '../assets/Images/meal2.jpeg';
 
-// Image mapping based on meal names or IDs
 const mealImages = {
   'Meal 1': MealImg1,
   'Meal 2': MealImg2,
-  // Add more mappings as needed
 };
 
 function MealOrderPage() {
@@ -35,9 +33,19 @@ function MealOrderPage() {
         setFilteredMeals([]);
       }
     };
-
+  
     fetchMeals();
+  
+    // Auto-fetch customer ID from localStorage when the component mounts
+    const storedCustomer = localStorage.getItem('currentUser');
+    if (storedCustomer) {
+      const userObject = JSON.parse(storedCustomer); // Parse the stored JSON string to an object
+      setCustomerID(userObject.userID); // Set the userID from the object to the customerID state
+      console.log(userObject.userID); // Log the userID to the console if needed
+    }
+  
   }, []);
+  
 
   const handleFilter = (filter) => {
     if (filter === 'All') {
@@ -71,11 +79,8 @@ function MealOrderPage() {
       customerName,
       customerID,
       amount: totalAmount,
-      meals: selectedMeals.map(meal => ({
-        name: meal.name,
-        type: meal.type,
-        price: meal.price
-      })),
+      meals: selectedMeals.map((meal) => meal.name), // Simplified to only include meal names
+
     };
 
     try {
@@ -135,6 +140,7 @@ function MealOrderPage() {
             value={customerID}
             onChange={(e) => setCustomerID(e.target.value)}
             className="input-field"
+            readOnly // Makes the input field read-only
           />
         </div>
         <button className="place-order-button" onClick={handlePlaceOrder}>Place Order</button>

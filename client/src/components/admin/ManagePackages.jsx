@@ -141,6 +141,7 @@ function ManagePackages() {
       <div className="manage_packages_content">
         <div className="manage_packages_header">
           <h1>Manage Packages</h1>
+          <div className="search-container-122313">
           <div className="search-bar">
           <Input
             placeholder="Search packages"
@@ -152,6 +153,7 @@ function ManagePackages() {
           <button className="add_new_package" onClick={showModal}>
             Add Package
           </button>
+          </div>
           <Modal title="Add Package" open={isModalOpen} onOk={addPackage} onCancel={handleCancel}>
             <Form form={form} layout="vertical">
               <Form.Item

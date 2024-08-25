@@ -13,7 +13,7 @@ function ManageOrders() {
   const [loading, setLoading] = useState(true);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [pagination, setPagination] = useState({
-    pageSize: 10,
+    pageSize: 6,
     current: 1,
     position: ["bottomCenter"],
   });
@@ -134,7 +134,9 @@ function ManageOrders() {
       title: "Meals",
       dataIndex: "meals",
       key: "meals",
-      render: (meals) => meals.join(", "),
+      render: (meals) => {
+        return meals.length > 0 ? meals.join(", ") : "No meals selected";
+      },
     },
     {
       title: "Actions",
@@ -154,6 +156,7 @@ function ManageOrders() {
       ),
     },
   ];
+  
 
   return (
     <div className="manage-orders">
