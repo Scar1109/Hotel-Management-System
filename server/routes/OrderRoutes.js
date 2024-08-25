@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const orderModel = require('../models/Order'); // Import the order model for database operations
+const orderModel = require('../models/Order');
 
 // Function to generate a unique order ID
 async function generateUniqueOrderId() {
@@ -8,101 +8,163 @@ async function generateUniqueOrderId() {
     let orderId;
 
     while (!unique) {
-        // Generate a random 10-digit number prefixed with 'O'
         const randomNumber = Math.floor(1000000000 + Math.random() * 9000000000);
         orderId = `O${randomNumber}`;
-        
-        // Check if this orderId already exists in the database
         const existingOrder = await orderModel.findOne({ orderId });
         if (!existingOrder) {
-            unique = true; // If no existing order with this ID, mark it as unique
+            unique = true;
         }
     }
-    
-    return orderId; // Return the unique order ID
+
+    return orderId;
 }
 
 // Route to get all orders
 router.get('/getOrders', async (req, res) => {
     try {
-        const orders = await orderModel.find(); // Fetch all orders from the database
-        res.json(orders); // Send the order data as a JSON response
+        const orders = await orderModel.find(); // Fetch all orders
+        res.json({ orders }); // Wrap the response in an object
     } catch (err) {
-        res.status(500).send(err); // Send a 500 error if something goes wrong
+        res.status(500).send(err);
+    }
+});
+
+// Route to get a single order by ID
+router.get('/getOrder/:orderId', async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const order = await orderModel.findOne({ orderId });
+
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
+        res.json(order);
+    } catch (err) {
+        res.status(500).send(err);
     }
 });
 
 // Route to add a new order
 router.post('/addOrder', async (req, res) => {
     try {
-        const { purchaseDate, customerName, customerID, amount, meals } = req.body;
-
-        console.log('Received Order Data:', req.body); // Log incoming data
+        const { purchaseDate, customerName, customerID, amount, meals,roomNumber } = req.body;
 
         const orderId = await generateUniqueOrderId();
-        console.log('Generated Order ID:', orderId); // Log generated ID
-
         const newOrder = new orderModel({
             orderId,
             purchaseDate,
             customerName,
             customerID,
+            roomNumber,
             amount,
             meals,
             status: "Pending"
         });
 
         await newOrder.save();
-        console.log('Saved Order:', newOrder); // Log saved order
-
         res.status(201).json(newOrder);
     } catch (err) {
-        console.error('Error Saving Order:', err); // Log any errors
         res.status(500).send(err);
     }
 });
 
 
-router.post('/updateOrder', async (req, res) => {
+
+router.post('/updateItem', async (req, res) => {
     try {
         const { orderId, purchaseDate, customerName, customerID, amount, meals, status } = req.body;
 
-        console.log("Received data to update order:", req.body); // Log the received data
-
-        // Ensure the orderId is correct and matches the database
         const updatedOrder = await orderModel.findOneAndUpdate(
-            { orderId }, // Ensure you're querying the correct field
+            { orderId },
             { purchaseDate, customerName, customerID, amount, meals, status },
-            { new: true } // Return the updated document
+            { new: true }
         );
 
         if (!updatedOrder) {
-            return res.status(404).send('Order not found'); // Return a 404 error if the order was not found
+            return res.status(404).send('Order not found');
         }
 
-        console.log("Order updated successfully:", updatedOrder); // Log the successful update
-        res.json(updatedOrder); // Send the updated order data as a JSON response
+        res.json(updatedOrder);
     } catch (err) {
-        console.error("Error updating order:", err); // Log any errors
-        res.status(500).send(err); // Send a 500 error if something goes wrong
+        res.status(500).send(err);
     }
 });
 
-
-// Route to delete an order
-router.post('/deleteOrder', async (req, res) => {
+router.post('/deleteItem', async (req, res) => {
     try {
-        const { orderId } = req.body; // Extract the orderId from the request body
-        const deletedOrder = await orderModel.findOneAndDelete({ orderId }); // Find the order by ID and delete it
+        const { orderId } = req.body;
+        const deletedOrder = await orderModel.findOneAndDelete({ orderId });
 
         if (!deletedOrder) {
-            return res.status(404).send('Order not found'); // Return a 404 error if the order was not found
+            return res.status(404).send('Order not found');
         }
 
-        res.send('Order deleted successfully'); // Send a success message
+        res.send('Order deleted successfully');
     } catch (err) {
-        res.status(500).send(err); // Send a 500 error if something goes wrong
+        res.status(500).send(err);
+    }
+}
+);
+
+// Route to update an order
+router.put('/updateOrder/:orderId', async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const { purchaseDate, customerName, customerID, amount, meals, status } = req.body;
+
+        const updatedOrder = await orderModel.findOneAndUpdate(
+            { orderId },
+            { purchaseDate, customerName, customerID, amount, meals, status },
+            { new: true }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).send('Order not found');
+        }
+
+        res.json(updatedOrder);
+    } catch (err) {
+        res.status(500).send(err);
     }
 });
 
-module.exports = router; // Export the router to use it in the main application
+// Route to update only the status of an order
+router.patch('/updateOrderStatus/:orderId', async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const { status } = req.body;
+
+        const updatedOrder = await orderModel.findOneAndUpdate(
+            { orderId },
+            { status },
+            { new: true }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).send('Order not found');
+        }
+
+        res.json(updatedOrder);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+// Route to delete an order
+router.delete('/deleteOrder/:orderId', async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const deletedOrder = await orderModel.findOneAndDelete({ orderId });
+
+        if (!deletedOrder) {
+            return res.status(404).send('Order not found');
+        }
+
+        res.send('Order deleted successfully');
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+module.exports = router;
