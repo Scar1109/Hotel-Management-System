@@ -20,7 +20,6 @@
     // Add new feedback
     router.post("/addFeedback", async (req, res) => {
         try {
-            console.log("Received data:", req.body);
     
             const { title, username, rating, description, userID } = req.body;
     

@@ -14,6 +14,7 @@ import SignupPage from "./pages/SignupPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import TakeAwayPage from "./pages/TakeAwayPage";
 import ParkingPage from "./pages/ParkingPage";
+import Footer from "./components/CommonComponents/Footer";
 
 function App() {
     return (
@@ -28,18 +29,61 @@ function App() {
                         element={
                             <>
                                 <Navbar />
-                                <Routes>
-                                    <Route path="/" element={<HomeScreen />} exact />
-                                    <Route path="/events" element={<EventListPage />} exact />
-                                    <Route path="/events/:id" element={<EventViewPage />} exact />
-                                    <Route path="/feedbacks" element={<FeedbackPage />} exact />
-                                    <Route path="/order" element={<OrderFoodPage />} exact />
-                                    <Route path="/rooms" element={<RoomListPage />} exact />
-                                    <Route path="/rooms/:id" element={<RoomViewPage />} exact />
-                                    <Route path="/profile" element={<UserProfilePage />} exact />
-                                    <Route path="/takeaway" element={<TakeAwayPage />} exact />
-                                    <Route path="/parking" element={<ParkingPage />} exact />
-                                </Routes>
+                                <div className="main-container-page">
+                                    <Routes>
+                                        <Route
+                                            path="/"
+                                            element={<HomeScreen />}
+                                            exact
+                                        />
+                                        <Route
+                                            path="/events"
+                                            element={<EventListPage />}
+                                            exact
+                                        />
+                                        <Route
+                                            path="/events/:id"
+                                            element={<EventViewPage />}
+                                            exact
+                                        />
+                                        <Route
+                                            path="/feedbacks"
+                                            element={<FeedbackPage />}
+                                            exact
+                                        />
+                                        <Route
+                                            path="/order"
+                                            element={<OrderFoodPage />}
+                                            exact
+                                        />
+                                        <Route
+                                            path="/rooms"
+                                            element={<RoomListPage />}
+                                            exact
+                                        />
+                                        <Route
+                                            path="/rooms/:id"
+                                            element={<RoomViewPage />}
+                                            exact
+                                        />
+                                        <Route
+                                            path="/profile"
+                                            element={<UserProfilePage />}
+                                            exact
+                                        />
+                                        <Route
+                                            path="/takeaway"
+                                            element={<TakeAwayPage />}
+                                            exact
+                                        />
+                                        <Route
+                                            path="/parking"
+                                            element={<ParkingPage />}
+                                            exact
+                                        />
+                                    </Routes>
+                                </div>
+                                <Footer />
                             </>
                         }
                     />
