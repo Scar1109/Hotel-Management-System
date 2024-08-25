@@ -17,7 +17,6 @@ router.get('/getEvents', async (req, res) => {
             eventName: { $regex: search, $options: 'i' }
         });
 
-        console.log('Events:', events); // Log the events
         res.status(200).json({ events, totalPages: Math.ceil(totalEvents / limit) });
     } catch (err) {
         console.error('Error retrieving events:', err.message); // Log the error
