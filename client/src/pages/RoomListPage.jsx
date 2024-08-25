@@ -44,7 +44,7 @@ function RoomListPage() {
 
   return (
     <div>
-      <h1>Our Rooms</h1>
+      <h1 style={{marginLeft:30}}>Our Rooms</h1>
       <hr />
       <div className="room-list">
         <div className="search-bar">
