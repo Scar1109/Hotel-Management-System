@@ -34,16 +34,21 @@ router.get('/getItems', async (req, res) => {
 // Route to add a new food item
 router.post('/addItem', async (req, res) => {
     try {
-        const { name, description, price, category } = req.body;
+        const { name, description, price, category,type } = req.body;
 
         const itemId = await generateUniqueItemId();
+
+        if (type !== 'vegi' && type !== 'non vegi') {
+            return res.status(400).json({ error: 'Type must be "vegi" or "non vegi"' });
+        }
 
         const newItem = new cateringModel({
             itemId,
             name,
             description,
             price,
-            category
+            category,
+            type
         });
 
         await newItem.save();
@@ -57,11 +62,11 @@ router.post('/addItem', async (req, res) => {
 // Route to update a food item
 router.post('/updateItem', async (req, res) => {
     try {
-        const { itemId, name, description, price, category } = req.body;
+        const { itemId, name, description, price, category,type } = req.body;
 
         const updatedItem = await cateringModel.findOneAndUpdate(
             { itemId },
-            { name, description, price, category },
+            { name, description, price, category ,type},
             { new: true }
         );
 
