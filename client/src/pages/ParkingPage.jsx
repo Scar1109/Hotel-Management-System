@@ -106,6 +106,20 @@ function ParkingPage() {
             message.error("Please fill all the fields.");
             return;
         }
+
+        if (!user || !user.userID) {
+            message.error("User not found. Please log in again.");
+            return;
+        }
+
+        // check the selected date is ahead of the current date
+        const currentDate = new Date();
+        const selectedDateObj = new Date(selectedDate);
+        if (selectedDateObj < currentDate) {
+            message.error("Please select a valid date.");
+            return;
+        }
+
         console.log(user);
 
         try {
