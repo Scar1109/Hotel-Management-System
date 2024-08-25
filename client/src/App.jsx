@@ -14,6 +14,7 @@ import SignupPage from "./pages/SignupPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import TakeAwayPage from "./pages/TakeAwayPage";
 import ParkingPage from "./pages/ParkingPage";
+import Footer from "./components/CommonComponents/Footer";
 
 function App() {
     return (
@@ -40,6 +41,7 @@ function App() {
                                     <Route path="/takeaway" element={<TakeAwayPage />} exact />
                                     <Route path="/parking" element={<ParkingPage />} exact />
                                 </Routes>
+                                <Footer />
                             </>
                         }
                     />

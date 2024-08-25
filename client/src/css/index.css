@@ -21,6 +21,7 @@
 @import url('./users/roomlistpage.css');
 @import url('./users/roomviewpage.css');
 @import url('./users/eventviewpage.css');
+@import url('./users/footer.css');
 
 @import url('./admin/ManageEmployees.css');
 @import url('./admin/ManageOrder_Foods.css');
