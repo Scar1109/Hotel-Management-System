@@ -1,36 +1,10 @@
-.room-list {
+.event-list {
     width: 80%;
     margin: auto;
     font-family: Arial, sans-serif;
 }
 
-.search-bar {
-    display: flex;
-    justify-content: right;
-}
-
-.search-bar input,
-.search-bar select {
-    padding: 8px;
-    margin-right: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.search-bar button {
-    padding: 8px 16px;
-    background-color: #27ae60;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.search-bar button:hover {
-    background-color: #229954;
-}
-
-.room {
+.event {
     display: flex;
     justify-content: space-between;
     border: 1px solid #eee;
@@ -39,52 +13,52 @@
     border-radius: 8px;
 }
 
-.room img {
+.event img {
     width: 150px;
     height: 100px;
     border-radius: 8px;
 }
 
-.room-details {
+.event-details {
     flex-grow: 1;
     padding-left: 15px;
 }
 
-.room-details h2 {
+.event-details h2 {
     margin: 0 0 10px 0;
     font-size: 1.5em;
 }
 
-.room-details p {
+.event-details p {
     margin: 5px 0;
 }
 
-.room-icons {
+.event-icons {
     margin-top: 10px;
 }
 
-.room-icons span {
+.event-icons span {
     margin-right: 10px;
     font-size: 1.2em;
 }
 
-.room-price {
+.event-price {
     text-align: right;
 }
 
-.room-price p:first-child {
+.event-price p:first-child {
     margin: 0;
     font-size: 0.9em;
     color: #888;
 }
 
-.room-price p:last-child {
+.event-price p:last-child {
     margin: 0;
     font-size: 1.5em;
     color: #333;
 }
 
-.room-price button {
+.event-price button {
     padding: 8px 16px;
     background-color: #27ae60;
     color: #fff;
@@ -94,6 +68,6 @@
     margin-top: 10px;
 }
 
-.room-price button:hover {
+.event-price button:hover {
     background-color: #229954;
 }

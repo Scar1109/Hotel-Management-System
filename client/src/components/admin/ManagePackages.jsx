@@ -8,6 +8,7 @@ function ManagePackages() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [packages, setPackages] = useState([]);
   const [editingPackage, setEditingPackage] = useState(null);
+  const [searchText, setSearchText] = useState("");
 
   const [form] = Form.useForm(); // Form instance for adding a package
   const [updateForm] = Form.useForm(); // Form instance for updating a package
@@ -86,6 +87,15 @@ function ManagePackages() {
     }
   };
 
+  // Filter packages based on search input
+  const filteredPackages = packages.filter((pkg) => {
+    return (
+      pkg.packageName.toLowerCase().includes(searchText.toLowerCase()) ||  // Filter by package name
+      pkg.description.toLowerCase().includes(searchText.toLowerCase()) || // Filter by description
+      pkg.price.toString().includes(searchText) // Filter by price
+    );
+  });
+
   // Table columns
   const columns = [
     {
@@ -131,6 +141,14 @@ function ManagePackages() {
       <div className="manage_packages_content">
         <div className="manage_packages_header">
           <h1>Manage Packages</h1>
+          <div className="search-bar">
+          <Input
+            placeholder="Search packages"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            style={{ width: 300, marginLeft: 20 }}
+          />                   
+                              </div>
           <button className="add_new_package" onClick={showModal}>
             Add Package
           </button>
@@ -171,9 +189,9 @@ function ManagePackages() {
           </Modal>
         </div>
         <div className="managepackages_table">
-          <Table
+        <Table
             columns={columns}
-            dataSource={packages}
+            dataSource={filteredPackages} // Use the filtered data
             pagination={{ pageSize: 6 }} // Pagination with 6 rows per page
             rowKey="_id" // Ensure each row has a unique key
           />

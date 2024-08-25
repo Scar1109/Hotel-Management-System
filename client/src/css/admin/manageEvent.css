@@ -1,0 +1,48 @@
+.manage-events {
+    margin: 16px;
+    padding: 16px;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: calc(100vh - 100px);
+    
+}
+/* .sg_eventManage_table_bg{
+    padding: 20px;
+    border-radius: 8px;
+    width: 1650px;
+} */
+
+.search-add-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-bar-eventmanage {
+    width: 300px;
+}
+
+.add-event-button {
+    background-color: #25b05f;
+    border-color: #25b05f;
+}
+
+.pagination-eventMange {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.ant-modal-content {
+    border-radius: 10px;
+}
+
+.ant-form-item {
+    margin-bottom: 15px;
+}
+
+.action-buttons-manageEvent > svg {
+    margin-right: 8px;
+    cursor: pointer;
+}
