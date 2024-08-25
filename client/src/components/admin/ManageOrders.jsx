@@ -134,7 +134,9 @@ function ManageOrders() {
       title: "Meals",
       dataIndex: "meals",
       key: "meals",
-      render: (meals) => meals.join(", "),
+      render: (meals) => {
+        return meals.length > 0 ? meals.join(", ") : "No meals selected";
+      },
     },
     {
       title: "Actions",
@@ -154,6 +156,7 @@ function ManageOrders() {
       ),
     },
   ];
+  
 
   return (
     <div className="manage-orders">
