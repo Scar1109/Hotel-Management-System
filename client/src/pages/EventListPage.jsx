@@ -53,7 +53,7 @@ function EventListPage() {
 
     return (
         <div>
-            <h1>Our Events</h1>
+            <h1 style={{marginLeft:30}}>Our Events</h1>
             <hr />
             <div className="event-list">
                 {/* Search input */}
