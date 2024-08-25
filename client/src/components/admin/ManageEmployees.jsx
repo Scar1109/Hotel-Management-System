@@ -61,6 +61,17 @@ function ManageEmployees() {
 
     // Function to add a new employee
     const handleAddEmployee = async (newEmployee) => {
+
+        if (!newEmployee.firstName || !newEmployee.lastName || !newEmployee.email || !newEmployee.username) {
+            message.error("Please fill all the fields"); // Show error message if any field is empty
+            return;
+        }
+
+        if (!newEmployee.email.includes("@") || !newEmployee.email.includes(".")) {
+            message.error("Invalid email address"); // Show error message if email is invalid
+            return;
+        }
+
         try {
             await axios.post("http://localhost:5000/api/employee/addEmployee", newEmployee);
             message.success("Employee added successfully");

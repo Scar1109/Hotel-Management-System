@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { message } from 'antd';
 
 import MealImg1 from '../assets/Images/meal1.png';
 import MealImg2 from '../assets/Images/meal2.jpeg';
@@ -62,7 +63,7 @@ function MealOrderPage() {
 
   const handlePlaceOrder = async () => {
     if (!customerName || !customerID || !roomNumber || selectedMeals.length === 0) {
-      alert('Please fill in all details, including room number, and select at least one meal.');
+      message.error('Please fill in all details.');
       return;
     }
 
@@ -77,11 +78,11 @@ function MealOrderPage() {
 
     try {
       const response = await axios.post('/api/order/addOrder', orderData);
-      alert('Order placed successfully!');
+      message.success('Order placed successfully!');
       navigate('/order-confirmation');
     } catch (error) {
       console.error('Error placing order:', error);
-      alert('Failed to place order. Please try again.');
+      message.error('Failed to place order. Please try again.');
     }
   };
 
