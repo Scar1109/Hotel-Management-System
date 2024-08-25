@@ -14,6 +14,12 @@
     gap: 20px;
 }
 
+.feedback-list-pofile-6789 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
 .feedback-card-6789 {
     padding: 15px;
     border: 1px solid #ddd;

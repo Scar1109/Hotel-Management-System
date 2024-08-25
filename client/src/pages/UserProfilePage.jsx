@@ -6,6 +6,7 @@ import EventBookings from "../components/User/EventBookings";
 import FoodOrders from "../components/User/FoodOrders";
 import ParkingBookings from "../components/User/ParkingBookings";
 import LeaveDetails from "../components/User/LeaveDetails";
+import Feedbacks from "../components/User/Feedbacks";
 
 function UserProfilePage() {
     const [user, setUser] = useState({});
@@ -125,8 +126,11 @@ function UserProfilePage() {
                         <Tabs.TabPane tab="Parkings" key="4">
                             <ParkingBookings />
                         </Tabs.TabPane>
+                        <Tabs.TabPane tab="Feedbacks" key="5">
+                            <Feedbacks />
+                        </Tabs.TabPane>
                         {user.userType === "Employee" && (
-                            <Tabs.TabPane tab="Leaves" key="5">
+                            <Tabs.TabPane tab="Leaves" key="6">
                                 <LeaveDetails />
                             </Tabs.TabPane>
                         )}
