@@ -136,11 +136,26 @@ function MealOrderPage() {
           />
           <input
             type="text"
+            placeholder="Phone Number"
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+            className="input-field"
+          />
+          <input
+            type="text"
+            placeholder="Address"
+            className="input-field"
+            readOnly // Makes the input field read-only
+            style={{marginTop: 10}}
+          />
+          <input
+            type="text"
             placeholder="Customer ID"
             value={customerID}
             onChange={(e) => setCustomerID(e.target.value)}
             className="input-field"
-            readOnly // Makes the input field read-only
+            disabled // Makes the input field read-only
+            style={{marginTop: 10}}
           />
         </div>
         <button className="place-order-button" onClick={handlePlaceOrder}>Place Order</button>
