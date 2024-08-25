@@ -106,6 +106,11 @@ function ManageOrders() {
       key: "orderId",
     },
     {
+      title: "Room Number", // New column for Room Number
+      dataIndex: "roomNumber",
+      key: "roomNumber",
+    },
+    {
       title: "Purchase Date",
       dataIndex: "purchaseDate",
       key: "purchaseDate",

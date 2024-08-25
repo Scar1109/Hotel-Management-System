@@ -48,7 +48,7 @@ router.get('/getOrder/:orderId', async (req, res) => {
 // Route to add a new order
 router.post('/addOrder', async (req, res) => {
     try {
-        const { purchaseDate, customerName, customerID, amount, meals } = req.body;
+        const { purchaseDate, customerName, customerID, amount, meals,roomNumber } = req.body;
 
         const orderId = await generateUniqueOrderId();
         const newOrder = new orderModel({
@@ -56,6 +56,7 @@ router.post('/addOrder', async (req, res) => {
             purchaseDate,
             customerName,
             customerID,
+            roomNumber,
             amount,
             meals,
             status: "Pending"

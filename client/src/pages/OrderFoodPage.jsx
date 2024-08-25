@@ -39,7 +39,7 @@ function MealOrderPage() {
     fetchMeals();
   }, []);
 
-  const handleFilter = (filter) => {
+   const handleFilter = (filter) => {
     if (filter === 'All') {
       setFilteredMeals(meals);
     } else {
