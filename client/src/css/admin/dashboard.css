@@ -58,4 +58,11 @@
     padding: 0 15px;
 }
 
-
+.sg_admin_dash_main_container{
+    margin: 16px;
+    padding: 16px;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: calc(100vh - 100px);
+}

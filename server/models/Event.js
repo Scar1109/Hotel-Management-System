@@ -1,28 +1,32 @@
 const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema({
-    eventId : {
+    eventId: {
         type: String,
         required: true,
     },
-    eventName : {
+    eventName: {
         type: String,
         required: true,
     },
-    eventType : {
+    eventType: {
         type: String,
         required: true,
     },
-    price : {
+    price: {
         type: Number,
         required: true,
     },
-    description : {
+    description: {
         type: String,
         required: true,
     },
-    baseImage : {
+    baseImage: {
         type: String,
+        required: true,
+    },
+    eventDate: { // Added field for event date
+        type: Date,
         required: true,
     }
 
