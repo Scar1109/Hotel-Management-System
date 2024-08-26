@@ -21,7 +21,7 @@ const orderSchema = new mongoose.Schema(
         roomNumber: {
             type: String,  // Add the room number field here
             required: true,
-            default: "Take Away",
+            default: "Take-Away",
         },
         amount : {
             type: Number,
