@@ -293,6 +293,7 @@ function AddEditFoodPopup({ food, onSave, onClose }) {
             cursor: "pointer",
             transition: "all 0.3s ease",
             outline: "none",
+            marginBottom: "20px",
           }}
         >
           <option value="vegi">Veg</option>
