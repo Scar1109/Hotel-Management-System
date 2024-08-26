@@ -52,16 +52,16 @@ function EventViewPage() {
             const response = await axios.post(`/api/event/reserveEvent/${event.eventId}`, reservationData);
     
             console.log("Reservation Response:", response.data); // Debugging: Log the response data
-            message.success(`Reservation successful! Your booking ID is ${response.data.bookingID}`); // Show success message with booking ID
+            message.success(`Booking successful!`); // Show success message with booking ID
     
             setIsModalOpen(false); // Close modal on successful reservation
             form.resetFields(); // Reset form fields
         } catch (error) {
             console.error("Failed to reserve:", error);
-            message.error("Reservation failed. Please try again."); // Show error message if reservation fails
+            message.error("Booking failed. Please try again."); // Show error message if reservation fails
         }
     };
-    
+
     const showModal = () => {
         setIsModalOpen(true); // Open modal
     };

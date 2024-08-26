@@ -134,7 +134,7 @@ router.post('/reserveEvent/:eventId', async (req, res) => {
         });
 
         await newBooking.save();
-        res.status(201).json({ message: 'Reservation successful', bookingID });
+        res.status(201).json({ message: 'Booking successful' });
     } catch (error) {
         res.status(500).json({ message: 'Error reserving event', error: error.message });
     }
