@@ -3,14 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
 
-import MealImg1 from '../assets/Images/meal1.png';
-import MealImg2 from '../assets/Images/meal2.jpeg';
-
-const mealImages = {
-  'Meal 1': MealImg1,
-  'Meal 2': MealImg2,
-};
-
 function MealOrderPage() {
   const [meals, setMeals] = useState([]);
   const [filteredMeals, setFilteredMeals] = useState([]);
@@ -33,19 +25,16 @@ function MealOrderPage() {
         setFilteredMeals([]);
       }
     };
-  
+
     fetchMeals();
-  
-    // Auto-fetch customer ID from localStorage when the component mounts
+
     const storedCustomer = localStorage.getItem('currentUser');
     if (storedCustomer) {
-      const userObject = JSON.parse(storedCustomer); // Parse the stored JSON string to an object
-      setCustomerID(userObject.userID); // Set the userID from the object to the customerID state
-      console.log(userObject.userID); // Log the userID to the console if needed
+      const userObject = JSON.parse(storedCustomer);
+      setCustomerID(userObject.userID);
+      console.log(userObject.userID);
     }
-  
   }, []);
-  
 
   const handleFilter = (filter) => {
     if (filter === 'All') {
@@ -58,14 +47,14 @@ function MealOrderPage() {
 
   const handleSelectMeal = (meal) => {
     setSelectedMeals([...selectedMeals, meal]);
-    setTotalAmount(totalAmount + meal.price);
+    setTotalAmount(totalAmount + Number(meal.price)); // Ensure meal.price is treated as a number
   };
 
   const handleRemoveMeal = (index) => {
     const updatedMeals = [...selectedMeals];
     const removedMeal = updatedMeals.splice(index, 1)[0];
     setSelectedMeals(updatedMeals);
-    setTotalAmount(totalAmount - removedMeal.price);
+    setTotalAmount(totalAmount - Number(removedMeal.price)); // Ensure removedMeal.price is treated as a number
   };
 
   const handlePlaceOrder = async () => {
@@ -79,8 +68,7 @@ function MealOrderPage() {
       customerName,
       customerID,
       amount: totalAmount,
-      meals: selectedMeals.map((meal) => meal.name), // Simplified to only include meal names
-
+      meals: selectedMeals.map((meal) => meal.name),
     };
 
     try {
@@ -105,11 +93,11 @@ function MealOrderPage() {
       <div className="meal-list">
         {filteredMeals.map((meal, index) => (
           <div className="meal-card" key={index}>
-            <img src={mealImages[meal.name] || MealImg1} alt={meal.name} className="meal-image" />
+            <img src={meal.imageUrl} alt={meal.name} className="meal-image" />
             <div className="meal-details">
               <h2>{meal.name}</h2>
               <p>{meal.description}</p>
-              <p>Type: {meal.type}</p> {/* Display the type */}
+              <p>Type: {meal.type}</p>
               <p>Price: Rs. {meal.price}</p>
               <button className="order-button" onClick={() => handleSelectMeal(meal)}>Add to Order</button>
             </div>
@@ -121,7 +109,7 @@ function MealOrderPage() {
         <h2>Your Order</h2>
         {selectedMeals.map((meal, index) => (
           <div className="order-item" key={index}>
-            <p>{meal.name} - Rs. {meal.price} ({meal.type})</p> {/* Display the type */}
+            <p>{meal.name} - Rs. {meal.price} ({meal.type})</p>
             <button className="remove-button" onClick={() => handleRemoveMeal(index)}>Remove</button>
           </div>
         ))}
@@ -145,8 +133,8 @@ function MealOrderPage() {
             type="text"
             placeholder="Address"
             className="input-field"
-            readOnly // Makes the input field read-only
-            style={{marginTop: 10}}
+            readOnly
+            style={{ marginTop: 10 }}
           />
           <input
             type="text"
@@ -154,8 +142,8 @@ function MealOrderPage() {
             value={customerID}
             onChange={(e) => setCustomerID(e.target.value)}
             className="input-field"
-            disabled // Makes the input field read-only
-            style={{marginTop: 10}}
+            disabled
+            style={{ marginTop: 10 }}
           />
         </div>
         <button className="place-order-button" onClick={handlePlaceOrder}>Place Order</button>

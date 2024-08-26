@@ -7,6 +7,7 @@ import FoodOrders from "../components/User/FoodOrders";
 import ParkingBookings from "../components/User/ParkingBookings";
 import LeaveDetails from "../components/User/LeaveDetails";
 import Feedbacks from "../components/User/Feedbacks";
+import Packages from "../components/User/PackageBooking";
 
 function UserProfilePage() {
     const [user, setUser] = useState({});
@@ -134,6 +135,9 @@ function UserProfilePage() {
                                 <LeaveDetails />
                             </Tabs.TabPane>
                         )}
+                        <Tabs.TabPane tab="Packages" key="7">
+                            <Packages/>
+                        </Tabs.TabPane>
                     </Tabs>
                 </ConfigProvider>
             </div>
