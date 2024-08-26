@@ -40,7 +40,7 @@ router.get('/getEvent/:id', async (req, res) => {
 
 router.post('/addEvent', async (req, res) => {
     try {
-        const { eventName, eventType, price, description, baseImage, eventDate } = req.body;
+        const { eventName, eventType, price, description, baseImage } = req.body;
         const eventId = 'EVT' + Date.now(); // generate a unique event ID
 
         const existingEvent = await eventModel.findOne({ eventName });
@@ -55,7 +55,6 @@ router.post('/addEvent', async (req, res) => {
             price,
             description,
             baseImage,
-            eventDate
         });
 
         await newEvent.save();
@@ -82,7 +81,7 @@ router.post('/deleteEvent', async (req, res) => {
 
 router.post('/updateEvent', async (req, res) => {
     try {
-        const { eventId, eventName, eventType, price, description, baseImage, eventDate } = req.body;
+        const { eventId, eventName, eventType, price, description, baseImage } = req.body;
 
         const event = await eventModel.findOne({ eventId });
         if (!event) {
@@ -94,7 +93,6 @@ router.post('/updateEvent', async (req, res) => {
         event.price = price;
         event.description = description;
         event.baseImage = baseImage;
-        event.eventDate = eventDate;
 
         await event.save();
         res.status(200).json({ message: 'Event updated successfully' });
@@ -105,29 +103,43 @@ router.post('/updateEvent', async (req, res) => {
 
 // Booking events
 
+// Function to generate a new booking ID
+const generateBookingID = async () => {
+    const lastBooking = await eventBookingModel.findOne().sort({ bookingID: -1 }).limit(1);
+    if (!lastBooking) {
+        return 'BOK001';
+    }
+    const lastID = parseInt(lastBooking.bookingID.substring(3));
+    const newID = lastID + 1;
+    return `BOK${newID.toString().padStart(3, '0')}`;
+};
+
 // Add booking route
 router.post('/reserveEvent/:eventId', async (req, res) => {
     try {
         const { eventId } = req.params;
         const { guestName, guestEmail, guestPhone, eventDate, totalAmount, userID } = req.body;
 
+        const bookingID = await generateBookingID(); // Generate the booking ID
+
         const newBooking = new eventBookingModel({
+            bookingID, // Save the generated booking ID
             eventId,
             guestName,
             guestEmail,
             guestPhone,
             eventDate,
             totalAmount,
-            userID // Include userID in the booking
+            userID
         });
 
         await newBooking.save();
-        res.status(201).json({ message: 'Reservation successful' });
-    } catch (err) {
-        console.error("Error making reservation:", err.message);
-        res.status(500).json({ message: 'Error making reservation', error: err.message });
+        res.status(201).json({ message: 'Reservation successful', bookingID });
+    } catch (error) {
+        res.status(500).json({ message: 'Error reserving event', error: error.message });
     }
 });
+
 
 // Get all bookings for a user
 router.get('/getBookings', async (req, res) => {

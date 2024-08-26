@@ -102,7 +102,7 @@ const FeedbackPage = () => {
             <h1 style={{marginBottom:20, marginLeft:5}}>Feedbacks..</h1>
             <div className="feedback-header-6789">
                 <Input.Search
-                    placeholder="Search by title or username"
+                    placeholder="Search"
                     value={search}
                     onChange={handleSearch}
                     style={{ width: 300 }}
@@ -115,7 +115,7 @@ const FeedbackPage = () => {
                 {feedbacks.map((feedback) => (
                     <div key={feedback._id} className="feedback-card-6789">
                         <h3>{feedback.title}</h3>
-                        <p><strong>User:</strong> {feedback.username}</p>
+                        <p><strong>{feedback.username}</strong> </p>
                         <p>{feedback.description}</p>
                         <Rate disabled defaultValue={feedback.rating} />
                     </div>

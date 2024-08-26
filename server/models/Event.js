@@ -24,10 +24,6 @@ const eventSchema = new mongoose.Schema({
     baseImage: {
         type: String,
         required: true,
-    },
-    eventDate: { // Added field for event date
-        type: Date,
-        required: true,
     }
 
 }, { timestamps: true });

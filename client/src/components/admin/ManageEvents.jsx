@@ -9,7 +9,7 @@ const { confirm } = Modal;
 
 const ManageEvents = () => {
     const [events, setEvents] = useState([]);
-    const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
+    const [pagination, setPagination] = useState({ current: 1, pageSize: 7, total: 0 });
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -52,7 +52,6 @@ const ManageEvents = () => {
         setSelectedEvent(record);
         form.setFieldsValue({
             ...record,
-            eventDate: moment(record.eventDate)  // Convert the date to a moment object
         });
         setIsModalVisible(true);
     };
@@ -84,6 +83,7 @@ const ManageEvents = () => {
         setSelectedEvent(null);
     };
 
+
     const handleSubmit = async (values) => {
         try {
             if (isEditMode) {
@@ -105,7 +105,7 @@ const ManageEvents = () => {
         { title: 'Event Name', dataIndex: 'eventName', key: 'eventName' },
         { title: 'Event Type', dataIndex: 'eventType', key: 'eventType' },
         { title: 'Price', dataIndex: 'price', key: 'price' },
-        { title: 'Date', dataIndex: 'eventDate', key: 'eventDate', render: text => new Date(text).toLocaleDateString() },
+        // { title: 'Date', dataIndex: 'eventDate', key: 'eventDate', render: text => new Date(text).toLocaleDateString() },
         { title: 'Description', dataIndex: 'description', key: 'description' },
         {
             title: 'Action',
@@ -176,23 +176,6 @@ const ManageEvents = () => {
                         </Form.Item>
                         <Form.Item label="Description" name="description" rules={[{ required: true, message: 'Please input the description!' }]}>
                             <Input.TextArea />
-                        </Form.Item>
-                        <Form.Item
-                            label="Event Date"
-                            name="eventDate"
-                            rules={[
-                                { required: true, message: 'Please select the event date!' },
-                                {
-                                    validator: (_, value) => {
-                                        if (!value || value.isAfter(moment())) {
-                                            return Promise.resolve();
-                                        }
-                                        return Promise.reject(new Error('The event date must be in the future!'));
-                                    }
-                                }
-                            ]}
-                        >
-                            <DatePicker format="YYYY-MM-DD" />
                         </Form.Item>
                         <Form.Item label="Image Link" name="baseImage" rules={[{ required: true, message: 'Please input the image link!' }]}>
                             <Input />

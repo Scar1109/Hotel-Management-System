@@ -135,7 +135,7 @@ function HomePage() {
                                 <h2>Tantalising Flavours!
                                 </h2>
                                 <h>Embark on a culinary journey and discover a world of delectable dishes from Sri Lanka and beyond. Immerse yourself in the exquisite flavours and let your taste buds explode with every bite. Head to our cosy restaurants and indulge in a wide range of freshly prepared dishes or beverages of your choice.</h>
-                                <Button danger style={{ color: '#27ae61', borderColor: '#27ae61', backgroundColor: 'transparent', width: 140, marginLeft: 60, marginTop: 30 }}>FIND OUT MORE</Button>
+                                <Button danger style={{ color: '#27ae61', borderColor: '#27ae61', backgroundColor: 'transparent', width: 140, marginLeft: 60, marginTop: 30 }}>FIND MORE</Button>
                             </div>
                             <div className="sg_home_page_food_card_section">
                                 <div className="sg_home_page_food_card_set">
