@@ -50,15 +50,16 @@ function MealOrderPage() {
 
   const handleSelectMeal = (meal) => {
     setSelectedMeals([...selectedMeals, meal]);
-    setTotalAmount(totalAmount + meal.price);
+    setTotalAmount(totalAmount + Number(meal.price)); // Ensure meal.price is treated as a number
   };
-
+  
   const handleRemoveMeal = (index) => {
     const updatedMeals = [...selectedMeals];
     const removedMeal = updatedMeals.splice(index, 1)[0];
     setSelectedMeals(updatedMeals);
-    setTotalAmount(totalAmount - removedMeal.price);
+    setTotalAmount(totalAmount - Number(removedMeal.price)); // Ensure removedMeal.price is treated as a number
   };
+  
 
   const handlePlaceOrder = async () => {
     if (
@@ -149,6 +150,7 @@ function MealOrderPage() {
             value={customerID}
             onChange={(e) => setCustomerID(e.target.value)}
             className="input-field"
+            disabled
           />
           <input
             type="text"
