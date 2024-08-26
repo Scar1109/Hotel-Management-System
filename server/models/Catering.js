@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 
 const cateringSchema = new mongoose.Schema(
   {
+    imageUrl: {
+      type: String,
+    },
     itemId: {
       type: String,
       required: true,

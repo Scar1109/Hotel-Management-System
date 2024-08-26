@@ -27,6 +27,7 @@ function ManageCateringFoods() {
       );
       const foodData = response.data || [];
       setFoods(foodData);
+      console.log(foodData);
     } catch (error) {
       message.error("Failed to fetch foods");
     } finally {
@@ -91,6 +92,19 @@ function ManageCateringFoods() {
   };
 
   const columns = [
+    
+      {
+        title: "Image",
+        dataIndex: "imageUrl",
+        key: "imageUrl",
+        render: (text) => (
+          <img
+            src={text} // Ensure `text` correctly references the imageUrl
+            alt="food"
+            style={{ width: "100px", height: "auto" }}
+          />
+        ),
+      },
     {
       title: "Item ID",
       dataIndex: "itemId",
@@ -139,6 +153,7 @@ function ManageCateringFoods() {
       ),
     },
   ];
+  
 
   return (
     <div className="manage-catering-foods">
@@ -197,92 +212,101 @@ function ManageCateringFoods() {
 }
 
 function AddEditFoodPopup({ food, onSave, onClose }) {
-    const [formData, setFormData] = useState({
-      name: food?.name || "",
-      description: food?.description || "",
-      price: food?.price || "",
-      category: food?.category || "",
-      type: food?.type || "vegi", // Default to "vegi"
-    });
-  
-    // Handle input change for text fields
-    const handleChange = (e) => {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-  
-    // Handle select change for the "type" field
-    const handleSelectChange = (value) => {
-      setFormData({ ...formData, type: value });
-    };
-  
-    // Handle form submission
-    const handleSubmit = () => {
-      const dataToSave = food ? { ...food, ...formData } : formData;
-      onSave(dataToSave);
-    };
-  
-    return (
-      <div className="popup-overlay">
-        <div className="popup">
-          <h3>{food ? "Edit Food Item" : "Add New Food Item"}</h3>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Food Name"
-          />
-          <input
-            type="text"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Description"
-          />
-          <input
-            type="number"
-            name="price"
-            value={formData.price}
-            onChange={handleChange}
-            placeholder="Price"
-          />
-          <input
-            type="text"
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            placeholder="Category"
-          />
-          <select
-            name="type"
-            value={formData.type}
-            onChange={(e) => handleSelectChange(e.target.value)}
-            style={{
-              width: "200px",
-              padding: "10px",
-              border: "1px solid #ccc",
-              borderRadius: "5px",
-              backgroundColor: "#f8f8f8",
-              fontSize: "16px",
-              color: "#333",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-              outline: "none",
-            }}
-          >
-            <option value="vegi">Veg</option>
-            <option value="non vegi">Non-Veg</option>
-          </select>
-  
-          <div className="actions">
-            <button onClick={handleSubmit}>Save</button>
-            <button onClick={onClose}>Cancel</button>
-          </div>
+  const [formData, setFormData] = useState({
+    name: food?.name || "",
+    description: food?.description || "",
+    price: food?.price || "",
+    category: food?.category || "",
+    type: food?.type || "vegi", // Default to "vegi"
+    imageUrl: food?.imageUrl || "", // Ensure imageUrl is included
+
+  });
+
+  // Handle input change for text fields
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle select change for the "type" field
+  const handleSelectChange = (value) => {
+    setFormData({ ...formData, type: value });
+  };
+
+  // Handle form submission
+  const handleSubmit = () => {
+    const dataToSave = food ? { ...food, ...formData } : formData;
+    onSave(dataToSave);
+  };
+
+  return (
+    <div className="popup-overlay">
+      <div className="popup">
+        <h3>{food ? "Edit Food Item" : "Add New Food Item"}</h3>
+
+        <input
+          type="text"
+          name="imageUrl"
+          value={formData.imageUrl}
+          onChange={handleChange}
+          placeholder="Image URL"
+        />
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          placeholder="Food Name"
+        />
+        <input
+          type="text"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="Description"
+        />
+        <input
+          type="number"
+          name="price"
+          value={formData.price}
+          onChange={handleChange}
+          placeholder="Price"
+        />
+        <input
+          type="text"
+          name="category"
+          value={formData.category}
+          onChange={handleChange}
+          placeholder="Category"
+        />
+        <select
+          name="type"
+          value={formData.type}
+          onChange={(e) => handleSelectChange(e.target.value)}
+          style={{
+            width: "200px",
+            padding: "10px",
+            border: "1px solid #ccc",
+            borderRadius: "5px",
+            backgroundColor: "#f8f8f8",
+            fontSize: "16px",
+            color: "#333",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            outline: "none",
+          }}
+        >
+          <option value="vegi">Veg</option>
+          <option value="non vegi">Non-Veg</option>
+        </select>
+
+        <div className="actions">
+          <button onClick={handleSubmit}>Save</button>
+          <button onClick={onClose}>Cancel</button>
         </div>
       </div>
-    );
-  }
-  
+    </div>
+  );
+}
 
 function DeleteConfirmationPopup({ food, onDelete, onClose }) {
   const handleDelete = () => {

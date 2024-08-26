@@ -3,183 +3,168 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { message } from "antd";
 
-import MealImg1 from "../assets/Images/meal1.png";
-import MealImg2 from "../assets/Images/meal2.jpeg";
-
-const mealImages = {
-    "Meal 1": MealImg1,
-    "Meal 2": MealImg2,
-};
-
 function MealOrderPage() {
-    const [meals, setMeals] = useState([]);
-    const [filteredMeals, setFilteredMeals] = useState([]);
-    const [selectedMeals, setSelectedMeals] = useState([]);
-    const [customerName, setCustomerName] = useState("");
-    const [customerID, setCustomerID] = useState("");
-    const [roomNumber, setRoomNumber] = useState("");
-    const [totalAmount, setTotalAmount] = useState(0);
-    const navigate = useNavigate();
+  const [meals, setMeals] = useState([]);
+  const [filteredMeals, setFilteredMeals] = useState([]);
+  const [selectedMeals, setSelectedMeals] = useState([]);
+  const [customerName, setCustomerName] = useState("");
+  const [customerID, setCustomerID] = useState("");
+  const [roomNumber, setRoomNumber] = useState("");
+  const [totalAmount, setTotalAmount] = useState(0);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchMeals = async () => {
-            try {
-                const response = await axios.get("/api/catering/getItems");
-                const mealsData = response.data || [];
-                setMeals(mealsData);
-                setFilteredMeals(mealsData);
-            } catch (error) {
-                console.error("Error fetching meals:", error);
-                setMeals([]);
-                setFilteredMeals([]);
-            }
-        };
+  useEffect(() => {
+    const fetchMeals = async () => {
+      try {
+        const response = await axios.get("/api/catering/getItems");
+        const mealsData = response.data || [];
 
-        fetchMeals();
-
-        // Auto-fetch customer ID from localStorage when the component mounts
-        const storedCustomer = localStorage.getItem("currentUser");
-        if (storedCustomer) {
-            const userObject = JSON.parse(storedCustomer);
-            setCustomerID(userObject.userID);
-            console.log(userObject.userID); // Verify the correct value is retrieved
-        }
-    }, []);
-
-    const handleFilter = (filter) => {
-        if (filter === "All") {
-            setFilteredMeals(meals);
-        } else {
-            const filtered = meals.filter((meal) => meal.type === filter);
-            setFilteredMeals(filtered);
-        }
+        setMeals(mealsData);
+        setFilteredMeals(mealsData);
+      } catch (error) {
+        console.error("Error fetching meals:", error);
+        setMeals([]);
+        setFilteredMeals([]);
+      }
     };
 
-    const handleSelectMeal = (meal) => {
-        setSelectedMeals([...selectedMeals, meal]);
-        setTotalAmount(totalAmount + meal.price);
+    fetchMeals();
+
+    // Auto-fetch customer ID from localStorage when the component mounts
+    const storedCustomer = localStorage.getItem("currentUser");
+    if (storedCustomer) {
+      const userObject = JSON.parse(storedCustomer);
+      setCustomerID(userObject.userID);
+      console.log(userObject.userID); // Verify the correct value is retrieved
+    }
+  }, []);
+
+  const handleFilter = (filter) => {
+    if (filter === "All") {
+      setFilteredMeals(meals);
+    } else {
+      const filtered = meals.filter((meal) => meal.type === filter);
+      setFilteredMeals(filtered);
+    }
+  };
+
+  const handleSelectMeal = (meal) => {
+    setSelectedMeals([...selectedMeals, meal]);
+    setTotalAmount(totalAmount + meal.price);
+  };
+
+  const handleRemoveMeal = (index) => {
+    const updatedMeals = [...selectedMeals];
+    const removedMeal = updatedMeals.splice(index, 1)[0];
+    setSelectedMeals(updatedMeals);
+    setTotalAmount(totalAmount - removedMeal.price);
+  };
+
+  const handlePlaceOrder = async () => {
+    if (
+      !customerName ||
+      !customerID ||
+      !roomNumber ||
+      selectedMeals.length === 0
+    ) {
+      message.error("Please fill in all details.");
+      return;
+    }
+
+    const orderData = {
+      purchaseDate: new Date().toLocaleDateString(),
+      customerName,
+      customerID,
+      roomNumber,
+      amount: totalAmount,
+      meals: selectedMeals.map((meal) => meal.name), // Simplified to only include meal names
     };
 
-    const handleRemoveMeal = (index) => {
-        const updatedMeals = [...selectedMeals];
-        const removedMeal = updatedMeals.splice(index, 1)[0];
-        setSelectedMeals(updatedMeals);
-        setTotalAmount(totalAmount - removedMeal.price);
-    };
+    try {
+      const response = await axios.post("/api/order/addOrder", orderData);
+      message.success("Order placed successfully!");
+      navigate("/order-confirmation");
+    } catch (error) {
+      console.error("Error placing order:", error);
+      message.error("Failed to place order. Please try again.");
+    }
+  };
 
-    const handlePlaceOrder = async () => {
-        if (
-            !customerName ||
-            !customerID ||
-            !roomNumber ||
-            selectedMeals.length === 0
-        ) {
-            message.error("Please fill in all details.");
-            return;
-        }
-
-        const orderData = {
-            purchaseDate: new Date().toLocaleDateString(),
-            customerName,
-            customerID,
-            roomNumber,
-            amount: totalAmount,
-            meals: selectedMeals.map((meal) => meal.name), // Simplified to only include meal names
-        };
-
-        try {
-            const response = await axios.post("/api/order/addOrder", orderData);
-            message.success("Order placed successfully!");
-            navigate("/order-confirmation");
-        } catch (error) {
-            console.error("Error placing order:", error);
-            message.error("Failed to place order. Please try again.");
-        }
-    };
-
-    return (
-        <div className="order-container">
-            <h1>Order Your Meal for Room</h1>
-            <hr />
-            <div className="filter-bar">
-                <button onClick={() => handleFilter("vegi")}>Vegetarian</button>
-                <button onClick={() => handleFilter("non vegi")}>
-                    Non-Vegetarian
-                </button>
-                <button onClick={() => handleFilter("All")}>All</button>
+  return (
+    <div className="order-container">
+      <h1>Order Your Meal for Room</h1>
+      <hr />
+      <div className="filter-bar">
+        <button onClick={() => handleFilter("vegi")}>Vegetarian</button>
+        <button onClick={() => handleFilter("non vegi")}>Non-Vegetarian</button>
+        <button onClick={() => handleFilter("All")}>All</button>
+      </div>
+      <div className="meal-list">
+        {filteredMeals.map((meal, index) => (
+          <div className="meal-card" key={index}>
+            <img src={meal.imageUrl} alt={meal.name} />
+            <div className="meal-details">
+              <h2>{meal.name}</h2>
+              <p>{meal.description}</p>
+              <p>Price: Rs. {meal.price}</p>
+              <button
+                className="order-button"
+                onClick={() => handleSelectMeal(meal)}
+              >
+                Add to Order
+              </button>
             </div>
-            <div className="meal-list">
-                {filteredMeals.map((meal, index) => (
-                    <div className="meal-card" key={index}>
-                        <img
-                            src={mealImages[meal.name] || MealImg1}
-                            alt={meal.name}
-                            className="meal-image"
-                        />
-                        <div className="meal-details">
-                            <h2>{meal.name}</h2>
-                            <p>{meal.description}</p>
-                            <p>Price: Rs. {meal.price}</p>
-                            <button
-                                className="order-button"
-                                onClick={() => handleSelectMeal(meal)}
-                            >
-                                Add to Order
-                            </button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-            <hr />
-            <div className="order-summary">
-                <h2>Your Order</h2>
-                {selectedMeals.map((meal, index) => (
-                    <div className="order-item" key={index}>
-                        <p>
-                            {meal.name} - Rs. {meal.price}
-                        </p>
-                        <button
-                            className="remove-button"
-                            onClick={() => handleRemoveMeal(index)}
-                        >
-                            Remove
-                        </button>
-                    </div>
-                ))}
-                <h3>Total: Rs. {totalAmount}</h3>
-                    <div className="customer-details">
-                        <input
-                            type="text"
-                            placeholder="Customer Name"
-                            value={customerName}
-                            onChange={(e) => setCustomerName(e.target.value)}
-                            className="input-field"
-                        />
-                        <input
-                            type="text"
-                            placeholder="Customer ID"
-                            value={customerID}
-                            onChange={(e) => setCustomerID(e.target.value)}
-                            className="input-field"
-                        />
-                        <input
-                            type="text"
-                            placeholder="Room Number"
-                            value={roomNumber}
-                            onChange={(e) => setRoomNumber(e.target.value)}
-                            className="input-field"
-                            style={{ marginTop:"15px" }}
-                        />
-                    </div>
-                <button
-                    className="place-order-button"
-                    onClick={handlePlaceOrder}
-                >
-                    Place Order
-                </button>
-            </div>
+          </div>
+        ))}
+      </div>
+
+      <hr />
+      <div className="order-summary">
+        <h2>Your Order</h2>
+        {selectedMeals.map((meal, index) => (
+          <div className="order-item" key={index}>
+            <p>
+              {meal.name} - Rs. {meal.price}
+            </p>
+            <button
+              className="remove-button"
+              onClick={() => handleRemoveMeal(index)}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+        <h3>Total: Rs. {totalAmount}</h3>
+        <div className="customer-details">
+          <input
+            type="text"
+            placeholder="Customer Name"
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+            className="input-field"
+          />
+          <input
+            type="text"
+            placeholder="Customer ID"
+            value={customerID}
+            onChange={(e) => setCustomerID(e.target.value)}
+            className="input-field"
+          />
+          <input
+            type="text"
+            placeholder="Room Number"
+            value={roomNumber}
+            onChange={(e) => setRoomNumber(e.target.value)}
+            className="input-field"
+            style={{ marginTop: "15px" }}
+          />
         </div>
-    );
+        <button className="place-order-button" onClick={handlePlaceOrder}>
+          Place Order
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default MealOrderPage;
