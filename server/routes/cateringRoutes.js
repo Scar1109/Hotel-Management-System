@@ -34,7 +34,7 @@ router.get('/getItems', async (req, res) => {
 // Route to add a new food item
 router.post('/addItem', async (req, res) => {
     try {
-        const { name, description, price, category,type } = req.body;
+        const { name, description, price, category,type,imageUrl } = req.body;
 
         const itemId = await generateUniqueItemId();
 
@@ -43,6 +43,7 @@ router.post('/addItem', async (req, res) => {
         }
 
         const newItem = new cateringModel({
+            imageUrl,
             itemId,
             name,
             description,
