@@ -31,7 +31,7 @@ function ManagePackages() {
     setEditingPackage(null);
   };
 
-  // Fetch packages from the API
+  // Fetch packages
   const fetchPackages = async () => {
     try {
       const response = await axios.get("/api/package/getPackages");
