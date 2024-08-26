@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { Carousel, Button, Card, Avatar } from "antd";
+import { Link } from 'react-router-dom';
+
 
 function HomePage() {
     const contentStyle = {
@@ -137,7 +139,7 @@ function HomePage() {
                             </div>
                             <div className="sg_home_page_food_card_section">
                                 <div className="sg_home_page_food_card_set">
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -151,7 +153,7 @@ function HomePage() {
                     <div className="sg_home_page_online_oder_txt">
                         <h3>Online food delivery</h3>
                         <h2>Satisfy your cravings</h2>
-                        <h>Fancy a delicious dish? Contact us and we will deliver it to your doorstep.</h>  
+                        <h>Fancy a delicious dish? Contact us and we will deliver it to your doorstep.</h>
                     </div>
                     <Button danger style={{ color: '#27ae61', borderColor: '#27ae61', backgroundColor: 'transparent', width: 140, marginLeft: 220, marginTop: 20 }}>ODER NOW</Button>
                 </div>
@@ -162,25 +164,62 @@ function HomePage() {
             <div className="sg_home_page_package_section">
                 <div className="home_page_our_category_section1">
                     <div className="home_page_category_card1">
-                        <h3>Weddings</h3>
+                        <Link
+                            to="./events"
+                            style={{
+                                textDecoration: 'none',
+                                color: 'inherit'
+                            }}
+                        >
+                            <h3>Weddings</h3>
+                        </Link>
                     </div>
                     <div className="home_page_category_card2">
+                        <Link to="./events"
+                            style={{
+                                textDecoration: 'none',
+                                color: 'inherit'
+                            }}>
                         <h3>Birthdays</h3>
+                        </Link>
                     </div>
                     <div className="home_page_category_card3">
+                        <Link style={{
+                                textDecoration: 'none',
+                                color: 'inherit'
+                            }}>
                         <h3>Get Together</h3>
+                        </Link>
                     </div>
                 </div>
             </div>
             <div className="home_page_category_section2">
                 <div className="home_page_category_card4">
+                    <Link to="./events"
+                            style={{
+                                textDecoration: 'none',
+                                color: 'inherit'
+                            }}>
                     <h3>Farewell</h3>
+                    </Link>
                 </div>
                 <div className="home_page_category_card5">
+                    <Link to="./events"
+                            style={{
+                                textDecoration: 'none',
+                                color: 'inherit'
+                            }}>
                     <h3>Bride To Be</h3>
+                    </Link>
                 </div>
                 <div className="home_page_category_card6">
+                    <Link to="./events"
+                            style={{
+                                textDecoration: 'none',
+                                color: 'inherit'
+                            }}>
                     <h3>Anniversary</h3>
+                    </Link>
                 </div>
             </div>
         </div>
