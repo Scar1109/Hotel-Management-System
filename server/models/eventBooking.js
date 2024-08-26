@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const eventBookingSchema = new mongoose.Schema({
+    bookingID: {
+        type: String,
+        required: true,
+        unique: true // Ensure bookingID is unique
+    },
     eventId: {
         type: String,
         required: true,

@@ -30,10 +30,17 @@ function Feedbacks() {
     }, []);
 
     useEffect(() => {
-        fetchFeedbacks();
+        if (userID) {
+            fetchFeedbacks();
+        }
     }, [page, search, userID]);
 
     const fetchFeedbacks = async () => {
+        console.log("Fetching feedbacks for userID:", userID); // Add logging
+        if (!userID) {
+            message.error('User ID not available');
+            return;
+        }
         try {
             const { data } = await axios.post('/api/feedback/getFeedbackByUserId', {
                 search,
@@ -41,9 +48,11 @@ function Feedbacks() {
                 limit,
                 userID
             });
+            console.log("Feedbacks fetched:", data.feedbacks); // Log fetched feedbacks
             setFeedbacks(data.feedbacks);
             setTotal(data.total);
         } catch (error) {
+            console.error("Error fetching feedbacks:", error); // Log error details
             message.error('Error fetching feedbacks');
         }
     };
@@ -100,7 +109,7 @@ function Feedbacks() {
                 {feedbacks.map((feedback) => (
                     <div key={feedback._id} className="feedback-card-6789">
                         <h3>{feedback.title}</h3>
-                        <p><strong>User:</strong> {feedback.username}</p>
+                        <p><strong>{feedback.username}</strong></p>
                         <p>{feedback.description}</p>
                         <Rate disabled defaultValue={feedback.rating} />
                         <div className="feedback-actions-6789">

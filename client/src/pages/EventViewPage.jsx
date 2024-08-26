@@ -34,7 +34,7 @@ function EventViewPage() {
             // Validate form and get values
             const values = await form.validateFields();
             const currentUser = JSON.parse(localStorage.getItem('currentUser')); // Get current user from localStorage
-            
+    
             // Prepare reservation data
             const reservationData = {
                 eventId: event.eventId,
@@ -49,14 +49,16 @@ function EventViewPage() {
             console.log("Reservation Data:", reservationData); // Debugging: Log reservation data
     
             // Send reservation data to the server
-            await axios.post(`/api/event/reserveEvent/${event.eventId}`, reservationData);
+            const response = await axios.post(`/api/event/reserveEvent/${event.eventId}`, reservationData);
+    
+            console.log("Reservation Response:", response.data); // Debugging: Log the response data
+            message.success(`Booking successful!`); // Show success message with booking ID
     
             setIsModalOpen(false); // Close modal on successful reservation
             form.resetFields(); // Reset form fields
-            message.success("Reservation successful!"); // Show success message
         } catch (error) {
             console.error("Failed to reserve:", error);
-            message.error("Reservation failed. Please try again."); // Show error message if reservation fails
+            message.error("Booking failed. Please try again."); // Show error message if reservation fails
         }
     };
 
