@@ -99,7 +99,7 @@ function EventBookings() {
                     <div className="event-booking-cards">
                         {currentBookings.map((booking) => (
                             <div key={booking._id} className="event-booking-card">
-                                <h3>Booking ID: {booking._id}</h3>
+                                <h3>Booking ID: {booking.bookingID}</h3>
                                 <p>Event ID: {booking.eventId}</p>
                                 <p>Guest Name: {booking.guestName}</p>
                                 <p>Email: {booking.guestEmail}</p>

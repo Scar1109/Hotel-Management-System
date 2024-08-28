@@ -109,34 +109,34 @@
     });
 
     // Search feedback by title and filter by userID
-router.post("/getFeedbackByUserId", async (req, res) => {
-    const { search, page, limit, userID } = req.body;
-
-    try {
-        const searchTerms = search ? search.split(" ") : []; // Split the search input by spaces if it exists
-
-        // Build the query to first filter by userID and then search for title or username
-        const query = {
-            userID: userID, // Filter by user ID first
-            $or: searchTerms.length > 0 ? [
-                { title: { $regex: searchTerms.join("|"), $options: "i" } }, // Match any word in the title
-                { username: { $regex: searchTerms.join("|"), $options: "i" } }, // Match any word in the username
-            ] : [{}] // If no search terms are provided, no further filtering by title/username is applied
-        };
-
-        const feedbacks = await feedbackModel
-            .find(query)
-            .skip((page - 1) * limit)
-            .limit(limit);
-
-        const total = await feedbackModel.countDocuments(query);
-
-        res.json({ feedbacks, total });
-    } catch (error) {
-        res.status(500).json({ message: "Error searching feedbacks" });
-    }
-});
-
+    router.post("/getFeedbackByUserId", async (req, res) => {
+        const { search, page, limit, userID } = req.body;
+        if (!userID) {
+            return res.status(400).json({ message: "User ID is required" });
+        }
+    
+        try {
+            const searchTerms = search ? search.split(" ") : [];
+            const query = {
+                userID: userID,
+                $or: searchTerms.length > 0 ? [
+                    { title: { $regex: searchTerms.join("|"), $options: "i" } },
+                    { username: { $regex: searchTerms.join("|"), $options: "i" } },
+                ] : [{}]
+            };
+    
+            const feedbacks = await feedbackModel
+                .find(query)
+                .skip((page - 1) * limit)
+                .limit(limit);
+    
+            const total = await feedbackModel.countDocuments(query);
+    
+            res.json({ feedbacks, total });
+        } catch (error) {
+            res.status(500).json({ message: "Error searching feedbacks" });
+        }
+    });
 
 
 
