@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 import { Modal, Form, Input, Button, DatePicker, Select, message } from "antd";
 import moment from "moment"; // Import moment library to work with dates
 import roomimg from "../assets/Images/roomimg.jpg"; // Use default image if no image is provided
 
 function RoomViewPage() {
       const { id } = useParams(); // Get the room ID from the URL
+      const navigate = useNavigate(); // Initialize navigate for redirection
       const [room, setRoom] = useState(null);
       const [packages, setPackages] = useState([]);
       const [selectedPackages, setSelectedPackages] = useState([]);
@@ -80,7 +81,20 @@ function RoomViewPage() {
 
       // Handle form submission
       const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+      // Redirect to login if not logged in
+      useEffect(() => {
+            if (!currentUser) {
+                  message.error("You must be logged in to make a reservation.");
+                  navigate("/login"); // Redirect to the login page
+            }
+      }, [currentUser, navigate]);
+
+      if (!currentUser) {
+            return null; // Prevent further rendering if user is not logged in
+      }
       const userID = currentUser.userID;
+
       const handleOk = async () => {
             try {
                   const values = await form.validateFields(); // Get form values
@@ -92,7 +106,9 @@ function RoomViewPage() {
                         guestPhone: values.phone,
                         checkInDate: values.dates[0].format("YYYY-MM-DD"), //  dates are in moment format
                         checkOutDate: values.dates[1].format("YYYY-MM-DD"),
-                        packages: selectedPackages.map((pkg) => pkg.packageName),
+                        packages: selectedPackages.map(
+                              (pkg) => pkg.packageName
+                        ),
                         totalAmount: totalPrice,
                   };
 
@@ -280,37 +296,36 @@ function RoomViewPage() {
                                           <Input />
                                     </Form.Item>
                                     <Form.Item
-                                          label="Phone Number"
+                                          label="Phone"
                                           name="phone"
                                           rules={[
                                                 {
                                                       required: true,
                                                       message: "Please enter your phone number",
                                                 },
+                                                {
+                                                      pattern: /^[0-9]+$/,
+                                                      message: "Please enter a valid phone number",
+                                                },
                                           ]}
                                     >
                                           <Input />
                                     </Form.Item>
                                     <Form.Item
-                                          label="Check-in and Check-out Dates"
+                                          label="Check-in & Check-out Dates"
                                           name="dates"
-                                          style={{ width: "100%" }} // Adjust the width of the form item
                                           rules={[
                                                 {
                                                       required: true,
-                                                      message: "Please select check-in and check-out dates",
+                                                      message: "Please select the check-in and check-out dates",
                                                 },
                                           ]}
                                     >
                                           <DatePicker.RangePicker
+                                                format="YYYY-MM-DD"
                                                 onChange={onDateChange}
-                                                style={{ width: "100%" }} // Adjust the width of the DatePicker
                                           />
                                     </Form.Item>
-
-                                    <p className="total-cost">
-                                          Total Cost: Rs {calculatedPrice}
-                                    </p>
                               </Form>
                         </Modal>
                   </div>
