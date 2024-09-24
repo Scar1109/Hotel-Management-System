@@ -29,7 +29,7 @@ const PackagePage = () => {
     <div className="pkg_container">
       {packages.map(pkg => (
         <div key={pkg.packageId} className="pkg_card">
-          <img className="pkg_image" src={pkg.image} alt={pkg.packageName} />
+          <img className="pkg_image" src={pkg.packageImage} alt={pkg.packageName} />
           <div className="pkg_info">
             <h2 className="pkg_title">{pkg.packageName}</h2>
             <p className="pkg_size">Size: {pkg.size} Person</p>
