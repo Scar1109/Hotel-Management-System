@@ -15,6 +15,8 @@ import UserProfilePage from "./pages/UserProfilePage";
 import TakeAwayPage from "./pages/TakeAwayPage";
 import ParkingPage from "./pages/ParkingPage";
 import Footer from "./components/CommonComponents/Footer";
+import PackagePage from "./pages/PackagePage";
+import PackageView from "./pages/PackageView";
 
 function App() {
     return (
@@ -59,6 +61,16 @@ function App() {
                                         <Route
                                             path="/rooms"
                                             element={<RoomListPage />}
+                                            exact
+                                        />
+                                        <Route
+                                            path="/packages"
+                                            element={<PackagePage />}
+                                            exact
+                                        />
+                                         <Route
+                                            path="/packages/:id"
+                                            element={<PackageView />}
                                             exact
                                         />
                                         <Route
