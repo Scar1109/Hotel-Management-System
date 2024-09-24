@@ -69,6 +69,10 @@ function NavBarUser() {
             key: "rooms",
         },
         {
+            label: "Packages",
+            key: "packages",
+        },
+        {
             label: "Events",
             key: "events",
         },
@@ -104,6 +108,8 @@ function NavBarUser() {
             navigate("/");
         } else if (e.key === "rooms") {
             navigate("/rooms");
+        } else if (e.key === "packages") {
+            navigate("/packages");
         } else if (e.key === "events") {
             navigate("/events");
         } else if (e.key === "order") {
@@ -123,6 +129,8 @@ function NavBarUser() {
             setCurrent("home");
         } else if (path === "/rooms") {
             setCurrent("rooms");
+        } else if (path === "/packages") {
+            setCurrent("packages");
         } else if (path === "/events") {
             setCurrent("events");
         } else if (path === "/order") {
