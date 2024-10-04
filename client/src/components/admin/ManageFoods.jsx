@@ -131,9 +131,14 @@ function ManageCateringFoods() {
       key: "category",
     },
     {
+      title: "Category",
+      dataIndex: "category",
+      key: "category"
+    },
+    {
       title: "Type",
       dataIndex: "type",
-      key: "type",
+      key: "type"
     },
     {
       title: "Actions",
@@ -278,6 +283,7 @@ function AddEditFoodPopup({ food, onSave, onClose }) {
           onChange={handleChange}
           placeholder="Category"
         />
+        
         <select
           name="type"
           value={formData.type}

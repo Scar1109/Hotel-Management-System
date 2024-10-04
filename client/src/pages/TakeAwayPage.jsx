@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { message } from 'antd';
+import { message, Radio } from 'antd';
 
 function MealOrderPage() {
   const [meals, setMeals] = useState([]);
@@ -10,6 +10,9 @@ function MealOrderPage() {
   const [customerName, setCustomerName] = useState('');
   const [customerID, setCustomerID] = useState('');
   const [totalAmount, setTotalAmount] = useState(0);
+  const [orderType, setOrderType] = useState('delivery');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [address, setAddress] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,19 +50,24 @@ function MealOrderPage() {
 
   const handleSelectMeal = (meal) => {
     setSelectedMeals([...selectedMeals, meal]);
-    setTotalAmount(totalAmount + Number(meal.price)); // Ensure meal.price is treated as a number
+    setTotalAmount(totalAmount + Number(meal.price));
   };
 
   const handleRemoveMeal = (index) => {
     const updatedMeals = [...selectedMeals];
     const removedMeal = updatedMeals.splice(index, 1)[0];
     setSelectedMeals(updatedMeals);
-    setTotalAmount(totalAmount - Number(removedMeal.price)); // Ensure removedMeal.price is treated as a number
+    setTotalAmount(totalAmount - Number(removedMeal.price));
   };
 
   const handlePlaceOrder = async () => {
-    if (!customerName || !customerID || selectedMeals.length === 0) {
-      message.error('Please provide customer details and select meals to place an order.');
+    if (!customerName || !customerID || selectedMeals.length === 0 || !phoneNumber) {
+      message.error('Please provide all required details and select meals to place an order.');
+      return;
+    }
+
+    if (orderType === 'delivery' && !address) {
+      message.error('Please provide delivery address.');
       return;
     }
 
@@ -67,8 +75,11 @@ function MealOrderPage() {
       purchaseDate: new Date().toLocaleDateString(),
       customerName,
       customerID,
+      phoneNumber,
+      address: orderType === 'delivery' ? address : 'Take-away',
       amount: totalAmount,
       meals: selectedMeals.map((meal) => meal.name),
+      orderType,
     };
 
     try {
@@ -114,6 +125,12 @@ function MealOrderPage() {
           </div>
         ))}
         <h3>Total: Rs. {totalAmount}</h3>
+        <div className="order-type">
+          <Radio.Group onChange={(e) => setOrderType(e.target.value)} value={orderType}>
+            <Radio value="delivery">Delivery</Radio>
+            <Radio value="takeaway">Take-away</Radio>
+          </Radio.Group>
+        </div>
         <div className="customer-details">
           <input
             type="text"
@@ -123,7 +140,7 @@ function MealOrderPage() {
             className="input-field"
           />
           <input
-            type="text"
+            type="tel"
             placeholder="Phone Number"
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}

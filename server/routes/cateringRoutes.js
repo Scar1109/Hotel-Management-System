@@ -34,7 +34,7 @@ router.get('/getItems', async (req, res) => {
 // Route to add a new food item
 router.post('/addItem', async (req, res) => {
     try {
-        const { name, description, price, category,type,imageUrl } = req.body;
+        const { name, description, price, category, type, imageUrl } = req.body;
 
         const itemId = await generateUniqueItemId();
 
@@ -63,11 +63,11 @@ router.post('/addItem', async (req, res) => {
 // Route to update a food item
 router.post('/updateItem', async (req, res) => {
     try {
-        const { itemId, name, description, price, category,type } = req.body;
+        const { itemId, name, description, price, category, type } = req.body;
 
         const updatedItem = await cateringModel.findOneAndUpdate(
             { itemId },
-            { name, description, price, category ,type},
+            { name, description, price, category, type },
             { new: true }
         );
 
@@ -97,5 +97,7 @@ router.post('/deleteItem', async (req, res) => {
         res.status(500).send(err);
     }
 });
+
+
 
 module.exports = router;

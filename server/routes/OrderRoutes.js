@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const orderModel = require('../models/Order');
+const MealPlan = require('../models/MealPlan'); // Corrected path for mealPlanModel
+const Catering = require('../models/Catering'); // Corrected path for Catering model
+
 
 // Function to generate a unique order ID
 async function generateUniqueOrderId() {
@@ -166,5 +169,43 @@ router.delete('/deleteOrder/:orderId', async (req, res) => {
         res.status(500).send(err);
     }
 });
+
+// Get meal plan for a customer
+router.get('/mealPlan/:customerID', async (req, res) => {
+    try {
+        const { customerID } = req.params;
+        const mealPlan = await MealPlan.findOne({ customerID });  // Corrected model reference
+        const meals = await Catering.find({});  // Assuming Catering model is correctly defined elsewhere
+        
+        if (!mealPlan) {
+            return res.json({ mealPlan: [], meals });  // Returning consistent format even when no meal plan is found
+        }
+        
+        res.json({ mealPlan: mealPlan.mealPlan, meals });  // Returning meal plan details and available meals
+    } catch (error) {
+        console.error('Error fetching meal plan:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+// Save or update meal plan for a customer
+router.post('/mealPlan', async (req, res) => {
+    const { customerID, mealPlan } = req.body;
+
+    try {
+        // Upsert option used to create or update based on existence of meal plan
+        const updatedMealPlan = await MealPlan.findOneAndUpdate(
+            { customerID },
+            { $set: { mealPlan } },
+            { new: true, upsert: true }  // upsert option to handle both creation and update
+        );
+
+        res.json({ message: 'Meal plan saved successfully', mealPlan: updatedMealPlan });
+    } catch (error) {
+        console.error('Error saving meal plan:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
 
 module.exports = router;
