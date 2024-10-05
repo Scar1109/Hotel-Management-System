@@ -9,6 +9,7 @@ function EventViewPage() {
     const [event, setEvent] = useState(null); // State to hold the event data
     const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
     const [loading, setLoading] = useState(true); // State to show loading status
+    const [reminderDate, setReminderDate] = useState(null); // State to set reminder time
     const [form] = Form.useForm(); // Create form instance
 
     useEffect(() => {
@@ -28,6 +29,25 @@ function EventViewPage() {
 
         fetchEvent(); // Trigger the fetch function
     }, [id]); // Dependency array: re-fetch if ID changes
+
+    // Function to handle reminder button click
+    const handleSetReminder = async () => {
+        try {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser')); // Get current user from localStorage
+            const reminderTime = reminderDate || moment(event.eventDate).subtract(1, 'days').toISOString(); // Default reminder is 1 day before the event
+            
+            // Send the reminder request to backend
+            await axios.post('/api/reminder/setReminder', {
+                userId: currentUser.userID,
+                eventId: event.eventId,
+                reminderTime
+            });
+            
+            message.success('Reminder set successfully!');
+        } catch (error) {
+            message.error('Failed to set reminder. Please try again.');
+        }
+    };
 
     const handleOk = async () => {
         try {
@@ -87,6 +107,17 @@ function EventViewPage() {
                 <h3>Event Type: {event.eventType}</h3>
                 {/* <h3>Event Date: {moment(event.eventDate).format("MMMM Do YYYY")}</h3> */}
                 <h3>Price: Rs {event.price}</h3>
+
+                {/* Remind me button */}
+                <div style={{ marginTop: '20px' }}>
+                    <DatePicker 
+                        onChange={(date) => setReminderDate(date)} 
+                        placeholder="Set custom reminder date" 
+                    />
+                    <Button type="primary" onClick={handleSetReminder} style={{ marginLeft: '10px' }}>
+                        Remind me 1 day before
+                    </Button>
+                </div>
 
                 <button className="reserve-button" onClick={showModal}>
                     Reserve

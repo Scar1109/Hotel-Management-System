@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const Reminder = require('../models/reminder'); // Reminder model
 
 const eventModel = require('../models/Event');
 const eventBookingModel = require('../models/eventBooking');
@@ -184,6 +185,32 @@ router.delete('/deleteBooking/:bookingId', async (req, res) => {
         res.status(200).json({ message: 'Booking deleted successfully' });
     } catch (err) {
         res.status(500).json({ message: 'Error deleting booking', error: err.message });
+    }
+});
+
+// Set a reminder for an event
+router.post('/setReminder', async (req, res) => {
+    const { userId, eventId, reminderTime } = req.body;
+
+    try {
+        // Check if the reminder already exists
+        const existingReminder = await Reminder.findOne({ userId, eventId });
+        if (existingReminder) {
+            return res.status(400).json({ message: 'Reminder already set for this event.' });
+        }
+
+        // Create new reminder
+        const newReminder = new Reminder({
+            userId,
+            eventId,
+            reminderTime,
+            sentStatus: false, // reminder has not been sent yet
+        });
+
+        await newReminder.save();
+        res.status(201).json({ message: 'Reminder set successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error setting reminder', error: error.message });
     }
 });
 
