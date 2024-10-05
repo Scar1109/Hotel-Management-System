@@ -160,5 +160,16 @@ router.post("/reservePackage/:id", async (req, res) => {
   }
 });
 
+// Route to get all reservations
+router.get("/getBookingData", async (req, res) => {
+  try {
+    const reservations = await PackageBooking.find();
+    res.json({ reservations });
+  } catch (error) {
+    console.error("Error fetching reservations:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;
 
