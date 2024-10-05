@@ -142,16 +142,16 @@ function MealOrderPage() {
           <input
             type="tel"
             placeholder="Phone Number"
-            value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
             className="input-field"
+            pattern="[0-9]{10}"
+            title="Phone number must be exactly 10 digits"
+            required
           />
           <input
             type="text"
             placeholder="Address"
             className="input-field"
-            readOnly
-            style={{ marginTop: 10 }}
+            required
           />
           <input
             type="text"

@@ -7,11 +7,19 @@ const packageSchema = new mongoose.Schema(
                   required: true,
                   unique: true,
             },
+            packageImage: {
+                  type: String,
+                  required: true,
+            },
             packageName: {
                   type: String,
                   required: true,
             },
             description: {
+                  type: String,
+                  required: true,
+            },
+            size: {
                   type: String,
                   required: true,
             },

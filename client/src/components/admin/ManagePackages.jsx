@@ -31,7 +31,7 @@ function ManagePackages() {
     setEditingPackage(null);
   };
 
-  // Fetch packages from the API
+  // Fetch packages
   const fetchPackages = async () => {
     try {
       const response = await axios.get("/api/package/getPackages");
@@ -111,6 +111,13 @@ function ManagePackages() {
       sorter: (a, b) => a.description.localeCompare(b.description),
     },
     {
+      title: "Size (People)",
+      dataIndex: "size",
+      key: "size",
+      sorter: (a, b) => a.size - b.size,
+      render: (text) => `${text} Person(s)`,
+    },
+    {
       title: "Price",
       dataIndex: "price",
       key: "price",
@@ -142,20 +149,27 @@ function ManagePackages() {
         <div className="manage_packages_header">
           <h1>Manage Packages</h1>
           <div className="search-container-122313">
-          <div className="search-bar">
-          <Input
-            placeholder="Search packages"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            style={{ width: 300, marginLeft: 20 }}
-          />                   
-                              </div>
-          <button className="add_new_package" onClick={showModal}>
-            Add Package
-          </button>
+            <div className="search-bar">
+              <Input
+                placeholder="Search packages"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                style={{ width: 300, marginLeft: 20 }}
+              />
+            </div>
+            <button className="add_new_package" onClick={showModal}>
+              Add Package
+            </button>
           </div>
           <Modal title="Add Package" open={isModalOpen} onOk={addPackage} onCancel={handleCancel}>
             <Form form={form} layout="vertical">
+              <Form.Item
+                label="Package Image"
+                name="packageImage"
+                rules={[{ required: true, message: "Please enter the package Image URL" }]}
+              >
+                <Input placeholder="Enter image URL" />
+              </Form.Item>
               <Form.Item
                 label="Package Name"
                 name="packageName"
@@ -171,18 +185,18 @@ function ManagePackages() {
                 <Input placeholder="Enter package description" />
               </Form.Item>
               <Form.Item
+                label="Size (People)"
+                name="size"
+                rules={[{ required: true, message: "Please enter the number of people" }]}
+              >
+                <InputNumber placeholder="Enter package size" style={{ width: "100%" }} min={1} />
+              </Form.Item>
+              <Form.Item
                 label="Price"
                 name="price"
                 rules={[
-                  { 
-                    required: true, 
-                    message: "Please enter the package price" 
-                  },
-                  { 
-                    type: 'number',
-                    min: 0,
-                    message: 'Price must be a positive number'
-                  }
+                  { required: true, message: "Please enter the package price" },
+                  { type: 'number', min: 0, message: 'Price must be a positive number' }
                 ]}
               >
                 <InputNumber placeholder="Enter package price" style={{ width: "100%" }} />
@@ -191,7 +205,7 @@ function ManagePackages() {
           </Modal>
         </div>
         <div className="managepackages_table">
-        <Table
+          <Table
             columns={columns}
             dataSource={filteredPackages} // Use the filtered data
             pagination={{ pageSize: 6 }} // Pagination with 6 rows per page
@@ -200,6 +214,13 @@ function ManagePackages() {
         </div>
         <Modal title="Update Package" open={isUpdateModalOpen} onOk={handleUpdate} onCancel={handleUpdateCancel}>
           <Form form={updateForm} layout="vertical">
+            <Form.Item
+              label="Package Image"
+              name="packageImage"
+              rules={[{ required: true, message: "Please enter the package Image URL" }]}
+            >
+              <Input placeholder="Enter image URL" />
+            </Form.Item>
             <Form.Item
               label="Package Name"
               name="packageName"
@@ -215,18 +236,18 @@ function ManagePackages() {
               <Input placeholder="Enter package description" />
             </Form.Item>
             <Form.Item
+              label="Size (People)"
+              name="size"
+              rules={[{ required: true, message: "Please enter the number of people" }]}
+            >
+              <InputNumber placeholder="Enter package size" style={{ width: "100%" }} min={1} />
+            </Form.Item>
+            <Form.Item
               label="Price"
               name="price"
               rules={[
-                { 
-                  required: true, 
-                  message: "Please enter the package price" 
-                },
-                { 
-                  type: 'number',
-                  min: 0,
-                  message: 'Price must be a positive number'
-                }
+                { required: true, message: "Please enter the package price" },
+                { type: 'number', min: 0, message: 'Price must be a positive number' }
               ]}
             >
               <InputNumber placeholder="Enter package price" style={{ width: "100%" }} />
