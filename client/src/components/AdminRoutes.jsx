@@ -8,6 +8,7 @@ import ManagePackages from "./admin/ManagePackages";
 import ManageParkings from "./admin/ManageParkings";
 import ManageRooms from "./admin/ManageRooms";
 import ManageEmployees from "./admin/ManageEmployees";
+import ManageFeedbacks from "./admin/ManageFeedbacks";
 
 
 
@@ -23,6 +24,7 @@ function AdminRoutes() {
                 <Route path="manage-parkings" element={<ManageParkings />} />
                 <Route path="manage-rooms" element={<ManageRooms />} />
                 <Route path="manage-employees" element={<ManageEmployees />} />
+                <Route path="manage-feedbacks" element={<ManageFeedbacks />} />
             </Routes>
         </div>
     );

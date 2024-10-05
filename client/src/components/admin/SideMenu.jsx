@@ -25,6 +25,7 @@ const items = [
     getItem("Packages", "/admin/manage-packages", <Icon icon="ri:news-line" />),
     getItem("Parking", "/admin/manage-parkings", <Icon icon="mdi:parking" />),
     getItem("Rooms", "/admin/manage-rooms", <Icon icon="cil:room" />),
+    getItem("Feedbacks", "/admin/manage-feedbacks", <Icon icon="mdi:feedback-outline" />),
 ];
 
 // Keys of submenu items that have children, used to manage open states
