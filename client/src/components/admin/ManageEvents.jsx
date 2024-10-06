@@ -4,11 +4,14 @@ import axios from 'axios';
 import { Icon } from '@iconify/react';
 import { DatePicker } from 'antd';
 import moment from 'moment';
+import { PrinterOutlined } from '@ant-design/icons';
+import { CSVLink } from "react-csv"; // Import CSVLink for CSV download
 
 const { confirm } = Modal;
 
 const ManageEvents = () => {
     const [events, setEvents] = useState([]);
+    const [allEvents, setAllEvents] = useState([]); // State to hold all events for CSV download
     const [pagination, setPagination] = useState({ current: 1, pageSize: 7, total: 0 });
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -20,8 +23,10 @@ const ManageEvents = () => {
 
     useEffect(() => {
         fetchEvents();
+        fetchAllEvents(); // Fetch all events for the CSV download
     }, [pagination.current, searchText]);
 
+    // Fetch paginated events for table view
     const fetchEvents = async () => {
         setLoading(true);
         try {
@@ -38,6 +43,18 @@ const ManageEvents = () => {
             message.error("Error fetching events");
         } finally {
             setLoading(false);
+        }
+    };
+
+    // Fetch all events for CSV download
+    const fetchAllEvents = async () => {
+        try {
+            const { data } = await axios.get('/api/Event/getEvents', {
+                params: { page: 1, limit: 1000, search: searchText }, // Request all events (adjust limit if needed)
+            });
+            setAllEvents(data.events); // Save all events for CSV download
+        } catch (error) {
+            message.error("Error fetching all events");
         }
     };
 
@@ -83,7 +100,6 @@ const ManageEvents = () => {
         setSelectedEvent(null);
     };
 
-
     const handleSubmit = async (values) => {
         try {
             if (isEditMode) {
@@ -95,6 +111,7 @@ const ManageEvents = () => {
             }
             setIsModalVisible(false);
             fetchEvents();
+            fetchAllEvents(); // Refresh all events list after adding/editing an event
         } catch (error) {
             message.error(isEditMode ? 'Error updating event' : 'Error adding event');
         }
@@ -105,7 +122,6 @@ const ManageEvents = () => {
         { title: 'Event Name', dataIndex: 'eventName', key: 'eventName' },
         { title: 'Event Type', dataIndex: 'eventType', key: 'eventType' },
         { title: 'Price', dataIndex: 'price', key: 'price' },
-        // { title: 'Date', dataIndex: 'eventDate', key: 'eventDate', render: text => new Date(text).toLocaleDateString() },
         { title: 'Description', dataIndex: 'description', key: 'description' },
         {
             title: 'Action',
@@ -131,6 +147,15 @@ const ManageEvents = () => {
         },
     ];
 
+    // CSV Headers and CSV Data
+    const csvHeaders = [
+        { label: "Event ID", key: "eventId" },
+        { label: "Event Name", key: "eventName" },
+        { label: "Event Type", key: "eventType" },
+        { label: "Price", key: "price" },
+        { label: "Description", key: "description" },
+    ];
+
     const handleSearch = (e) => {
         setSearchText(e.target.value);
     };
@@ -140,7 +165,23 @@ const ManageEvents = () => {
             <div className="manage-events">
                 <div className="search-add-container">
                     <Input placeholder="Search events" value={searchText} onChange={handleSearch} className="search-bar-eventmanage" />
-                    <Button type="primary" onClick={handleAddNewEvent} className="add-event-button" style={{ backgroundColor: '#25b05f' }}>Add Event</Button>
+                    
+                    <div className="Event_button_group"> 
+                        {/* CSV Download Button */}
+                        <CSVLink
+                            data={allEvents} // Use allEvents instead of events for the full list
+                            headers={csvHeaders}
+                            filename={"events_report.csv"}
+                            className="csv_button_event"
+                        >
+                            <Button type="primary" className="Event_generate_report_button">
+                                    <PrinterOutlined style={{ marginRight: '5px' }} /> 
+                                    Export
+                                </Button>
+                        </CSVLink>
+
+                        <Button type="primary" onClick={handleAddNewEvent} className="add_event_button" style={{ backgroundColor: '#25b05f' }}>Add Event</Button>
+                    </div>
                 </div>
                 <Table
                     columns={columns}
