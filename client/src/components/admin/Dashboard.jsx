@@ -234,83 +234,93 @@ function Dashboard() {
                     <div className="admin_dashboard_chart">
                         <h1 style={{ fontSize: "30px" }}>Feedback Ratings Over Time</h1>
                         <Line data={chartData} options={chartOptions} />
-                    </div>
-                    <div className="admin_panel_progress_rating_section">
-                        <div className="rating_breakdown_container" style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            padding: "15px",
-                            height: "200px",
-                            backgroundColor: "#ffffff",
-                            borderRadius: "8px",
-                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" // Add this for shadow effect
-                        }}>
-                            {/* Left Side - Average Rating */}
-                            <div className="average_rating" style={{
-                                textAlign: "center",
-                                padding: "10px",
-                                borderRight: "0.2px solid #ddd"
+                        <div className="admin_panel_progress_rating_section">
+                            <div className="rating_breakdown_container" style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                padding: "15px",
+                                height: "200px",
+                                backgroundColor: "#ffffff",
+                                borderRadius: "8px",
+                                marginTop: "2.6%",
+                                marginLeft: "-3%",
+                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" // Add this for shadow effect
                             }}>
-                                <h1 style={{ fontSize: "40px" }}>{ratingSummary.average.toFixed(1)}</h1>
-                                <div style={{ fontSize: "24px", color: "#FFD700" }}>
-                                    {Array(Math.round(ratingSummary.average))
-                                        .fill()
-                                        .map((_, i) => (
-                                            <span key={i}>⭐</span>
-                                        ))}
-                                    {ratingSummary.average % 1 !== 0 && <span>⭐</span>}
-                                </div>
-                                <p style={{ color: "green" }}>All from verified</p>
-                            </div>
-                            {/* Right Side - Rating Breakdown */}
-                            <div className="rating_breakdown" style={{ flex: 1, paddingLeft: "20px", marginLeft: "-10px" }}>
-                                {[5, 4, 3, 2, 1].map((star) => (
-                                    <div
-                                        key={star}
-                                        style={{ display: "flex", alignItems: "center", marginBottom: "8px", marginLeft: "10px" }}
-                                    >
-                                        <span style={{ width: "50px", fontSize: "18px", color: "#FFD700" }}>
-                                            {Array(star)
-                                                .fill()
-                                                .map((_, i) => (
-                                                    <span key={i}>⭐</span>
-                                                ))}
-                                        </span>
-                                        <Progress
-                                            percent={getPercentage(ratingSummary.ratings.find(rating => rating._id === star)?.count || 0)}
-                                            showInfo={false}
-                                            strokeColor={star === 5 ? "#52c41a" : "#d9d9d9"}
-                                            style={{ width: "200px", marginLeft: "73px" }}
-                                        />
-                                        <span style={{ marginLeft: "10px" }}>
-                                            {ratingSummary.ratings.find(rating => rating._id === star)?.count || 0}
-                                        </span>
+                                {/* Left Side - Average Rating */}
+                                <div className="average_rating" style={{
+                                    textAlign: "center",
+                                    padding: "10px",
+                                    borderRight: "0.2px solid #ddd"
+                                }}>
+                                    <h1 style={{ fontSize: "40px" }}>{ratingSummary.average.toFixed(1)}</h1>
+                                    <div style={{ fontSize: "24px", color: "#FFD700" }}>
+                                        {Array(Math.round(ratingSummary.average))
+                                            .fill()
+                                            .map((_, i) => (
+                                                <span key={i}>⭐</span>
+                                            ))}
+                                        {ratingSummary.average % 1 !== 0 && <span>⭐</span>}
                                     </div>
-                                ))}
+                                    <p style={{ color: "green" }}>All from verified</p>
+                                </div>
+                                {/* Right Side - Rating Breakdown */}
+                                <div className="rating_breakdown" style={{ flex: 1, paddingLeft: "20px", marginLeft: "-10px" }}>
+                                    {[5, 4, 3, 2, 1].map((star) => (
+                                        <div
+                                            key={star}
+                                            style={{ display: "flex", alignItems: "center", marginBottom: "8px", marginLeft: "10px" }}
+                                        >
+                                            <span style={{ width: "50px", fontSize: "18px", color: "#FFD700" }}>
+                                                {Array(star)
+                                                    .fill()
+                                                    .map((_, i) => (
+                                                        <span key={i}>⭐</span>
+                                                    ))}
+                                            </span>
+                                            <Progress
+                                                percent={getPercentage(ratingSummary.ratings.find(rating => rating._id === star)?.count || 0)}
+                                                showInfo={false}
+                                                strokeColor={star === 5 ? "#52c41a" : "#d9d9d9"}
+                                                style={{ width: "200px", marginLeft: "73px" }}
+                                            />
+                                            <span style={{ marginLeft: "10px" }}>
+                                                {ratingSummary.ratings.find(rating => rating._id === star)?.count || 0}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
-                        {/* Pie Chart for likes and dislikes */}
+                    </div>
                     {/* Pie Chart for likes and dislikes */}
-                        <div
+                    <div
                         style={{
                             padding: "20px",
                             borderRadius: "8px",
                             backgroundColor: "#ffffff",
                             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Add shadow
                             marginBottom: "20px", // Space between sections
-                            textAlign: "center", // Center the heading and chart
-                            width: "70%", // Adjust width if necessary
-                            maxWidth: "300px", // Set a max width for the chart container
-                            margin: "0 auto", // Center align the chart container
+                            textAlign: "center", // Center the chart
+                            width: "950px", 
+                            height: "600px",// Adjust width if necessary
+                            maxWidth: "500px", // Set a max width for the chart container
+                            margin: "2% 1% 0% ", // Center align the chart container
                         }}
+                    >
+                        <h1
+                            style={{
+                                fontSize: "30px",
+                                marginBottom: "20px",
+                                color: "#333",
+                                textAlign: "right", // Align the heading to the right
+                            }}
                         >
-                        <h1 style={{ fontSize: "30px", marginBottom: "20px", color: "#333" }}>
-                            Feedback Like vs Dislike Ratio
+                            Feedback Like & Dislike 
                         </h1>
                         <Pie data={pieChartData} options={pieChartOptions} />
-                        </div>
                     </div>
+
                 </div>
             </div>
             <div className="booking_table_admin_show">
@@ -321,7 +331,8 @@ function Dashboard() {
                                 padding: "20px",
                                 borderRadius: "8px",
                                 width: "100%",
-                                margin: "0 auto"
+                                margin: "0 auto",
+                                marginTop:"5px"
                             }}>
                                 <h2 style={{ marginBottom: "10px", fontSize: "20px" }}>Recent Event Bookings</h2>
                                 <table style={{
