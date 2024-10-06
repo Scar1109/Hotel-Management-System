@@ -52,35 +52,46 @@ function ManageCateringFoods() {
   const handleTableChange = (pagination, filters, sorter) => {
     setPagination(pagination);
   };
-
   const handleAddFood = async (newFood) => {
     try {
-      await axios.post("http://localhost:5000/api/catering/addItem", newFood);
-      message.success("Food item added successfully");
-      fetchFoods();
-      setShowAddPopup(false);
+      setLoading(true);
+      const response = await axios.post('http://localhost:5000/api/catering/addItem', newFood);
+  
+      if (response.status === 201) {
+        message.success("Food item added successfully");
+        await fetchFoods();
+        setShowAddPopup(false);
+      } else {
+        throw new Error("Failed to add food item");
+      }
     } catch (error) {
-      message.error("Failed to add food item");
+      console.error("Error adding food item:", error.response ? error.response.data : error.message);
+      message.error("Failed to add food item: " + (error.response?.data?.error || error.message));
+    } finally {
+      setLoading(false);
     }
   };
+
 
   const handleEditFood = async (updatedFood) => {
     try {
-      await axios.post(
-        "http://localhost:5000/api/catering/updateItem",
-        updatedFood
-      );
-      message.success("Food item updated successfully");
-      fetchFoods();
-      setShowEditPopup(null);
+        await axios.post(
+            "http://localhost:5000/api/catering/updateItem",
+            { ...updatedFood, itemId: updatedFood.itemId } // Ensure itemId is sent
+        );
+        message.success("Food item updated successfully");
+        fetchFoods();
+        setShowEditPopup(null);
     } catch (error) {
-      message.error("Failed to update food item");
+        message.error("Failed to update food item");
     }
-  };
+};
+
 
   const handleDeleteFood = async (itemId) => {
     try {
       await axios.post("http://localhost:5000/api/catering/deleteItem", {
+        
         itemId,
       });
       message.success("Food item deleted successfully");
@@ -130,11 +141,7 @@ function ManageCateringFoods() {
       dataIndex: "category",
       key: "category",
     },
-    {
-      title: "Category",
-      dataIndex: "category",
-      key: "category"
-    },
+    
     {
       title: "Type",
       dataIndex: "type",
@@ -218,100 +225,101 @@ function ManageCateringFoods() {
 
 function AddEditFoodPopup({ food, onSave, onClose }) {
   const [formData, setFormData] = useState({
+    imageUrl: food?.imageUrl || "", // Ensure imageUrl is included
     name: food?.name || "",
     description: food?.description || "",
     price: food?.price || "",
-    category: food?.category || "",
-    type: food?.type || "vegi", // Default to "vegi"
-    imageUrl: food?.imageUrl || "", // Ensure imageUrl is included
-
+    type: food?.type || "vegi",
+    category: food?.category || "breakfast",
+    itemId: food?.itemId || "", // Include itemId in form data
   });
+  
 
-  // Handle input change for text fields
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: name === "price" ? parseFloat(value) : value
+    }));
   };
 
-  // Handle select change for the "type" field
-  const handleSelectChange = (value) => {
-    setFormData({ ...formData, type: value });
-  };
-
-  // Handle form submission
   const handleSubmit = () => {
-    const dataToSave = food ? { ...food, ...formData } : formData;
-    onSave(dataToSave);
+    console.log(formData);  // Log the data being sent
+    if (!formData.imageUrl || !formData.name || !formData.description || !formData.price || !formData.type || !formData.category) {
+      message.error("Please fill all required fields");
+      return;
+    }
+    if (formData.price <= 0) {
+      message.error("Price must be a positive number");
+      return;
+    }
+    onSave(formData);
   };
+  
 
   return (
     <div className="popup-overlay">
-      <div className="popup">
-        <h3>{food ? "Edit Food Item" : "Add New Food Item"}</h3>
+    <div className="popup">
+      <h3>{food ? "Edit Food Item" : "Add New Food Item"}</h3>
 
-        <input
-          type="text"
-          name="imageUrl"
-          value={formData.imageUrl}
-          onChange={handleChange}
-          placeholder="Image URL"
-        />
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Food Name"
-        />
-        <input
-          type="text"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Description"
-        />
-        <input
-          type="number"
-          name="price"
-          value={formData.price}
-          onChange={handleChange}
-          placeholder="Price"
-        />
-        <input
-          type="text"
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          placeholder="Category"
-        />
-        
-        <select
-          name="type"
-          value={formData.type}
-          onChange={(e) => handleSelectChange(e.target.value)}
-          style={{
-            width: "200px",
-            padding: "10px",
-            border: "1px solid #ccc",
-            borderRadius: "5px",
-            backgroundColor: "#f8f8f8",
-            fontSize: "16px",
-            color: "#333",
-            cursor: "pointer",
-            transition: "all 0.3s ease",
-            outline: "none",
-            marginBottom: "20px",
-          }}
-        >
-          <option value="vegi">Veg</option>
-          <option value="non vegi">Non-Veg</option>
-        </select>
+      <input
+        type="text"
+        name="imageUrl"
+        value={formData.imageUrl}
+        onChange={handleChange}
+        placeholder="Image URL (optional)"
+      />
+      <input
+        type="text"
+        name="name"
+        value={formData.name}
+        onChange={handleChange}
+        placeholder="Food Name"
+        required
+      />
+      <textarea
+        name="description"
+        value={formData.description}
+        onChange={handleChange}
+        placeholder="Description"
+        required
+      />
+      <input
+        type="number"
+        name="price"
+        value={formData.price}
+        onChange={handleChange}
+        placeholder="Price"
+        required
+        min="0.01"
+        step="0.01"
+      />
+      <select
+        name="type"
+        value={formData.type}
+        onChange={handleChange}
+        required
+      >
+        <option value="vegi">Veg</option>
+        <option value="non vegi">Non-Veg</option>
+      </select>
+      <select
+        name="category"
+        value={formData.category}
+        onChange={handleChange}
+        required
+      >
+        <option value="breakfast">Breakfast</option>
+        <option value="lunch">Lunch</option>
+        <option value="dinner">Dinner</option>
+      </select>
 
-        <div className="actions">
-          <button onClick={handleSubmit}>Save</button>
-          <button onClick={onClose}>Cancel</button>
-        </div>
+      <div className="actions">
+        <button onClick={handleSubmit}>Save</button>
+        <button onClick={onClose}>Cancel</button>
       </div>
     </div>
+  </div>
   );
 }
 
@@ -333,5 +341,8 @@ function DeleteConfirmationPopup({ food, onDelete, onClose }) {
     </div>
   );
 }
+
+
+
 
 export default ManageCateringFoods;

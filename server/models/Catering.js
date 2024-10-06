@@ -4,8 +4,13 @@ const cateringSchema = new mongoose.Schema(
   {
     imageUrl: {
       type: String,
+      required: true,
     },
     name: {
+      type: String,
+      required: true,
+    },
+    itemId: {
       type: String,
       required: true,
     },
