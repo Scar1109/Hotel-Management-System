@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const roomsModel = require("../models/Room"); // import model
 const ReservationModel = require("../models/Resevation"); // import model
+const UserSuggestion = require("../models/userSuggestion"); // import model
 
 // Get all rooms
 router.get("/getRooms", async (req, res) => {
@@ -217,5 +218,84 @@ router.put("/updateBooking/:id", async (req, res) => {
           res.status(404).json({ message: error.message });
       }
   });
+
+  // Route to fetch best-selling rooms (based on booking count or some other logic)
+router.get('/getBestSelling', async (req, res) => {
+      try {
+          // Assuming "best-selling" is based on the number of reservations
+          const bestSellingRooms = await ReservationModel.aggregate([
+              { $group: { _id: "$roomNumber", count: { $sum: 1 } } },
+              { $sort: { count: -1 } }, // Sort by highest booking count
+              { $limit: 5 } // Limit to top 5 rooms
+          ]);
+  
+          // Find room details for the best-selling rooms
+          const roomIds = bestSellingRooms.map(room => room._id);
+          const rooms = await roomsModel.find({ roomNumber: { $in: roomIds } });
+  
+          res.status(200).json({ rooms });
+      } catch (error) {
+          console.error(error);
+          res.status(500).json({ message: 'Error fetching best-selling rooms' });
+      }
+  });
+
+// Route to get user-specific recommendations based on user behavior
+router.get('/getRecommendations', async (req, res) => {
+      const { userId } = req.query;
+    
+      if (!userId) {
+        return res.status(400).json({ message: 'User ID is required' });
+      }
+    
+      try {
+        // Fetch user suggestions based on user ID
+        const userSuggestion = await UserSuggestion.findOne({ userId });
+    
+        if (!userSuggestion || userSuggestion.rooms.length === 0) {
+          return res.status(200).json({ recommendations: [] });
+        }
+    
+        // Find room details for the suggested rooms using _id instead of roomNumber
+        const rooms = await roomsModel.find({ _id: { $in: userSuggestion.rooms } });
+    
+        res.status(200).json({ recommendations: rooms });
+      } catch (error) {
+        console.error('Error fetching user recommendations:', error);
+        res.status(500).json({ message: 'Server error' });
+      }
+    });    
+
+// Route to save user room suggestion
+router.post('/saveSuggestion', async (req, res) => {
+      const { userId, roomId } = req.body;
+    
+      if (!userId || !roomId) {
+        return res.status(400).json({ message: 'User ID and Room ID are required' });
+      }
+    
+      try {
+        let userSuggestion = await UserSuggestion.findOne({ userId });
+    
+        if (userSuggestion) {
+          // Add the room to suggestions if not already present
+          if (!userSuggestion.rooms.includes(roomId)) {
+            userSuggestion.rooms.push(roomId);
+          }
+        } else {
+          // Create a new suggestion if none exist for this user
+          userSuggestion = new UserSuggestion({
+            userId,
+            rooms: [roomId],
+          });
+        }
+    
+        await userSuggestion.save();
+        res.status(201).json({ message: 'Suggestion saved successfully' });
+      } catch (error) {
+        console.error('Error saving user suggestion:', error);
+        res.status(500).json({ message: 'Server error' });
+      }
+    });
   
 module.exports = router;

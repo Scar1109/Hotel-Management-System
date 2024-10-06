@@ -348,7 +348,7 @@ function ManagePackages() {
                                 <div className="manage_packages_header">
                                         <h1>Manage Packages</h1>
                                         <div className="search-container-122313">
-                                                <div className="search-bar">
+                                                <div className="search-bar_">
                                                         <Input
                                                                 placeholder="Search packages"
                                                                 value={

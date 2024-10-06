@@ -1,7 +1,7 @@
 .manage_room{
     width: 100%;
     margin-top: 10px;
-    height: 620px;
+    height: 1020px;
     padding: 15px;
 }
 
@@ -11,6 +11,10 @@
     border-radius: 10px;
     height: 100%;
     width: 100%;
+}
+
+.Type_Distribution{
+    margin-top: 20px;
 }
 
 .manageroom_table{
