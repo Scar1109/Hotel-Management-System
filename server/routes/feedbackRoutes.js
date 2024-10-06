@@ -138,6 +138,22 @@
         }
     });
 
+    router.post("/getFeedback", async (req, res) => {
+        const { page, limit } = req.body;
+        try {
+            const feedbacks = await feedbackModel
+                .find({})
+                .skip((page - 1) * limit)
+                .limit(limit)
+                .sort({ createdAt: -1 }); // Latest feedback first
+            const total = await feedbackModel.countDocuments();
+            res.json({ feedbacks, total });
+        } catch (error) {
+            res.status(500).json({ message: "Error fetching feedbacks" });
+        }
+    });
+    
+
 
 
     module.exports = router;
