@@ -188,6 +188,25 @@ router.delete('/deleteBooking/:bookingId', async (req, res) => {
     }
 });
 
+
+// Get 5 most recent bookings sorted by the most recent
+router.get('/getRecentBookings', async (req, res) => {
+    try {
+        // Find bookings and sort by `createdAt` in descending order to get the most recent first
+        const recentBookings = await eventBookingModel.find({}).sort({ createdAt: -1 }).limit(5); // Limit to 5 recent bookings
+
+        if (!recentBookings.length) {
+            return res.status(404).json({ message: 'No bookings found' });
+        }
+        res.status(200).json({ bookings: recentBookings });
+    } catch (err) {
+        console.error('Error fetching recent bookings:', err.message);
+        res.status(500).json({ message: 'Error fetching recent bookings', error: err.message });
+    }
+});
+
+
+
 // Set a reminder for an event
 router.post('/setReminder', async (req, res) => {
     const { userId, eventId, reminderTime } = req.body;

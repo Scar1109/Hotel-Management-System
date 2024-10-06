@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
 function Dashboard() {
+    const [bookings, setBookings] = useState([]);
     const [eventCount, setEventCount] = useState(0); // State for storing total event count
     const [feedbackCount, setFeedbackCount] = useState(0);
     const [feedbackRatings, setFeedbackRatings] = useState([]);
@@ -57,7 +58,7 @@ function Dashboard() {
         try {
             const response = await axios.get("/api/event/getTotalEvents");
             console.log("API Response:", response.data); // Log the API response to inspect the data
-            
+
             // Use totalEvents from the response
             if (response.data.totalEvents) {
                 setEventCount(response.data.totalEvents); // Set the total event count
@@ -68,7 +69,7 @@ function Dashboard() {
             console.error("Error fetching event count:", error);
         }
     };
-    
+
     // Call the function in useEffect
     useEffect(() => {
         fetchEventCount();
@@ -135,6 +136,24 @@ function Dashboard() {
         },
     };
 
+    // Fetch event bookings from the backend
+    useEffect(() => {
+        const fetchRecentBookings = async () => {
+            try {
+                const response = await axios.get('/api/event/getRecentBookings'); // Fetch recent 5 bookings
+                console.log('API Response:', response.data); // Log the API response to inspect the data
+                setBookings(response.data.bookings); // Update the bookings state with the recent 5 bookings
+            } catch (error) {
+                console.error('Error fetching recent bookings:', error);
+            }
+        };
+
+        fetchRecentBookings();
+    }, []);
+
+
+
+
     // Calculate the percentage of each rating
     const totalRatings = ratingSummary.total;
     const getPercentage = (count) => (count / totalRatings) * 100;
@@ -179,13 +198,12 @@ function Dashboard() {
                             display: "flex",
                             justifyContent: "space-between",
                             alignItems: "center",
-                            padding: "20px",
+                            padding: "15px",
                             height: "400px",
                             backgroundColor: "#ffffff",
                             borderRadius: "8px",
                             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" // Add this for shadow effect
                         }}>
-
                             {/* Left Side - Average Rating */}
                             <div className="average_rating" style={{
                                 textAlign: "center",
@@ -203,7 +221,6 @@ function Dashboard() {
                                 </div>
                                 <p style={{ color: "green" }}>All from verified</p>
                             </div>
-
                             {/* Right Side - Rating Breakdown */}
                             <div className="rating_breakdown" style={{ flex: 1, paddingLeft: "20px", marginLeft: "-10px" }}>
                                 {[5, 4, 3, 2, 1].map((star) => (
@@ -222,13 +239,63 @@ function Dashboard() {
                                             percent={getPercentage(ratingSummary.ratings.find(rating => rating._id === star)?.count || 0)}
                                             showInfo={false}
                                             strokeColor={star === 5 ? "#52c41a" : "#d9d9d9"}
-                                            style={{ width: "200px", marginLeft: "82px" }}
+                                            style={{ width: "200px", marginLeft: "73px" }}
                                         />
-                                        <span style={{ marginLeft: "20px" }}>
+                                        <span style={{ marginLeft: "10px" }}>
                                             {ratingSummary.ratings.find(rating => rating._id === star)?.count || 0}
                                         </span>
                                     </div>
                                 ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="booking_table_admin_show">
+                <div className="booking_table_admin_show">
+                    <div className="booking_table_admin_show">
+                        <div className="booking_table_admin_show">
+                            <div style={{
+                                padding: "20px",
+                                borderRadius: "8px",
+                                width: "100%",
+                                margin: "0 auto"
+                            }}>
+                                <h2 style={{ marginBottom: "10px", fontSize: "20px" }}>Recent Event Bookings</h2>
+                                <table style={{
+                                    width: "100%",
+                                    borderCollapse: "collapse",
+                                    backgroundColor: "#fff",
+                                    marginTop: "5px",
+                                    borderRadius: "8px",
+                                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                    fontSize: "14px" // Small font for compact table
+                                }}>
+                                    <thead style={{ backgroundColor: "#e8f0fb", textAlign: "left" }}>
+                                        <tr>
+                                            <th style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>Guest Name</th>
+                                            <th style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>Guest Email</th>
+                                            <th style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>Phone</th>
+                                            <th style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>Event Date</th>
+                                            <th style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>Total Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {bookings.length > 0 ? bookings.map((booking, index) => (
+                                            <tr key={index}>
+                                                <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>{booking.guestName}</td>
+                                                <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>{booking.guestEmail}</td>
+                                                <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>{booking.guestPhone}</td>
+                                                <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>{new Date(booking.eventDate).toDateString()}</td>
+                                                <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}> LKR {booking.totalAmount}</td>
+                                            </tr>
+                                        )) : (
+                                            <tr>
+                                                <td colSpan="5" style={{ padding: "12px", textAlign: "center" }}>No recent bookings found</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
