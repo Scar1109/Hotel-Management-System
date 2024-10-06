@@ -106,22 +106,20 @@ function ParkingPage() {
             message.error("Please fill all the fields.");
             return;
         }
-
+    
         if (!user || !user.userID) {
             message.error("User not found. Please log in again.");
             return;
         }
-
-        // check the selected date is ahead of the current date
+    
+        // Check the selected date is ahead of the current date
         const currentDate = new Date();
         const selectedDateObj = new Date(selectedDate);
         if (selectedDateObj < currentDate) {
             message.error("Please select a valid date.");
             return;
         }
-
-        console.log(user);
-
+    
         try {
             // Send booking request to the server
             await axios.post("/api/parking/book", {
@@ -132,12 +130,32 @@ function ParkingPage() {
                 userID: user.userID,
                 Price: price,
             });
+    
             message.success("Parking slot booked successfully.");
-            fetchAvailability(); // Refresh availability after booking
+    
+            // After successful booking, send the gate pass email
+            const bookingDetails = {
+                vehicleNumber,
+                selectedSlot,
+                selectedDate,
+                bookingDuration,
+                price,
+            };
+    
+            await axios.post("/api/parking/send-gatepass", {
+                userEmail: user.email, // Assuming user.email is available in your user object
+                bookingDetails,
+            });
+    
+            message.success("Gate pass sent to your email.");
+    
+            // Refresh availability after booking
+            fetchAvailability();
         } catch (error) {
-            message.error("Failed to book the parking slot.");
+            message.error("Failed to book the parking slot or send the gate pass.");
         }
     };
+    
 
     return (
         <div className="parking-page1244">

@@ -4,10 +4,9 @@ import axios from 'axios';
 
 const PackagePage = () => {
   const [packages, setPackages] = useState([]);
-  const navigate = useNavigate();  // Use the React Router's navigate hook
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch the packages from the backend
     const fetchPackages = async () => {
       try {
         const response = await axios.get('/api/package/getPackages');
@@ -20,8 +19,9 @@ const PackagePage = () => {
     fetchPackages();
   }, []);
 
-  // Navigate to the package details page
   const handleMoreInfoClick = (id) => {
+    // Increment popularity score when viewing details
+    axios.post(`/api/package/updatePopularity/${id}`);
     navigate(`/packages/${id}`);
   };
 
@@ -34,8 +34,20 @@ const PackagePage = () => {
             <h2 className="pkg_title">{pkg.packageName}</h2>
             <p className="pkg_size">Size: {pkg.size} Person</p>
           </div>
+          <div className="pkg_pricing">
+            {pkg.currentDiscount > 0 && (
+              <div className="pkg_original_price">
+                Original Price: <strike>Rs {pkg.originalPrice}</strike>
+              </div>
+            )}
+            <div className="pkg_discounted_price">
+              <span className="pkg_price">Rs {pkg.price}</span>
+              {pkg.currentDiscount > 0 && (
+                <span className="pkg_discount_badge">{pkg.currentDiscount}% OFF</span>
+              )}
+            </div>
+          </div>
           <div className="pkg_footer">
-            <span className="pkg_price">From Rs: {pkg.price}</span>
             <button
               className="pkg_button"
               onClick={() => handleMoreInfoClick(pkg._id)}

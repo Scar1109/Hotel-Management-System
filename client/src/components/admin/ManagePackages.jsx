@@ -318,7 +318,13 @@ function ManagePackages() {
                                                 <div><h2>Package Booking Count</h2>
                                                 <Pie data={pieChartData} /></div>
                                         </div>
-                                        <div className="package_card">
+                                        <div className="package_chart">
+                                        <h2>Package Booking by Date</h2>
+                                        <Bar data={barChartData} />
+                                </div>
+                                </div>
+                                <div className="package_chart">
+                                <div className="package_card">
                                                 {" "}
                                                 <div className="package_insight_card">
                                                         <h1>{totalPackages}</h1>
@@ -337,10 +343,6 @@ function ManagePackages() {
                                                         <p>Unbooked Packages</p>
                                                 </div>
                                         </div>
-                                </div>
-                                <div className="package_chart">
-                                        <h2>Package Booking by Date</h2>
-                                        <Bar data={barChartData} />
                                 </div>
                         </div>
 
