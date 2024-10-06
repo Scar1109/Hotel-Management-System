@@ -41,7 +41,7 @@ function EventViewPage() {
             }
 
             const reminderTime = reminderDate || moment(event.eventDate).subtract(1, 'days').toISOString(); // Default reminder is 1 day before the event
-            
+
             // Send the reminder request to backend
             await axios.post('/api/reminder/setReminder', {
                 userId: currentUser.userID,
@@ -49,7 +49,7 @@ function EventViewPage() {
                 eventId: event.eventId,
                 reminderTime
             });
-            
+
             message.success('Reminder set successfully!');
         } catch (error) {
             message.error('Failed to set reminder. Please try again.');
@@ -61,7 +61,7 @@ function EventViewPage() {
             // Validate form and get values
             const values = await form.validateFields();
             const currentUser = JSON.parse(localStorage.getItem('currentUser')); // Get current user from localStorage
-    
+
             // Prepare reservation data
             const reservationData = {
                 eventId: event.eventId,
@@ -72,15 +72,15 @@ function EventViewPage() {
                 totalAmount: event.price,
                 userID: currentUser.userID // Include user ID for reservation
             };
-    
+
             console.log("Reservation Data:", reservationData); // Debugging: Log reservation data
-    
+
             // Send reservation data to the server
             const response = await axios.post(`/api/event/reserveEvent/${event.eventId}`, reservationData);
-    
+
             console.log("Reservation Response:", response.data); // Debugging: Log the response data
             message.success(`Booking successful!`); // Show success message with booking ID
-    
+
             setIsModalOpen(false); // Close modal on successful reservation
             form.resetFields(); // Reset form fields
         } catch (error) {
@@ -116,11 +116,22 @@ function EventViewPage() {
 
                 {/* Remind me button */}
                 <div style={{ marginTop: '20px' }}>
-                    <DatePicker 
-                        onChange={(date) => setReminderDate(date)} 
-                        placeholder="Set custom reminder date" 
+                    <DatePicker
+                        onChange={(date) => setReminderDate(date)}
+                        placeholder="Set custom reminder date"
                     />
-                    <Button type="primary" onClick={handleSetReminder} style={{ marginLeft: '20px', height:"40px" }}>
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            if (!reminderDate) {
+                                // Show an Ant Design error message if no date is selected
+                                message.error('Please pick a date before setting a reminder.');
+                                return;
+                            }
+                            handleSetReminder(); // Call the reminder function if a date is selected
+                        }}
+                        style={{ marginLeft: '20px', height: "40px" }}
+                    >
                         Remind me 1 day before
                     </Button>
                 </div>

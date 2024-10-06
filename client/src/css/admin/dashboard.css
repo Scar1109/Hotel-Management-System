@@ -193,4 +193,6 @@
 }
 .admin_panel_progress_rating_section{
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
 }

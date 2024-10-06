@@ -79,7 +79,6 @@ class EmailService {
                     </div>
                 `
             };
-
             // Send the email
             const info = await transporter.sendMail(mailOptions);
             

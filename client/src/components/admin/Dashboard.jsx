@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Line } from "react-chartjs-2";
-import { Chart as ChartJS, LineElement, PointElement, CategoryScale, LinearScale, Title, Tooltip, Legend } from 'chart.js';
+import { Line, Pie } from "react-chartjs-2";
+import { Chart as ChartJS, LineElement, PointElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import { Progress } from "antd"; // Ant Design Progress for the rating breakdown
 import axios from "axios";
 import { Link } from "react-router-dom";
 
 // Register necessary chart components
-ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
+ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ArcElement);
 
 function Dashboard() {
     const [bookings, setBookings] = useState([]);
@@ -17,6 +17,10 @@ function Dashboard() {
         total: 0,
         ratings: [],
         average: 0
+    });
+    const [feedbackData, setFeedbackData] = useState({
+        totalLikes: 0,
+        totalDislikes: 0,
     });
 
     // Fetch feedback count, ratings, and rating summary from the backend API
@@ -48,10 +52,26 @@ function Dashboard() {
             }
         };
 
+        const fetchFeedbackLikesDislikes = async () => {
+            try {
+                const response = await axios.post("/api/feedback/getFeedback", { page: 1, limit: 100 }); // Adjust limit as needed
+                const feedbacks = response.data.feedbacks;
+
+                const totalLikes = feedbacks.reduce((acc, feedback) => acc + feedback.likes, 0);
+                const totalDislikes = feedbacks.reduce((acc, feedback) => acc + feedback.dislikes, 0);
+
+                setFeedbackData({ totalLikes, totalDislikes });
+            } catch (error) {
+                console.error("Error fetching feedback likes/dislikes", error);
+            }
+        };
+
         fetchFeedbackCount();
         fetchFeedbackRatings();
         fetchRatingsSummary();
+        fetchFeedbackLikesDislikes(); // Fetch like and dislike counts
     }, []);
+
 
     // Fetch event count from the backend API
     const fetchEventCount = async () => {
@@ -74,6 +94,28 @@ function Dashboard() {
     useEffect(() => {
         fetchEventCount();
     }, []);
+
+    // Pie chart data for likes and dislikes
+    const pieChartData = {
+        labels: ["Likes", "Dislikes"],
+        datasets: [
+            {
+                data: [feedbackData.totalLikes, feedbackData.totalDislikes],
+                backgroundColor: ["#36A2EB", "#FF6384"], // Colors for likes and dislikes
+                hoverBackgroundColor: ["#36A2EB", "#FF6384"],
+            },
+        ],
+    };
+
+    const pieChartOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true,
+                position: "top",
+            },
+        },
+    };
 
     // Prepare data for the line chart
     const feedbackMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -199,7 +241,7 @@ function Dashboard() {
                             justifyContent: "space-between",
                             alignItems: "center",
                             padding: "15px",
-                            height: "400px",
+                            height: "200px",
                             backgroundColor: "#ffffff",
                             borderRadius: "8px",
                             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" // Add this for shadow effect
@@ -247,6 +289,26 @@ function Dashboard() {
                                     </div>
                                 ))}
                             </div>
+                        </div>
+                        {/* Pie Chart for likes and dislikes */}
+                    {/* Pie Chart for likes and dislikes */}
+                        <div
+                        style={{
+                            padding: "20px",
+                            borderRadius: "8px",
+                            backgroundColor: "#ffffff",
+                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Add shadow
+                            marginBottom: "20px", // Space between sections
+                            textAlign: "center", // Center the heading and chart
+                            width: "70%", // Adjust width if necessary
+                            maxWidth: "300px", // Set a max width for the chart container
+                            margin: "0 auto", // Center align the chart container
+                        }}
+                        >
+                        <h1 style={{ fontSize: "30px", marginBottom: "20px", color: "#333" }}>
+                            Feedback Like vs Dislike Ratio
+                        </h1>
+                        <Pie data={pieChartData} options={pieChartOptions} />
                         </div>
                     </div>
                 </div>
