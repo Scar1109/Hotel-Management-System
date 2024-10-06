@@ -214,4 +214,19 @@ router.post('/setReminder', async (req, res) => {
     }
 });
 
+router.get('/getTotalEvents', async (req, res) => {
+    try {
+        // Fetch the total number of events in the database
+        const totalEvents = await eventModel.countDocuments();
+        
+        // Return the total event count
+        res.status(200).json({ totalEvents });
+    } catch (err) {
+        console.error('Error retrieving total events:', err.message);
+        res.status(500).json({ message: 'Error retrieving total events', error: err.message });
+    }
+});
+
+
+
 module.exports = router;

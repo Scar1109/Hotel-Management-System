@@ -153,7 +153,71 @@
         }
     });
     
+    // Get total feedback count
+    router.get("/feedbackCount", async (req, res) => {
+        try {
+            const count = await feedbackModel.countDocuments(); // Get total count of feedbacks
+            res.json({ count });
+        } catch (error) {
+            res.status(500).json({ message: "Error fetching feedback count" });
+        }
+    });
 
+// Get average feedback ratings by month
+router.get("/feedbackRatingsByMonth", async (req, res) => {
+    try {
+        const feedbacks = await feedbackModel.aggregate([
+            {
+                $group: {
+                    _id: { $month: "$createdAt" }, // Group by month
+                    averageRating: { $avg: "$rating" }, // Calculate average rating
+                },
+            },
+            {
+                $sort: { _id: 1 }, // Sort by month
+            },
+        ]);
+        res.json(feedbacks);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching feedback ratings" });
+    }
+});
+
+// Get feedback ratings summary (for progress bars)
+router.get("/ratingsSummary", async (req, res) => {
+    try {
+        const feedbackSummary = await feedbackModel.aggregate([
+            {
+                $group: {
+                    _id: "$rating", // Group by rating (1 to 5)
+                    count: { $sum: 1 }, // Count how many feedbacks per rating
+                },
+            },
+            {
+                $sort: { _id: -1 }, // Sort by rating (5 stars first)
+            },
+        ]);
+
+        // Calculate the total feedback count
+        const totalFeedback = await feedbackModel.countDocuments();
+        const averageRating = await feedbackModel.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    avgRating: { $avg: "$rating" },
+                },
+            },
+        ]);
+
+        res.json({
+            total: totalFeedback,
+            ratings: feedbackSummary,
+            average: averageRating.length > 0 ? averageRating[0].avgRating : 0,
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching ratings summary" });
+    }
+});
 
 
     module.exports = router;
