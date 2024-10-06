@@ -5,7 +5,6 @@ const cron = require("node-cron"); // Schedule tasks (cron jobs)
 const { sendReminderEmail } = require('./utils/emailService'); // Email sending service
 const Reminder = require('./models/reminder'); // Reminder model
 const Event = require('./models/Event'); // Event model
-const User = require('./models/User'); // User model (Ensure this is added)
 
 const app = express();
 
@@ -41,29 +40,34 @@ app.use("/api/room", roomRoutes);
 app.use("/api/reminder", reminderRoutes);
 
 // Cron job to check reminders every hour
-cron.schedule('0 * * * *', async () => {
+// Cron job to check reminders every minute
+// Cron job to check reminders every minute
+cron.schedule('* * * * *', async () => { // Runs every minute
     try {
         const now = new Date();
+
+        // Find reminders that are due and haven't been sent yet
         const reminders = await Reminder.find({
-            reminderTime: { $lte: now }, // Find reminders that are due
-            sentStatus: false // Only process reminders that haven't been sent yet
+            reminderTime: { $lte: now }, // Reminder time is in the past or right now
+            sentStatus: false // Only get reminders that haven't been sent yet
         });
 
         for (const reminder of reminders) {
+            // Get the event associated with the reminder
             const event = await Event.findOne({ eventId: reminder.eventId });
-            const user = await User.findOne({ userID: reminder.userId }); // Find user by userID
 
-            if (event && user) {
-                // Send reminder email to the user
-                await sendReminderEmail(user.email, event);
+            // If the event exists, send the email
+            if (event) {
+                await sendReminderEmail(reminder.userEmail, event);
 
-                // Mark reminder as sent
+                // Mark the reminder as sent
                 reminder.sentStatus = true;
                 await reminder.save();
 
-                console.log(`Email sent to ${user.email} for event ${event.eventName}`);
+                console.log(`Reminder email sent to ${reminder.userEmail} for event ${event.eventName}`);
             } else {
-                console.error(`User or event not found for reminder: ${reminder._id}`);
+                // Log that the event was not found
+                console.log(`Event not found for reminder: ${reminder._id}`);
             }
         }
     } catch (error) {

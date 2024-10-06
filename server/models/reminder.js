@@ -2,7 +2,11 @@ const mongoose = require('mongoose');
 
 const reminderSchema = new mongoose.Schema({
     userId: {
-        type: String, // Change this to String if your userId is a custom string (like 'U83872')
+        type: String, // User ID as a string
+        required: true,
+    },
+    userEmail: {
+        type: String,  // User email
         required: true,
     },
     eventId: {
@@ -10,7 +14,7 @@ const reminderSchema = new mongoose.Schema({
         required: true,
     },
     reminderTime: {
-        type: Date,
+        type: Date,  // This will store the exact reminder time (picked date or 1 day before)
         required: true,
     },
     sentStatus: {

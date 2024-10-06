@@ -34,11 +34,18 @@ function EventViewPage() {
     const handleSetReminder = async () => {
         try {
             const currentUser = JSON.parse(localStorage.getItem('currentUser')); // Get current user from localStorage
+
+            if (!currentUser || !currentUser.userID || !currentUser.email) {
+                message.error("No user data found in localStorage. Please login.");
+                return;
+            }
+
             const reminderTime = reminderDate || moment(event.eventDate).subtract(1, 'days').toISOString(); // Default reminder is 1 day before the event
             
             // Send the reminder request to backend
             await axios.post('/api/reminder/setReminder', {
                 userId: currentUser.userID,
+                userEmail: currentUser.email,  // Send user email
                 eventId: event.eventId,
                 reminderTime
             });
@@ -105,7 +112,6 @@ function EventViewPage() {
                 <h1>{event.eventName}</h1>
                 <p>{event.description}</p>
                 <h3>Event Type: {event.eventType}</h3>
-                {/* <h3>Event Date: {moment(event.eventDate).format("MMMM Do YYYY")}</h3> */}
                 <h3>Price: Rs {event.price}</h3>
 
                 {/* Remind me button */}
@@ -114,7 +120,7 @@ function EventViewPage() {
                         onChange={(date) => setReminderDate(date)} 
                         placeholder="Set custom reminder date" 
                     />
-                    <Button type="primary" onClick={handleSetReminder} style={{ marginLeft: '10px' }}>
+                    <Button type="primary" onClick={handleSetReminder} style={{ marginLeft: '20px', height:"40px" }}>
                         Remind me 1 day before
                     </Button>
                 </div>
