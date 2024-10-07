@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const parkingMail = require('../utils/parkingMail');
 
 const parkingModel = require('../models/Parking');
 
@@ -103,6 +104,18 @@ router.get('/getAllParkings', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error retrieving parking bookings." });
+    }
+});
+
+router.post('/send-gatepass', async (req, res) => {
+    const { userEmail, bookingDetails } = req.body;
+
+    try {
+        // Send the gate pass email
+        await parkingMail.sendGatePassEmail(userEmail, bookingDetails);
+        res.status(200).json({ message: "Gate pass email sent successfully." });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to send gate pass email.", error });
     }
 });
 

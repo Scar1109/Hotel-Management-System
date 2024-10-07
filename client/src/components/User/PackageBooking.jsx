@@ -12,9 +12,11 @@ function RoomBookings() {
     // Fetch bookings data
     const getBookings = async () => {
         try {
-            const response = await axios.get("/api/room/getBookings");
+            const response = await axios.get("/api/package/getBookingData");
             const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-            const filteredBookings = response.data.bookings.filter(
+
+            // Filter bookings based on current user ID
+            const filteredBookings = response.data.reservations.filter(
                 (booking) => booking.userID === currentUser.userID
             );
             setBookings(filteredBookings);
@@ -23,7 +25,7 @@ function RoomBookings() {
         }
     };
 
-    // Fetch packages
+    // Fetch packages data
     const fetchPackages = async () => {
         try {
             const response = await axios.get("/api/package/getPackages");
@@ -37,18 +39,20 @@ function RoomBookings() {
         fetchPackages();
     }, []);
 
-    // Create an array of all booking-package pairs
-    const bookingPackagePairs = bookings.flatMap((booking) =>
-        booking.packages.map((packageName) => {
-            const matchedPackage = packages.find(
-                (pkg) => pkg.packageName === packageName
-            );
-            return {
-                booking,
-                package: matchedPackage || { packageName, notFound: true },
-            };
-        })
-    );
+    useEffect(() => {
+        getBookings();
+    }, []);
+
+    // Map bookings to their respective packages
+    const bookingPackagePairs = bookings.map((booking) => {
+        const matchedPackage = packages.find(
+            (pkg) => pkg._id === booking.packageId // Match booking's packageId to package _id
+        );
+        return {
+            booking,
+            package: matchedPackage || { packageName: "Unknown Package", notFound: true },
+        };
+    });
 
     // Pagination logic
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -59,11 +63,6 @@ function RoomBookings() {
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
-
-    // Fetch bookings when the component mounts
-    useEffect(() => {
-        getBookings();
-    }, []);
 
     return (
         <div className="bookings-container">
@@ -85,12 +84,12 @@ function RoomBookings() {
                                     <p>Package details not found</p>
                                 ) : (
                                     <>
-                                        <p>Package ID: {pkg.packageId}</p>
+                                        <p>Package ID: {pkg._id}</p>
                                         <p>Description: {pkg.description}</p>
                                     </>
                                 )}
                                 <p>Guest Name: {booking.guestName}</p>
-                                <h5>Package Price:{pkg.price}</h5>
+                                <h5>Package Price: {pkg.price}</h5>
                             </Card>
                         ))}
                     </div>

@@ -14,7 +14,7 @@
     "aos": "^2.3.4",
     "axios": "^1.6.7",
     "bootstrap": "^5.3.3",
-    "chart.js": "^4.4.2",
+    "chart.js": "^4.4.4",
     "jquery": "^3.7.1",
     "js-file-download": "^0.4.12",
     "jspdf": "^2.5.1",

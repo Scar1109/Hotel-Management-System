@@ -209,14 +209,14 @@ function Dashboard() {
                 </div>
                 <div className="admin_dashboard_card card2">
                     <h1 style={{ fontSize: "30px" }}>Employees</h1>
-                    <h2 style={{ fontSize: "32px" }}>{/* Employee count */}</h2>
+                    <h2 style={{ fontSize: "32px" }}>10</h2>
                     <Link to="/admin/bookings" style={{ textDecoration: "none" }}>
                         {/* Link content */}
                     </Link>
                 </div>
                 <div className="admin_dashboard_card card3">
                     <h1 style={{ fontSize: "30px" }}>Rooms</h1>
-                    <h2>{/* Room count */}</h2>
+                    <h2>12</h2>
                     <Link to="/admin/inventorylist" style={{ textDecoration: "none" }}>
                         {/* Link content */}
                     </Link>

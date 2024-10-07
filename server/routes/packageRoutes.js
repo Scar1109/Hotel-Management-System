@@ -108,54 +108,78 @@ router.delete("/deletePackage/:id", async (req, res) => {
 
 
 // Function to generate a unique booking ID
-let currentID = 0; // This should ideally be stored and managed in your database
-
-const generateBookingID = () => {
-  currentID++;
-  return `Res${currentID.toString().padStart(3, "0")}`;
-};
+const generateBookingID = async () => {
+      // Fetch the latest booking, sorted by bookingID in descending order
+      const lastBooking = await PackageBooking.findOne().sort({ bookingID: -1 });
+    
+      // If no bookings are found, start with the initial booking ID
+      if (!lastBooking) {
+        return "Res001"; // Starting ID
+      }
+    
+      // Extract the numeric part of the bookingID, e.g., '001' from 'Res001'
+      const lastIdNumber = parseInt(lastBooking.bookingID.replace("Res", ""), 10);
+      
+      // Increment the numeric part by 1
+      const newIdNumber = lastIdNumber + 1;
+    
+      // Format the new bookingID, ensuring it's 3 digits
+      return `Res${newIdNumber.toString().padStart(3, "0")}`;
+    };
+    
 
 // Route to create a new package reservation
 router.post("/reservePackage/:id", async (req, res) => {
-  const {
-    userID, // Now treated as a string
-    guestName,
-    guestEmail,
-    guestPhone,
-    startDate,
-    endDate,
-    totalAmount,
-  } = req.body;
-
-  try {
-    // Generate a custom booking ID
-    const bookingID = generateBookingID();
-
-    // Find the package using its _id
-    const pkg = await packageModel.findById(req.params.id);
-    if (!pkg) {
-      return res.status(404).json({ message: "Package not found" });
-    }
-
-    // Create a new booking with the custom booking ID
-    const newBooking = new PackageBooking({
-      bookingID, // Add the custom booking ID to the package booking
-      userID, // Now stored as a string
-      packageId: pkg._id,
-      guestName,
-      guestEmail,
-      guestPhone,
-      startDate,
-      endDate,
-      totalAmount,
+      const {
+        userID,
+        guestName,
+        guestEmail,
+        guestPhone,
+        startDate,
+        endDate,
+        totalAmount,
+      } = req.body;
+    
+      try {
+        // Generate a custom booking ID by fetching the latest one from the database
+        const bookingID = await generateBookingID();
+    
+        // Find the package using its _id
+        const pkg = await packageModel.findById(req.params.id);
+        if (!pkg) {
+          return res.status(404).json({ message: "Package not found" });
+        }
+    
+        // Create a new booking with the custom booking ID
+        const newBooking = new PackageBooking({
+          bookingID, 
+          userID,
+          packageId: pkg._id,
+          guestName,
+          guestEmail,
+          guestPhone,
+          startDate,
+          endDate,
+          totalAmount,
+        });
+    
+        // Save the booking to the database
+        await newBooking.save();
+    
+        res.status(201).json({ message: "Reservation successful!", booking: newBooking });
+      } catch (error) {
+        console.error("Error creating booking:", error);
+        res.status(500).json({ message: "Server error" });
+      }
     });
-
-    // Save the booking to the database
-    await newBooking.save();
-
-    res.status(201).json({ message: "Reservation successful!", booking: newBooking });
+    
+// Route to get all reservations
+router.get("/getBookingData", async (req, res) => {
+  try {
+    const reservations = await PackageBooking.find();
+    res.json({ reservations });
   } catch (error) {
-    console.error("Error creating booking:", error);
+    console.error("Error fetching reservations:", error);
     res.status(500).json({ message: "Server error" });
   }
 });

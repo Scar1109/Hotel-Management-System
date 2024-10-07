@@ -1,12 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Space, Table, Modal, Input, message, Form, InputNumber } from "antd";
 import { Icon } from "@iconify/react";
 import axios from "axios";
+import { Bar, Pie } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+} from "chart.js";
+import PackageAlerts from "./PackageAlerts";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function ManagePackages() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [packages, setPackages] = useState([]);
+  const [bookingData, setBookingData] = useState([]);
   const [editingPackage, setEditingPackage] = useState(null);
   const [searchText, setSearchText] = useState("");
 
@@ -41,8 +64,19 @@ function ManagePackages() {
     }
   };
 
+  // Fetch booking data
+  const fetchBookingData = async () => {
+    try {
+      const response = await axios.get("/api/package/getBookingData");
+      setBookingData(response.data.reservations); // Access the "reservations" key
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     fetchPackages();
+    fetchBookingData();
   }, []);
 
   // Add new package
@@ -56,7 +90,9 @@ function ManagePackages() {
       form.resetFields();
     } catch (err) {
       console.log(err);
-      message.error(err.response?.data?.message || "Failed to add package");
+      message.error(
+        err.response?.data?.message || "Failed to add package"
+      );
     }
   };
 
@@ -64,14 +100,19 @@ function ManagePackages() {
   const handleUpdate = async () => {
     try {
       const values = await updateForm.validateFields();
-      await axios.put(`/api/package/updatePackage/${editingPackage._id}`, values);
+      await axios.put(
+        `/api/package/updatePackage/${editingPackage._id}`,
+        values
+      );
       setIsUpdateModalOpen(false);
       message.success("Package updated successfully");
       fetchPackages();
       updateForm.resetFields();
     } catch (err) {
       console.log(err);
-      message.error(err.response?.data?.message || "Failed to update package");
+      message.error(
+        err.response?.data?.message || "Failed to update package"
+      );
     }
   };
 
@@ -87,16 +128,51 @@ function ManagePackages() {
     }
   };
 
+  // Function to convert JSON to CSV and trigger download
+  const downloadCSV = () => {
+    const headers = ["Package Name", "Description", "Size", "Price", "Date Added"];
+    const csvRows = [];
+
+    // Add headers
+    csvRows.push(headers.join(","));
+
+    // Add data rows
+    packages.forEach((pkg) => {
+      const row = [
+        pkg.packageName,
+        pkg.description,
+        pkg.size,
+        pkg.price,
+        new Date(pkg.createdAt).toLocaleDateString(),
+      ];
+      csvRows.push(row.join(","));
+    });
+
+    // Create CSV file
+    const csvContent = csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+
+    // Trigger download
+    const a = document.createElement("a");
+    a.setAttribute("hidden", "");
+    a.setAttribute("href", url);
+    a.setAttribute("download", "packages.csv");
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   // Filter packages based on search input
   const filteredPackages = packages.filter((pkg) => {
     return (
-      pkg.packageName.toLowerCase().includes(searchText.toLowerCase()) ||  // Filter by package name
+      pkg.packageName.toLowerCase().includes(searchText.toLowerCase()) || // Filter by package name
       pkg.description.toLowerCase().includes(searchText.toLowerCase()) || // Filter by description
       pkg.price.toString().includes(searchText) // Filter by price
     );
   });
 
-  // Table columns
+  // Define the columns for the table
   const columns = [
     {
       title: "Package Name",
@@ -136,29 +212,128 @@ function ManagePackages() {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Icon onClick={() => showUpdateModal(record)} icon="akar-icons:edit" width="24" height="24" />
-          <Icon onClick={() => deletePackage(record._id)} icon="material-symbols:delete" width="24" height="24" />
+          <Icon
+            onClick={() => showUpdateModal(record)}
+            icon="akar-icons:edit"
+            width="24"
+            height="24"
+          />
+          <Icon
+            onClick={() => deletePackage(record._id)}
+            icon="material-symbols:delete"
+            width="24"
+            height="24"
+          />
         </Space>
       ),
     },
   ];
 
+  let totalPackages = packages.length;
+
+// Create a Set to store unique booked package IDs
+const uniqueBookedPackageIds = new Set(bookingData.map((booking) => booking.packageId.toString()));
+// Filter the packages that are booked based on the unique package IDs
+let bookedPackages = packages.filter((pkg) => uniqueBookedPackageIds.has(pkg._id.toString())).length;
+// Calculate unbooked packages by subtracting the booked packages from total packages
+let unbookedPackages = totalPackages - bookedPackages;
+  let barChartData = {};
+  let pieChartData = {};
+
+  // Prepare data for the charts
+  if (Array.isArray(bookingData)) {
+    const bookingDates = bookingData.map((booking) =>
+      new Date(booking.startDate).toLocaleDateString()
+    );
+    const bookingCountByDate = bookingDates.reduce((acc, date) => {
+      acc[date] = (acc[date] || 0) + 1;
+      return acc;
+    }, {});
+
+    barChartData = {
+      labels: Object.keys(bookingCountByDate),
+      datasets: [
+        {
+          label: "Bookings by Date",
+          data: Object.values(bookingCountByDate),
+          backgroundColor: "rgba(75, 192, 192, 0.6)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          borderWidth: 1,
+          barThickness: 30,
+          maxBarThickness: 50,
+        },
+      ],
+    };
+
+    pieChartData = {
+      labels: ["Booked Packages", "Unbooked Packages"],
+      datasets: [
+        {
+          label: "Package Booking Count",
+          data: [bookedPackages, unbookedPackages],
+          backgroundColor: ["rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)"],
+          borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
+          borderWidth: 1,
+        },
+      ],
+    };
+  }
+
   return (
     <div className="manage_packages">
+      <div className="manage_Package_insight">
+        <div>
+          <h1>Package Insight</h1>
+        </div>
+        <div className="package_insight">
+          <div className="package_bar">
+            <h2>Package Booking Count</h2>
+            <Pie data={pieChartData} />
+          </div>
+          <div className="package_chart">
+            <h2>Package Booking by Date</h2>
+            <Bar data={barChartData} />
+          </div>
+        </div>
+        <div className="package_chart">
+          <div className="package_card">
+            <div className="package_insight_card">
+              <h1>{totalPackages}</h1>
+              <p>Total Packages</p>
+            </div>
+            <div className="package_insight_card">
+              <h1>{bookedPackages}</h1>
+              <p>Booked Packages</p>
+            </div>
+            <div className="package_insight_card">
+              <h1>{unbookedPackages}</h1>
+              <p>Unbooked Packages</p>
+            </div>
+            <PackageAlerts packages={packages} bookingData={bookingData} />
+          </div>
+        </div>
+      </div>
+
       <div className="manage_packages_content">
         <div className="manage_packages_header">
           <h1>Manage Packages</h1>
           <div className="search-container-122313">
-            <div className="search-bar">
+            <div className="search-bar_">
               <Input
                 placeholder="Search packages"
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
-                style={{ width: 300, marginLeft: 20 }}
+                style={{
+                  width: 300,
+                  marginLeft: 20,
+                }}
               />
             </div>
             <button className="add_new_package" onClick={showModal}>
               Add Package
+            </button>
+            <button className="download_pkg" onClick={downloadCSV}>
+              Download CSV
             </button>
           </div>
           <Modal title="Add Package" open={isModalOpen} onOk={addPackage} onCancel={handleCancel}>
@@ -196,7 +371,7 @@ function ManagePackages() {
                 name="price"
                 rules={[
                   { required: true, message: "Please enter the package price" },
-                  { type: 'number', min: 0, message: 'Price must be a positive number' }
+                  { type: "number", min: 0, message: "Price must be a positive number" },
                 ]}
               >
                 <InputNumber placeholder="Enter package price" style={{ width: "100%" }} />
@@ -247,7 +422,7 @@ function ManagePackages() {
               name="price"
               rules={[
                 { required: true, message: "Please enter the package price" },
-                { type: 'number', min: 0, message: 'Price must be a positive number' }
+                { type: "number", min: 0, message: "Price must be a positive number" },
               ]}
             >
               <InputNumber placeholder="Enter package price" style={{ width: "100%" }} />

@@ -12,7 +12,7 @@ const packageBookingSchema = new mongoose.Schema({
   },
   packageId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Package",
+    ref: "packages",
     required: true,
   },
   guestName: {
