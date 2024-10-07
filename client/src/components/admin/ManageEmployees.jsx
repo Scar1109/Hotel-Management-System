@@ -30,6 +30,7 @@ import {
   DeleteOutlined,
   PlusOutlined,
   SearchOutlined,
+  DownloadOutlined,
 } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
@@ -78,6 +79,50 @@ function ManageEmployees() {
     }
   };
 
+  // CSV download function (frontend only)
+  const downloadCSV = () => {
+    // Define the headers for CSV
+    const headers = [
+      "First Name",
+      "Last Name",
+      "Email",
+      "Username",
+      "Department",
+      "Customer Satisfaction",
+      "Tasks Completed",
+      "Recent Achievement",
+    ];
+
+    // Map employee data into CSV format
+    const csvData = employees.map((employee) => [
+      employee.firstName,
+      employee.lastName,
+      employee.email,
+      employee.username,
+      employee.department,
+      employee.customerSatisfaction,
+      employee.tasksCompleted,
+      employee.recentAchievement,
+    ]);
+
+    // Convert the headers and data into a CSV string
+    let csvString = `${headers.join(",")}\n`;
+    csvData.forEach((row) => {
+      csvString += `${row.join(",")}\n`;
+    });
+
+    // Create a Blob from the CSV string and trigger download
+    const blob = new Blob([csvString], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.setAttribute("hidden", "");
+    a.setAttribute("href", url);
+    a.setAttribute("download", "employees.csv");
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   const handleAddEdit = async (values) => {
     try {
       const employeeData = {
@@ -87,9 +132,9 @@ function ManageEmployees() {
 
       if (editingEmployee) {
         await axios.put(
-            `http://localhost:5000/api/employee/${editingEmployee.employeeId}`,
-            employeeData
-          );
+          `http://localhost:5000/api/employee/${editingEmployee.employeeId}`,
+          employeeData
+        );
         message.success("Employee updated successfully");
       } else {
         await axios.post(
@@ -256,13 +301,22 @@ function ManageEmployees() {
       <Card
         title={<Title level={4}>Existing Employees</Title>}
         extra={
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => showModal()}
-          >
-            Add New Employee
-          </Button>
+          <Space>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => showModal()}
+            >
+              Add New Employee
+            </Button>
+            <Button
+              type="primary"
+              icon={<DownloadOutlined />}
+              onClick={downloadCSV}
+            >
+              Download CSV
+            </Button>
+          </Space>
         }
         style={{ marginTop: "24px" }}
       >
@@ -298,7 +352,7 @@ function ManageEmployees() {
         width={600}
       >
         <Form form={form} onFinish={handleAddEdit} layout="vertical">
-        <Form.Item
+          <Form.Item
             name="imageUrl"
             label="Profile Picture URL"
             rules={[

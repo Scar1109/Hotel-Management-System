@@ -24,7 +24,6 @@ function MealOrderPage() {
 
   const navigate = useNavigate();
 
-
   useEffect(() => {
     console.log("Meals passed to MealPlanner:", meals);
   }, [meals]);
@@ -99,7 +98,7 @@ function MealOrderPage() {
       message.error("Please fill in all details and select at least one meal.");
       return;
     }
-
+  
     let scheduledDeliveryTime = null;
     if (scheduledDate && scheduledTime) {
       scheduledDeliveryTime = moment(scheduledDate)
@@ -107,21 +106,21 @@ function MealOrderPage() {
         .minute(scheduledTime.minute())
         .toDate();
     }
-
+  
     const orderData = {
       purchaseDate: new Date().toLocaleDateString(),
       customerName,
       customerID,
       roomNumber,
       amount: totalAmount,
-      meals: selectedMeals.map((meal) => meal.name), // Simplified to only include meal names
+      meals: selectedMeals,  // Send entire meal objects instead of just names
       scheduledDeliveryTime,
     };
-
+  
     try {
       const response = await axios.post("/api/order/addOrder", orderData);
       message.success("Order placed successfully!");
-      navigate("/order-confirmation", {
+      navigate("/", {
         state: { orderDetails: response.data },
       });
     } catch (error) {
@@ -129,6 +128,7 @@ function MealOrderPage() {
       message.error("Failed to place order. Please try again.");
     }
   };
+  
 
   return (
     <div className="order-container">
@@ -174,11 +174,22 @@ function MealOrderPage() {
               )}
             </p>
             <button
-              className="customize-button"
+              style={{
+                backgroundColor: "#4CAF50", // Green background
+                color: "white", // White text
+                padding: "10px 20px", // Padding around the button
+                border: "none", // No border
+                borderRadius: "5px", // Rounded corners
+                cursor: "pointer", // Pointer cursor on hover
+                fontSize: "16px", // Font size
+            
+                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow
+              }}
               onClick={() => handleCustomize(index)}
             >
               Customize
             </button>
+
             <button
               className="remove-button"
               onClick={() => handleRemoveMeal(index)}
@@ -231,7 +242,6 @@ function MealOrderPage() {
         meals={meals} // Pass entire meal objects instead of just names
         customerID={customerID}
       />
-
 
       <Modal
         title="Customize Your Meal"

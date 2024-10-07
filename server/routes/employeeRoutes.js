@@ -123,7 +123,7 @@ router.get('/spotlight', async (req, res) => {
         const spotlightData = {
             name: `${spotlightEmployee.firstName} ${spotlightEmployee.lastName}`,
             department: spotlightEmployee.department,
-            photoUrl: spotlightEmployee.photoUrl,
+            imageUrl: spotlightEmployee.imageUrl,
             customerSatisfaction: spotlightEmployee.customerSatisfaction,
             tasksCompleted: spotlightEmployee.tasksCompleted,
             recentAchievement: spotlightEmployee.recentAchievement,

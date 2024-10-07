@@ -120,9 +120,11 @@ router.post("/addOrder", async (req, res) => {
       customerName,
       customerID,
       amount,
-      meals,
+      meals, // This is an array of meal objects
       roomNumber,
+      scheduledDeliveryTime, // If scheduling is needed
     } = req.body;
+
     const orderId = await generateUniqueOrderId();
     const newOrder = new orderModel({
       orderId,
@@ -131,15 +133,18 @@ router.post("/addOrder", async (req, res) => {
       customerID,
       roomNumber,
       amount,
-      meals,
+      meals, // Store the meal objects with customizations and prices
       status: "Pending",
+      scheduledDeliveryTime, // Optional: store scheduled time if provided
     });
+    
     await newOrder.save();
     res.status(201).json(newOrder);
   } catch (err) {
     res.status(500).send(err);
   }
 });
+
 
 router.post("/updateItem", async (req, res) => {
   try {
@@ -301,18 +306,21 @@ router.delete("/deleteOrder/:orderId", async (req, res) => {
   }
 });
 
-// Get meal plan for a customer
 router.get("/mealPlan/:customerID", async (req, res) => {
   try {
     const { customerID } = req.params;
-    const mealPlan = await MealPlan.findOne({ customerID }); // Corrected model reference
-    const meals = await Catering.find({}); // Assuming Catering model is correctly defined elsewhere
+
+    // Fetch the customer's meal plan
+    const mealPlan = await MealPlan.findOne({ customerID }).lean();
+    
+    // Fetch all available meals
+    const meals = await Catering.find({});
 
     if (!mealPlan) {
-      return res.json({ mealPlan: [], meals }); // Returning consistent format even when no meal plan is found
+      return res.status(200).json({ mealPlan: [], meals });
     }
 
-    res.json({ mealPlan: mealPlan.mealPlan, meals }); // Returning meal plan details and available meals
+    res.status(200).json({ mealPlan: mealPlan.mealPlan, meals });
   } catch (error) {
     console.error("Error fetching meal plan:", error);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -323,16 +331,29 @@ router.get("/mealPlan/:customerID", async (req, res) => {
 router.post("/mealPlan", async (req, res) => {
   const { customerID, mealPlan } = req.body;
 
+  // Validate that both customerID and mealPlan are provided
+  if (!customerID || !mealPlan) {
+    return res.status(400).json({ message: "Customer ID and meal plan are required." });
+  }
+
   try {
-    // Upsert option used to create or update based on existence of meal plan
+    // Check if the meal plan already exists for the customer
+    const existingMealPlan = await MealPlan.findOne({ customerID }).lean();
+
+    // If the meal plan already exists, check if there are any changes
+    if (existingMealPlan && JSON.stringify(existingMealPlan.mealPlan) === JSON.stringify(mealPlan)) {
+      return res.status(200).json({ message: "No changes detected in the meal plan." });
+    }
+
+    // Use upsert to create or update the meal plan
     const updatedMealPlan = await MealPlan.findOneAndUpdate(
       { customerID },
       { $set: { mealPlan } },
-      { new: true, upsert: true } // upsert option to handle both creation and update
+      { new: true, upsert: true, lean: true } // upsert: creates or updates the document
     );
 
-    res.json({
-      message: "Meal plan saved successfully",
+    res.status(200).json({
+      message: "Meal plan saved successfully.",
       mealPlan: updatedMealPlan,
     });
   } catch (error) {

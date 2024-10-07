@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Input, Button, message, Modal, Form, Select, InputNumber, Image } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined, DownloadOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import fileDownload from 'js-file-download'; // Import the file download package
 
 const { Search } = Input;
 const { Option } = Select;
@@ -75,6 +76,30 @@ const ManageCateringFoods = () => {
     });
   };
 
+  // CSV Export Function
+  const exportToCSV = () => {
+    const csvData = foods.map((food) => ({
+      ItemID: food.itemId,
+      Name: food.name,
+      Description: food.description,
+      Price: `$${food.price.toFixed(2)}`,
+      Category: food.category,
+      Type: food.type,
+      ImageURL: food.imageUrl,
+    }));
+
+    const csvContent = [
+      ["ItemID", "Name", "Description", "Price", "Category", "Type", "ImageURL"],
+      ...csvData.map((item) =>
+        [item.ItemID, item.Name, item.Description, item.Price, item.Category, item.Type, item.ImageURL]
+      ),
+    ]
+      .map((e) => e.join(","))
+      .join("\n");
+
+    fileDownload(csvContent, 'catering_foods_report.csv');
+  };
+
   const columns = [
     {
       title: 'Image',
@@ -110,9 +135,23 @@ const ManageCateringFoods = () => {
           style={{ width: 300 }}
           enterButton
         />
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()}>
-          Add New Food
-        </Button>
+        <div>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => showModal()}
+            style={{ marginRight: 10 }}
+          >
+            Add New Food
+          </Button>
+          <Button
+            type="default"
+            icon={<DownloadOutlined />}
+            onClick={exportToCSV}
+          >
+            Export CSV
+          </Button>
+        </div>
       </div>
       <Table
         columns={columns}

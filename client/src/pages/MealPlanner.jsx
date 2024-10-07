@@ -1,26 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Select, DatePicker, Table, message, Spin } from "antd";
+import { Modal, Button, Select, DatePicker, Table, message, Spin, Popconfirm } from "antd";
 import moment from "moment";
 import axios from "axios";
 
 const { Option } = Select;
-const { RangePicker } = DatePicker;
 
-function MealPlanner({ visible, onClose, customerID, }) {
-  const [dateRange, setDateRange] = useState([]);
+function MealPlanner({ visible, onClose, customerID }) {
   const [mealPlan, setMealPlan] = useState([]);
   const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetchingPlan, setFetchingPlan] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
     if (visible && customerID) {
       fetchExistingMealPlan();
     }
   }, [visible, customerID]);
-  useEffect(() => {
-    console.log("Mealssss received:", meals);  // Log the meals data to check its structure and contents
-}, [meals]);
 
   const fetchExistingMealPlan = async () => {
     setFetchingPlan(true);
@@ -29,55 +25,47 @@ function MealPlanner({ visible, onClose, customerID, }) {
       if (response.data && response.data.mealPlan) {
         setMealPlan(response.data.mealPlan);
         setMeals(response.data.meals);
-        if (response.data.mealPlan.length > 0) {
-          setDateRange([
-            moment(response.data.mealPlan[0].date),
-            moment(
-              response.data.mealPlan[response.data.mealPlan.length - 1].date
-            ),
-          ]);
-        }
       } else {
         setMealPlan([]);
-        setDateRange([]);
         setMeals(response.data.meals);
       }
     } catch (error) {
       console.error("Error fetching existing meal plan:", error);
       message.error("Failed to fetch existing meal plan. Please try again.");
       setMealPlan([]);
-      setDateRange([]);
       setMeals([]);
     } finally {
       setFetchingPlan(false);
     }
   };
 
-  const handleDateRangeChange = (dates) => {
-    if (dates && dates.length === 2) {
-      const start = moment(dates[0]);
-      const end = moment(dates[1]);
-      const range = [];
-      let current = start.clone();
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
 
-      while (current.isSameOrBefore(end)) {
-        const existingDay = mealPlan.find(
-          (day) => day.date === current.format("YYYY-MM-DD")
-        );
-        range.push(
-          existingDay || {
-            date: current.format("YYYY-MM-DD"),
-            breakfast: "",
-            lunch: "",
-            dinner: "",
-          }
-        );
-        current.add(1, "days");
-      }
-
-      setDateRange(dates);
-      setMealPlan(range);
+  const handleAddDay = () => {
+    if (!selectedDate) {
+      message.error("Please select a date before adding a day.");
+      return;
     }
+
+    const formattedDate = selectedDate.format("YYYY-MM-DD");
+
+    if (mealPlan.find((day) => day.date === formattedDate)) {
+      message.error("Meal plan for this date already exists.");
+      return;
+    }
+
+    setMealPlan((prevPlan) => [
+      ...prevPlan,
+      {
+        date: formattedDate,
+        breakfast: "",
+        lunch: "",
+        dinner: "",
+      },
+    ]);
+    setSelectedDate(null); // Reset the selected date
   };
 
   const handleMealSelection = (date, mealType, mealId) => {
@@ -86,6 +74,11 @@ function MealPlanner({ visible, onClose, customerID, }) {
         day.date === date ? { ...day, [mealType]: mealId } : day
       )
     );
+  };
+
+  const handleDeleteMealPlan = (date) => {
+    setMealPlan((prevPlan) => prevPlan.filter((day) => day.date !== date));
+    message.success(`Meal plan for ${date} deleted.`);
   };
 
   const handleSavePlan = async () => {
@@ -146,7 +139,7 @@ function MealPlanner({ visible, onClose, customerID, }) {
           value={value || undefined}
         >
           <Option value="">Select meal</Option>
-          {meals // Filter meals based on category
+          {meals
             .filter((meal) => meal.category === "lunch")
             .map((meal) => (
               <Option key={meal._id} value={meal._id}>
@@ -177,7 +170,20 @@ function MealPlanner({ visible, onClose, customerID, }) {
               </Option>
             ))}
         </Select>
-        
+      ),
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <Popconfirm
+          title={`Are you sure you want to delete the meal plan for ${record.date}?`}
+          onConfirm={() => handleDeleteMealPlan(record.date)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button type="danger">Delete</Button>
+        </Popconfirm>
       ),
     },
   ];
@@ -204,11 +210,18 @@ function MealPlanner({ visible, onClose, customerID, }) {
       ]}
     >
       <Spin spinning={fetchingPlan}>
-        <RangePicker
-          value={dateRange}
-          onChange={handleDateRangeChange}
-          style={{ marginBottom: 16 }}
-        />
+        <div style={{ marginBottom: 16, display: "flex", alignItems: "center" }}>
+          <DatePicker
+            value={selectedDate}
+            onChange={handleDateChange}
+            placeholder="Select a date"
+            style={{ marginRight: 8 }}
+          />
+          <Button type="primary" onClick={handleAddDay}>
+            Add Day
+          </Button>
+        </div>
+
         {meals.length === 0 ? (
           <p>No meals available. Please add meals to the system first.</p>
         ) : (

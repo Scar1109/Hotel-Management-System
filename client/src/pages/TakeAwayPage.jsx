@@ -236,7 +236,9 @@ function MealOrderPage() {
     try {
       const response = await axios.post("/api/order/addOrdertakeaway", orderData);
       message.success("Order placed successfully!");
-      // Handle successful order placement (e.g., redirect to confirmation page)
+      navigate("/", {
+        state: { orderDetails: response.data },
+      });
     } catch (error) {
       console.error("Error placing order:", error);
       message.error("Failed to place order. Please try again.");
