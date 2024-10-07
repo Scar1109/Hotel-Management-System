@@ -1,4 +1,5 @@
     const express = require("express");
+    const mongoose = require("mongoose");
     const router = express.Router();
     const feedbackModel = require("../models/Feedback");
 
@@ -216,6 +217,108 @@ router.get("/ratingsSummary", async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ message: "Error fetching ratings summary" });
+    }
+});
+
+// Retrieve feedback with pagination
+router.post("/getFeedback", async (req, res) => {
+    const { page, limit } = req.body;
+    try {
+        const feedbacks = await feedbackModel
+            .find({})
+            .skip((page - 1) * limit)
+            .limit(limit);
+        const total = await feedbackModel.countDocuments();
+        res.json({ feedbacks, total });
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching feedbacks" });
+    }
+});
+
+/// Like feedback route (protected)
+// Like feedback route (protected)
+// Like feedback route (protected)
+router.post('/:id/like', async (req, res) => {
+    const { userID } = req.body;
+    
+    try {
+        console.log("Feedback ID:", req.params.id);
+        console.log("User ID:", userID);
+
+        // Validate feedbackID
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            
+            return res.status(400).json({ message: "Invalid feedback ID" });
+        }
+
+        // Find feedback by ID
+        const feedback = await feedbackModel.findById(req.params.id);
+        if (!feedback) {
+            return res.status(404).json({ message: 'Feedback not found' });
+        }
+
+        // Here, we're not treating userID as an ObjectId, we're treating it as a regular string
+        const userObjectId = userID;  // No need to convert
+
+        // Remove dislike if the user has already disliked
+        if (feedback.dislikedBy.includes(userObjectId)) {
+            feedback.dislikes -= 1;
+            feedback.dislikedBy.pull(userObjectId);
+        }
+
+        // Toggle like
+        if (feedback.likedBy.includes(userObjectId)) {
+            feedback.likes -= 1;
+            feedback.likedBy.pull(userObjectId);
+        } else {
+            feedback.likes += 1;
+            feedback.likedBy.push(userObjectId);
+        }
+
+        await feedback.save();
+        
+        return res.status(200).json({ feedback });
+    } catch (error) {
+        
+        return res.status(500).json({ message: 'Error liking feedback', error: error.message });
+    }
+});
+
+// Dislike feedback route (protected)
+router.post('/:id/dislike', async (req, res) => {
+    const { userID } = req.body;  // userID is a string
+
+    try {
+        // Find the feedback by its ID
+        const feedback = await feedbackModel.findById(req.params.id);
+        if (!feedback) {
+            return res.status(404).json({ message: 'Feedback not found' });
+        }
+
+        // Use userID as a string (no ObjectId conversion needed)
+        const userObjectId = userID;
+
+        // Remove like if the user has already liked
+        if (feedback.likedBy.includes(userObjectId)) {
+            feedback.likes -= 1;
+            feedback.likedBy.pull(userObjectId);
+        }
+
+        // Toggle dislike
+        if (feedback.dislikedBy.includes(userObjectId)) {
+            feedback.dislikes -= 1;
+            feedback.dislikedBy.pull(userObjectId);
+        } else {
+            feedback.dislikes += 1;
+            feedback.dislikedBy.push(userObjectId);
+        }
+
+        // Save the updated feedback
+        await feedback.save();
+        res.status(200).json({ feedback });
+    } catch (error) {
+        console.error('Error disliking feedback:', error);
+        res.status(500).json({ message: 'Error disliking feedback', error: error.message });
     }
 });
 
