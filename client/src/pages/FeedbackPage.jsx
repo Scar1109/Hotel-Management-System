@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Modal, Button, Input, Rate, Pagination, message } from 'antd';
+import { LikeOutlined, DislikeOutlined, LikeFilled, DislikeFilled } from '@ant-design/icons';
 import axios from 'axios';
 
 const FeedbackPage = () => {
@@ -15,6 +16,7 @@ const FeedbackPage = () => {
     const [visibleDelete, setVisibleDelete] = useState(false);
     const [currentFeedback, setCurrentFeedback] = useState(null);
 
+    // Fetch user ID from local storage
     const fetchUserByID = useCallback(() => {
         const userJSON = localStorage.getItem("currentUser");
         if (!userJSON) {
@@ -97,9 +99,31 @@ const FeedbackPage = () => {
         setPage(1);
     };
 
+    // Like a feedback
+    const handleLike = async (feedbackID) => {
+        try {
+            const { data } = await axios.post(`/api/feedback/${feedbackID}/like`, { userID });
+            setFeedbacks(feedbacks.map(feedback => feedback._id === feedbackID ? data.feedback : feedback));
+        } catch (error) {
+            message.error('Error liking feedback');
+        }
+    };
+
+
+
+    // Dislike a feedback
+    const handleDislike = async (feedbackID) => {
+        try {
+            const { data } = await axios.post(`/api/feedback/${feedbackID}/dislike`, { userID });
+            setFeedbacks(feedbacks.map(feedback => feedback._id === feedbackID ? data.feedback : feedback));
+        } catch (error) {
+            message.error('Error disliking feedback');
+        }
+    };
+
     return (
         <div className="feedback-page-6789">
-            <h1 style={{marginBottom:20, marginLeft:5}}>Feedbacks..</h1>
+            <h1 style={{ marginBottom: 20, marginLeft: 5 }}>Feedbacks..</h1>
             <hr />
             <div className="feedback-header-6789">
                 <Input.Search
@@ -113,18 +137,48 @@ const FeedbackPage = () => {
                 </Button>
             </div>
             <div className="feedback-list-6789">
-                {feedbacks.map((feedback) => (
-                    <div key={feedback._id} className="feedback-card-6789">
-                        <h3>{feedback.title}</h3>
-                        <p><strong>{feedback.username}</strong> </p>
-                        <p>{feedback.description}</p>
-                        <Rate disabled defaultValue={feedback.rating} />
-                    </div>
-                ))}
+                {feedbacks.map(feedback => {
+                    console.log(feedback._id); // This will log the feedback ID to the console
+
+                    return (
+                        <div key={feedback._id} className="feedback-card-6789">
+                            <h3>{feedback.title}</h3>
+                            <p>
+                                <strong>{feedback.username}</strong>
+                            </p>
+                            <p>{feedback.description}</p>
+                            <Rate disabled defaultValue={feedback.rating} />
+                            <div style={{ marginTop: 10 }}>
+                                <Button
+                                    type="text"
+                                    icon={feedback.likedBy.includes(userID) ? <LikeFilled /> : <LikeOutlined />}
+                                    onClick={() => {
+                                        handleLike(feedback._id);  // Ensure feedback._id is passed correctly
+                                    }}
+                                    style={{ color: feedback.likedBy.includes(userID) ? '#1890ff' : 'inherit', marginRight: 8 }}
+                                    disabled={!userID}  // Disable the button if userID is null or undefined
+                                >
+                                    Like {feedback.likes}
+                                </Button>
+                                <Button
+                                    type="text"
+                                    icon={feedback.dislikedBy.includes(userID) ? <DislikeFilled /> : <DislikeOutlined />}
+                                    onClick={() => {
+                                        handleDislike(feedback._id);  // Ensure feedback._id is passed correctly
+                                    }}
+                                    style={{ color: feedback.dislikedBy.includes(userID) ? '#ff4d4f' : 'inherit' }}
+                                    disabled={!userID}  // Disable the button if userID is null or undefined
+                                >
+                                    Dislike {feedback.dislikes}
+                                </Button>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
             <Pagination
                 current={page}
-                pageSize={limit}  // Shows 9 cards per page
+                pageSize={limit} // Shows 9 cards per page
                 total={total}
                 onChange={setPage}
                 style={{ textAlign: 'center', marginTop: '20px' }}
