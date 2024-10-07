@@ -4,12 +4,13 @@ const cateringSchema = new mongoose.Schema(
   {
     imageUrl: {
       type: String,
-    },
-    itemId: {
-      type: String,
       required: true,
     },
     name: {
+      type: String,
+      required: true,
+    },
+    itemId: {
       type: String,
       required: true,
     },
@@ -18,17 +19,18 @@ const cateringSchema = new mongoose.Schema(
       required: true,
     },
     price: {
-      type: String,
-      required: true,
-    },
-    category: {
-      type: String,
+      type: Number,
       required: true,
     },
     type: {
       type: String,
-      enum: ["vegi", "non vegi"], // Restrict the field to "vegi" or "non vegi"
-      required: true, // Set it to true if it's a required field
+      enum: ["vegi", "non vegi"],
+      required: true,
+    },
+    category: {
+      type: String,
+      enum: ["breakfast", "lunch", "dinner"],
+      required: true,
     },
   },
   { timestamps: true }

@@ -1,5 +1,11 @@
 const mongoose = require("mongoose");
 
+const mealSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
+    specialInstructions: { type: String, default: '' } // For storing customization details
+  });
+
 const orderSchema = new mongoose.Schema(
     {
         orderId: {
@@ -31,10 +37,10 @@ const orderSchema = new mongoose.Schema(
             type: String,
             default: "Pending",
         },
-        meals: [],
+        meals: [mealSchema], // Array of mealSchema for added meals
     },
     { timestamps: true }
 );
 
-const orderModel = mongoose.model("orders", orderSchema);
+const orderModel = mongoose.model("ordersrooms", orderSchema);
 module.exports = orderModel;
