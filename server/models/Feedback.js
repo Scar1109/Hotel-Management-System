@@ -1,33 +1,41 @@
 const mongoose = require('mongoose');
 
 const FeedbackSchema = new mongoose.Schema({
-
-    title : {
+    title: {
         type: String,
         required: true
     },
-
-    username : {
+    username: {
         type: String,
         required: true
     },
-
-    userID : {
-        type: String,
+    userID: {
+        type: String,  // Keep userID as a string
         required: true
     },
-
-    rating : {
+    rating: {
         type: Number,
         required: true
     },
-
-    description : {
+    description: {
         type: String,
         required: true
     },
-
-},{
+    likes: {
+        type: Number,
+        default: 0
+    },
+    dislikes: {
+        type: Number,
+        default: 0
+    },
+    likedBy: [{
+        type: String,  // Store as string, not ObjectId
+    }],
+    dislikedBy: [{
+        type: String,  // Store as string, not ObjectId
+    }]
+}, {
     timestamps: true
 });
 
