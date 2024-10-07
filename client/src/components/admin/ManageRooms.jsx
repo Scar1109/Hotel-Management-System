@@ -217,17 +217,14 @@ const ManageRooms = () => {
                         key: "status",
                         dataIndex: "status",
                         render: (status) => (
-                                <Tag
-                                        color={
-                                                status === "Suspended"
-                                                        ? "volcano"
-                                                        : "green"
-                                        }
-                                >
-                                        {status.toUpperCase()}
-                                </Tag>
+                            <Tag
+                                color={status === "Suspended" ? "volcano" : "green"}
+                            >
+                                {status === "Suspended" ? "MAINTENANCE" : status.toUpperCase()}
+                            </Tag>
                         ),
-                },
+                    }
+                    ,
                 {
                         title: "Action",
                         key: "action",
