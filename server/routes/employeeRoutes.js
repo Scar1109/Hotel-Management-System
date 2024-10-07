@@ -1,64 +1,61 @@
 const express = require('express');
 const router = express.Router();
-const employeeModel = require('../models/Employee'); // Import the employee model for database operations
+const employeeModel = require('../models/Employee');
 const User = require('../models/User');
-const bcrypt = require('bcrypt'); // Import bcrypt for password hashing
+const bcrypt = require('bcrypt');
 
-// Function to generate a unique employee ID
+// Helper function to generate unique employee ID
 async function generateUniqueEmployeeId() {
     let unique = false;
     let employeeId;
 
     while (!unique) {
-        // Generate a random 8-digit number prefixed with 'E'
         const randomNumber = Math.floor(10000000 + Math.random() * 90000000);
         employeeId = `E${randomNumber}`;
         
-        // Check if this employeeId already exists in the database
         const existingEmployee = await employeeModel.findOne({ employeeId });
         if (!existingEmployee) {
-            unique = true; // If no existing employee with this ID, mark it as unique
+            unique = true;
         }
     }
-    
-    return employeeId; // Return the unique employee ID
+    return employeeId;
 }
 
-// Route to get all employees
+// Fetch all employees
 router.get('/getEmployees', async (req, res) => {
     try {
-        const employees = await employeeModel.find(); // Fetch all employees from the database
-        res.json(employees); // Send the employee data as a JSON response
+        const employees = await employeeModel.find();
+        res.json(employees);
     } catch (err) {
-        res.status(500).send(err); // Send a 500 error if something goes wrong
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 });
 
-// Route to add a new employee
+// Add new employee with image URL handling
 router.post('/addEmployee', async (req, res) => {
     try {
-        const { firstName, lastName, email, username } = req.body;
+        const { firstName, lastName, email, username, department, customerSatisfaction, tasksCompleted, recentAchievement, imageUrl } = req.body;
 
-        // Check if the username or email already exists in the database
+        // Check if employee or customer exists with the same email/username
         const existingEmployee = await employeeModel.findOne({ $or: [{ email }, { username }] });
         if (existingEmployee) {
-            return res.status(400).send('Email or Username already exists as Employee');
+            return res.status(400).json({ message: 'Email or Username already exists as Employee' });
         }
 
-        // Check if the email or username already exists in the User collection
         const existingUser = await User.findOne({ $or: [{ email }, { username }] });
         if (existingUser) {
-            return res.status(400).json({ message: 'Email or username already in as Customer' });
+            return res.status(400).json({ message: 'Email or Username already exists as Customer' });
         }
 
-        // Generate a unique employee ID
+        // Generate unique Employee ID
         const employeeId = await generateUniqueEmployeeId();
-        let randomPwd = Math.random().toString(36).substr(2, 9);
+        const randomPwd = Math.random().toString(36).substr(2, 9);
 
+        // Hash the password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(randomPwd, salt);
 
-        // Create a new employee document
+        // Create new employee
         const newEmployee = new employeeModel({
             employeeId,
             userID: Math.random().toString(36).substr(2, 9),
@@ -66,18 +63,19 @@ router.post('/addEmployee', async (req, res) => {
             lastName,
             email,
             username,
-            leaves: [],
-            password : hashedPassword,
+            department,
+            customerSatisfaction,
+            tasksCompleted,
+            recentAchievement,
+            imageUrl,
+            password: hashedPassword,
         });
 
-        // Save the new employee to the database
         await newEmployee.save();
 
-        const userID = employeeId;
-
-        // Create the new User
+        // Register the employee as a user
         const newUser = new User({
-            userID,
+            userID: employeeId,
             firstName,
             lastName,
             email,
@@ -88,7 +86,6 @@ router.post('/addEmployee', async (req, res) => {
 
         const savedUser = await newUser.save();
 
-        // Exclude the password from the response
         const userResponse = {
             _id: savedUser._id,
             userID: savedUser.userID,
@@ -109,80 +106,95 @@ router.post('/addEmployee', async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        res.status(500).send('Server error');
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 });
 
-// Route to update an existing employee
-router.post('/updateEmployee', async (req, res) => {
+
+// Get employee spotlight (top performer)
+router.get('/spotlight', async (req, res) => {
     try {
-        const { firstName, lastName, email, username } = req.body; // Extract updated employee details from the request body
+        const spotlightEmployee = await employeeModel.findOne().sort('-customerSatisfaction').limit(1);
 
-        // Find the employee by email and update their details
-        const updatedEmployee = await employeeModel.findOneAndUpdate(
-            { email },
-            { firstName, lastName, username },
-            { new: true } // Return the updated document
-        );
-
-        res.json(updatedEmployee); // Send the updated employee data as a JSON response
-    } catch (err) {
-        res.status(500).send(err); // Send a 500 error if something goes wrong
-    }
-});
-
-// Route to delete an employee
-router.post('/deleteEmployee', async (req, res) => {
-    try {
-        const { employeeId } = req.body; // Extract the employeeId from the request body
-        await employeeModel.findOneAndDelete({ employeeId }); // Find the employee by ID and delete them
-        res.send('Employee deleted successfully'); // Send a success message
-    } catch (err) {
-        res.status(500).send(err); // Send a 500 error if something goes wrong
-    }
-});
-
-router.get('/getLeave/:empID', async (req, res) => {
-    const { empID } = req.params;
-
-    try {
-        const employee = await employeeModel.findOne({ employeeId : empID });
-        if (!employee) {
-            return res.status(404).json({ message: 'Employee not found' });
+        if (!spotlightEmployee) {
+            return res.status(404).json({ message: 'No employees found' });
         }
 
-        res.status(200).json({ leaves: employee.leaves });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
-    }
-});
-
-router.post('/addLeave', async (req, res) => {
-    const { empID, fromDate, toDate } = req.body;
-
-    try {
-        const employee = await employeeModel.findOne({ employeeId : empID });
-        if (!employee) {
-            return res.status(404).json({ message: 'Employee not found' });
-        }
-
-        const randomNumber = Math.floor(10000000 + Math.random() * 90000000);
-        leaveID = `L${randomNumber}`;
-
-        const newLeave = {
-            leaveID,
-            fromDate: new Date(fromDate),
-            toDate: new Date(toDate),
-            status: 'Pending',
+        const spotlightData = {
+            name: `${spotlightEmployee.firstName} ${spotlightEmployee.lastName}`,
+            department: spotlightEmployee.department,
+            photoUrl: spotlightEmployee.photoUrl,
+            customerSatisfaction: spotlightEmployee.customerSatisfaction,
+            tasksCompleted: spotlightEmployee.tasksCompleted,
+            recentAchievement: spotlightEmployee.recentAchievement,
         };
 
-        employee.leaves.push(newLeave);
-        await employee.save();
-
-        res.status(200).json({ message: 'Leave added successfully', leaves: employee.leaves });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+        res.json(spotlightData);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 });
 
-module.exports = router; // Export the router to use it in the main application
+// Update employee details, including image URL
+router.put('/:employeeId', async (req, res) => {
+    try {
+        const { employeeId } = req.params;
+        const { firstName, lastName, email, username, department, imageUrl, customerSatisfaction, tasksCompleted, recentAchievement } = req.body;
+
+        const updatedEmployee = await employeeModel.findOneAndUpdate(
+            { employeeId },
+            { 
+                firstName, 
+                lastName, 
+                email, 
+                username, 
+                department, 
+                imageUrl, 
+                customerSatisfaction, 
+                tasksCompleted, 
+                recentAchievement 
+            },
+            { new: true }
+        );
+
+        if (!updatedEmployee) {
+            return res.status(404).json({ message: 'Employee not found' });
+        }
+
+        // Update the corresponding User document
+        await User.findOneAndUpdate(
+            { userID: employeeId },
+            { 
+                firstName, 
+                lastName, 
+                email, 
+                username 
+            }
+        );
+
+        res.json(updatedEmployee);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
+    }
+});
+
+// Delete employee and associated user
+router.post('/deleteEmployee', async (req, res) => {
+    try {
+        const { employeeId } = req.body;
+        const deletedEmployee = await employeeModel.findOneAndDelete({ employeeId });
+        
+        if (!deletedEmployee) {
+            return res.status(404).json({ message: 'Employee not found' });
+        }
+
+        // Delete the corresponding User document
+        await User.findOneAndDelete({ userID: employeeId });
+
+        res.json({ message: 'Employee deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
+    }
+});
+
+module.exports = router;

@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const employeeSchema = new mongoose.Schema(
     {
+        imageUrl: {
+            type: String,
+            required: true,
+        },
+
         employeeId: {
             type: String,
             required: true,
@@ -27,6 +32,26 @@ const employeeSchema = new mongoose.Schema(
             required: true,
         },
         leaves: [],
+        department: {
+            type: String,
+            default: "General",
+        },
+        photoUrl: {
+            type: String,
+            default: "",
+        },
+        customerSatisfaction: {
+            type: Number,
+            default: 0,
+        },
+        tasksCompleted: {
+            type: Number,
+            default: 0,
+        },
+        recentAchievement: {
+            type: String,
+            default: "",
+        },
     },
     { timestamps: true }
 );
