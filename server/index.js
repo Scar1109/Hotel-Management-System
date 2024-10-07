@@ -5,7 +5,6 @@ const cron = require("node-cron"); // Schedule tasks (cron jobs)
 const { sendReminderEmail } = require('./utils/emailService'); // Email sending service
 const Reminder = require('./models/reminder'); // Reminder model
 const Event = require('./models/Event'); // Event model
-
 const app = express();
 
 // Database configuration
@@ -23,11 +22,16 @@ const userRoutes = require("./routes/userRoute");
 const roomRoutes = require("./routes/roomRoutes");
 const reminderRoutes = require('./routes/reminderRoutes');
 
+
 // Middleware
 app.use(cors());
 app.use(express.json()); // Parse JSON bodies
 
-// Route Definitions
+
+// Middleware to parse incoming requests with JSON payloads
+app.use(express.json());
+
+// Define routes (ensure routes are applied after middleware)
 app.use("/api/catering", cateringRoutes);
 app.use("/api/employee", employeeRoutes);
 app.use("/api/event", eventRoutes);
@@ -73,6 +77,21 @@ cron.schedule('* * * * *', async () => { // Runs every minute
     } catch (error) {
         console.error('Error sending reminders:', error);
     }
+});
+
+// Basic Error Handling Middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send({
+        error: "Something went wrong, please try again later."
+    });
+});
+
+// Catch all 404 errors
+app.use((req, res, next) => {
+    res.status(404).send({
+        error: "Route not found"
+    });
 });
 
 // Start the server

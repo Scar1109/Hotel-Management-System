@@ -34,40 +34,45 @@ router.get('/getItems', async (req, res) => {
 // Route to add a new food item
 router.post('/addItem', async (req, res) => {
     try {
-        const { name, description, price, category,type,imageUrl } = req.body;
-
-        const itemId = await generateUniqueItemId();
-
-        if (type !== 'vegi' && type !== 'non vegi') {
-            return res.status(400).json({ error: 'Type must be "vegi" or "non vegi"' });
-        }
-
-        const newItem = new cateringModel({
-            imageUrl,
-            itemId,
-            name,
-            description,
-            price,
-            category,
-            type
-        });
-
-        await newItem.save();
-
-        res.status(201).json(newItem);
+      const { name, description, price, category, type, imageUrl } = req.body;
+      const itemId = await generateUniqueItemId();
+  
+      console.log('Generated itemId:', itemId); // Log generated ID
+  
+      const newItem = new cateringModel({
+        imageUrl,
+        itemId,
+        name,
+        description,
+        price,
+        category,
+        type,
+      });
+  
+      await newItem.save();
+  
+      res.status(201).json(newItem);
     } catch (err) {
-        res.status(500).send(err);
+      console.error("Error adding item:", err); // Log any errors
+      res.status(500).send(err);
     }
-});
+  });
+  
 
 // Route to update a food item
 router.post('/updateItem', async (req, res) => {
     try {
-        const { itemId, name, description, price, category,type } = req.body;
+        const { itemId, name, description, price, category, type, imageUrl } = req.body;
+        
+        // Validation to check if itemId is provided
+        if (!itemId) {
+            return res.status(400).send('itemId is required');
+        }
 
+        // Find and update the item by itemId
         const updatedItem = await cateringModel.findOneAndUpdate(
             { itemId },
-            { name, description, price, category ,type},
+            { name, description, price, category, type ,imageUrl },
             { new: true }
         );
 
@@ -80,6 +85,7 @@ router.post('/updateItem', async (req, res) => {
         res.status(500).send(err);
     }
 });
+
 
 // Route to delete a food item
 router.post('/deleteItem', async (req, res) => {
@@ -97,5 +103,7 @@ router.post('/deleteItem', async (req, res) => {
         res.status(500).send(err);
     }
 });
+
+
 
 module.exports = router;

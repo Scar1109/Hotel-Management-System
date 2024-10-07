@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { message, Table } from "antd";
+import React, { useState, useEffect } from 'react';
+import { Table, Input, Button, message, Modal, Form, Select, InputNumber, Image } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined, DownloadOutlined } from '@ant-design/icons';
+import axios from 'axios';
+import fileDownload from 'js-file-download'; // Import the file download package
 
-function ManageCateringFoods() {
+const { Search } = Input;
+const { Option } = Select;
+
+const ManageCateringFoods = () => {
   const [foods, setFoods] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showAddPopup, setShowAddPopup] = useState(false);
-  const [showEditPopup, setShowEditPopup] = useState(null);
-  const [showDeletePopup, setShowDeletePopup] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [filteredFoods, setFilteredFoods] = useState([]);
-  const [pagination, setPagination] = useState({
-    pageSize: 6,
-    current: 1,
-    position: ["bottomCenter"],
-  });
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editingFood, setEditingFood] = useState(null);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     fetchFoods();
@@ -22,310 +20,182 @@ function ManageCateringFoods() {
 
   const fetchFoods = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/catering/getItems"
-      );
-      const foodData = response.data || [];
-      setFoods(foodData);
-      console.log(foodData);
+      const response = await axios.get('http://localhost:5000/api/catering/getItems');
+      setFoods(response.data || []);
     } catch (error) {
-      message.error("Failed to fetch foods");
+      message.error('Failed to fetch foods');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    let tempList = foods;
-
-    if (searchTerm !== "") {
-      tempList = tempList.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.itemId.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    setFilteredFoods(tempList);
-  }, [searchTerm, foods]);
-
-  const handleTableChange = (pagination, filters, sorter) => {
-    setPagination(pagination);
+  const handleSearch = (value) => {
+    // Implement search functionality
   };
 
-  const handleAddFood = async (newFood) => {
-    try {
-      await axios.post("http://localhost:5000/api/catering/addItem", newFood);
-      message.success("Food item added successfully");
-      fetchFoods();
-      setShowAddPopup(false);
-    } catch (error) {
-      message.error("Failed to add food item");
+  const showModal = (food = null) => {
+    setEditingFood(food);
+    setModalVisible(true);
+    if (food) {
+      form.setFieldsValue(food);
+    } else {
+      form.resetFields();
     }
   };
 
-  const handleEditFood = async (updatedFood) => {
-    try {
-      await axios.post(
-        "http://localhost:5000/api/catering/updateItem",
-        updatedFood
-      );
-      message.success("Food item updated successfully");
-      fetchFoods();
-      setShowEditPopup(null);
-    } catch (error) {
-      message.error("Failed to update food item");
-    }
+  const handleOk = () => {
+    form.validateFields().then(async (values) => {
+      try {
+        if (editingFood) {
+          await axios.post('http://localhost:5000/api/catering/updateItem', { ...values, itemId: editingFood.itemId });
+          message.success('Food item updated successfully');
+        } else {
+          await axios.post('http://localhost:5000/api/catering/addItem', values);
+          message.success('Food item added successfully');
+        }
+        setModalVisible(false);
+        fetchFoods();
+      } catch (error) {
+        message.error('Operation failed: ' + (error.response?.data?.error || error.message));
+      }
+    });
   };
 
-  const handleDeleteFood = async (itemId) => {
-    try {
-      await axios.post("http://localhost:5000/api/catering/deleteItem", {
-        itemId,
-      });
-      message.success("Food item deleted successfully");
-      fetchFoods();
-      setShowDeletePopup(null);
-    } catch (error) {
-      message.error("Failed to delete food item");
-    }
+  const handleDelete = async (itemId) => {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this food item?',
+      onOk: async () => {
+        try {
+          await axios.post('http://localhost:5000/api/catering/deleteItem', { itemId });
+          message.success('Food item deleted successfully');
+          fetchFoods();
+        } catch (error) {
+          message.error('Failed to delete food item');
+        }
+      },
+    });
+  };
+
+  // CSV Export Function
+  const exportToCSV = () => {
+    const csvData = foods.map((food) => ({
+      ItemID: food.itemId,
+      Name: food.name,
+      Description: food.description,
+      Price: `$${food.price.toFixed(2)}`,
+      Category: food.category,
+      Type: food.type,
+      ImageURL: food.imageUrl,
+    }));
+
+    const csvContent = [
+      ["ItemID", "Name", "Description", "Price", "Category", "Type", "ImageURL"],
+      ...csvData.map((item) =>
+        [item.ItemID, item.Name, item.Description, item.Price, item.Category, item.Type, item.ImageURL]
+      ),
+    ]
+      .map((e) => e.join(","))
+      .join("\n");
+
+    fileDownload(csvContent, 'catering_foods_report.csv');
   };
 
   const columns = [
-    
-      {
-        title: "Image",
-        dataIndex: "imageUrl",
-        key: "imageUrl",
-        render: (text) => (
-          <img
-            src={text} // Ensure `text` correctly references the imageUrl
-            alt="food"
-            style={{ width: "100px", height: "auto" }}
-          />
-        ),
-      },
     {
-      title: "Item ID",
-      dataIndex: "itemId",
-      key: "itemId",
+      title: 'Image',
+      dataIndex: 'imageUrl',
+      key: 'imageUrl',
+      render: (text) => <Image src={text} alt="food" width={100} />,
     },
+    { title: 'Item ID', dataIndex: 'itemId', key: 'itemId' },
+    { title: 'Name', dataIndex: 'name', key: 'name' },
+    { title: 'Description', dataIndex: 'description', key: 'description', ellipsis: true },
+    { title: 'Price', dataIndex: 'price', key: 'price', render: (price) => `$${price.toFixed(2)}` },
+    { title: 'Category', dataIndex: 'category', key: 'category' },
+    { title: 'Type', dataIndex: 'type', key: 'type' },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-    },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-    },
-    {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
-    },
-    {
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (text, food) => (
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
         <>
-          <button className="edit-btn" onClick={() => setShowEditPopup(food)}>
-            Edit
-          </button>
-          <button
-            className="delete-btn"
-            onClick={() => setShowDeletePopup(food)}
-          >
-            Delete
-          </button>
+          <Button icon={<EditOutlined />} onClick={() => showModal(record)} />
+          <Button icon={<DeleteOutlined />} onClick={() => handleDelete(record.itemId)} danger />
         </>
       ),
     },
   ];
-  
 
   return (
-    <div className="manage-catering-foods">
-      {loading ? (
-        <p>Loading food items...</p>
-      ) : (
-        <>
-          <div className="header">
-            <h2>Manage Catering Foods</h2>
-            <div className="search-and-add">
-              <input
-                type="text"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-                disabled={showEditPopup || showDeletePopup || showAddPopup}
-              />
-              <button className="add-btn" onClick={() => setShowAddPopup(true)}>
-                Add New
-              </button>
-            </div>
-          </div>
-
-          <Table
-            dataSource={filteredFoods}
-            columns={columns}
-            pagination={filteredFoods.length > 6 ? pagination : false}
-            onChange={handleTableChange}
-          />
-
-          {showAddPopup && (
-            <AddEditFoodPopup
-              onSave={handleAddFood}
-              onClose={() => setShowAddPopup(false)}
-            />
-          )}
-          {showEditPopup && (
-            <AddEditFoodPopup
-              food={showEditPopup}
-              onSave={handleEditFood}
-              onClose={() => setShowEditPopup(null)}
-            />
-          )}
-          {showDeletePopup && (
-            <DeleteConfirmationPopup
-              food={showDeletePopup}
-              onDelete={handleDeleteFood}
-              onClose={() => setShowDeletePopup(null)}
-            />
-          )}
-        </>
-      )}
-    </div>
-  );
-}
-
-function AddEditFoodPopup({ food, onSave, onClose }) {
-  const [formData, setFormData] = useState({
-    name: food?.name || "",
-    description: food?.description || "",
-    price: food?.price || "",
-    category: food?.category || "",
-    type: food?.type || "vegi", // Default to "vegi"
-    imageUrl: food?.imageUrl || "", // Ensure imageUrl is included
-
-  });
-
-  // Handle input change for text fields
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // Handle select change for the "type" field
-  const handleSelectChange = (value) => {
-    setFormData({ ...formData, type: value });
-  };
-
-  // Handle form submission
-  const handleSubmit = () => {
-    const dataToSave = food ? { ...food, ...formData } : formData;
-    onSave(dataToSave);
-  };
-
-  return (
-    <div className="popup-overlay">
-      <div className="popup">
-        <h3>{food ? "Edit Food Item" : "Add New Food Item"}</h3>
-
-        <input
-          type="text"
-          name="imageUrl"
-          value={formData.imageUrl}
-          onChange={handleChange}
-          placeholder="Image URL"
+    <div style={{ padding: '24px' }}>
+      <h1>Manage Catering Foods</h1>
+      <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between' }}>
+        <Search
+          placeholder="Search foods"
+          onSearch={handleSearch}
+          style={{ width: 300 }}
+          enterButton
         />
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Food Name"
-        />
-        <input
-          type="text"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Description"
-        />
-        <input
-          type="number"
-          name="price"
-          value={formData.price}
-          onChange={handleChange}
-          placeholder="Price"
-        />
-        <input
-          type="text"
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          placeholder="Category"
-        />
-        <select
-          name="type"
-          value={formData.type}
-          onChange={(e) => handleSelectChange(e.target.value)}
-          style={{
-            width: "200px",
-            padding: "10px",
-            border: "1px solid #ccc",
-            borderRadius: "5px",
-            backgroundColor: "#f8f8f8",
-            fontSize: "16px",
-            color: "#333",
-            cursor: "pointer",
-            transition: "all 0.3s ease",
-            outline: "none",
-            marginBottom: "20px",
-          }}
-        >
-          <option value="vegi">Veg</option>
-          <option value="non vegi">Non-Veg</option>
-        </select>
-
-        <div className="actions">
-          <button onClick={handleSubmit}>Save</button>
-          <button onClick={onClose}>Cancel</button>
+        <div>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => showModal()}
+            style={{ marginRight: 10 }}
+          >
+            Add New Food
+          </Button>
+          <Button
+            type="default"
+            icon={<DownloadOutlined />}
+            onClick={exportToCSV}
+          >
+            Export CSV
+          </Button>
         </div>
       </div>
+      <Table
+        columns={columns}
+        dataSource={foods}
+        rowKey="itemId"
+        loading={loading}
+        pagination={{ pageSize: 10 }}
+      />
+      <Modal
+        title={editingFood ? 'Edit Food Item' : 'Add New Food Item'}
+        visible={modalVisible}
+        onOk={handleOk}
+        onCancel={() => setModalVisible(false)}
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item name="imageUrl" label="Image URL">
+            <Input />
+          </Form.Item>
+          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="description" label="Description" rules={[{ required: true }]}>
+            <Input.TextArea />
+          </Form.Item>
+          <Form.Item name="price" label="Price" rules={[{ required: true, type: 'number', min: 0.01 }]}>
+            <InputNumber style={{ width: '100%' }} step={0.01} />
+          </Form.Item>
+          <Form.Item name="type" label="Type" rules={[{ required: true }]}>
+            <Select>
+              <Option value="vegi">Veg</Option>
+              <Option value="non vegi">Non-Veg</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="category" label="Category" rules={[{ required: true }]}>
+            <Select>
+              <Option value="breakfast">Breakfast</Option>
+              <Option value="lunch">Lunch</Option>
+              <Option value="dinner">Dinner</Option>
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
-}
-
-function DeleteConfirmationPopup({ food, onDelete, onClose }) {
-  const handleDelete = () => {
-    onDelete(food.itemId);
-  };
-
-  return (
-    <div className="popup-overlay">
-      <div className="popup">
-        <h3>Delete Food Item</h3>
-        <p>Are you sure you want to delete {food.name}?</p>
-        <div className="actions">
-          <button onClick={handleDelete}>Delete</button>
-          <button onClick={onClose}>Cancel</button>
-        </div>
-      </div>
-    </div>
-  );
-}
+};
 
 export default ManageCateringFoods;
